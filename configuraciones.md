@@ -80,24 +80,6 @@ Get-Content -Path "logs/app.log" -Wait
 
 
 
-## 6. Gestión con Git
-
-### Inicializar repositorio
-git init
-
-### Configurar remoto
-git remote add origin https://link-de-tu-repo.com
-
-### Flujo de trabajo típico
-git add .
-git commit -m "Mensaje descriptivo"
-git push origin main
-
-### Manejo de ramas
-git checkout -b nueva-rama
-git push origin nueva-rama
-
-
 ## 7. Despliegue en PythonAnywhere
 
 ### Crear y activar entorno
