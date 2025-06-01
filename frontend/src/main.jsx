@@ -8,3 +8,8 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+//Forma que react hace, reac se encarga de hace todo esto por si solo,
+//  mejorando la expreciencia de desarrollo
+// const div = document.createElement("div")
+// div.appendChild(doc)
