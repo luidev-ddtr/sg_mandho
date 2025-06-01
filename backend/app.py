@@ -47,5 +47,31 @@ def home():
                     "final": ("si", True),
                     }),200
 
+
+# EJEMPLO DE LOGIN SIN EMBARGO FALTA IMPLEMENTAR SEGURIDAD
+# @app.route("/login", method = ["POST"])
+# def login():
+#     try:
+#         datos = request.json()
+#         usuario, contraseña = datos
+        
+#         if es_valido(usuario,contraseña):
+#             informacion = obtener_info()
+#             return jsonify({"message": "usuario identificado",
+#                             "nombre": informacion.nombre,
+#                             "cargo": informacion.cargo,
+#                             "manazana": informacion.manzana
+#                             },200)
+#         else: 
+#             return jsonify({"message": "usuario no identificado","status":"Error no encontrado"},404)
+#     except Exception as e:
+#         return jsonify({
+#             "status":'error',
+#             "message": str(e)
+#         },500)
+
+#es_valido funcion para saber si los datos son correctos 
+# obtener_info tiene que ser la funcion que obtiene la info de registro
+# puede ser un objeto el cual tenga la informacion carga como su cargo, manzana, nombre
 if __name__ == '__main__':
     app.run(debug=True)
