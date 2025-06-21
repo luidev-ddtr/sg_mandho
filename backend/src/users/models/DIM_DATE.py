@@ -16,3 +16,14 @@ class DIM_DATE:
     
     def __str__(self):
         return f"Date {self.dateId} {self.fiscal_date} {self.year} {self.month} {self.day} {self.fiscal_year} {self.fiscal_month} {self.fiscal_day} {self.week}"
+    
+    def mostrar_datos(self):
+        print(f"""Id fecha {self.dateId}
+        Fecha Fiscal {self.fiscal_date}
+        Año {self.year}
+        Mes {self.month}
+        Dia {self.day}
+        Año Fiscal {self.fiscal_year}
+        Mes Fiscal {self.fiscal_month}
+        Dia Fiscal {self.fiscal_day}
+        Semana {self.week}""")

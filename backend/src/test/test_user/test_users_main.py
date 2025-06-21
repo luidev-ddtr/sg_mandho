@@ -7,10 +7,10 @@ def test_insert_user():
         "nombre": "John",
         "segundo_nombre": "Doe",
         "apellido": "Torres",
-        "segundo_apellido": "Garcia",
+        "segundo_apellido": "",
         "fecha_nacimiento": "1990-01-01",
         "fecha_inicio": "2022-01-01",
-        "fecha_fin": "2025-12-31",
+        "fecha_fin": "",
         "manzana": "A",
         "calle": "Main Street",
         "numero_ext": "123",
@@ -46,7 +46,7 @@ def test_insert_user():
     
     assert message == "Todo bien"
     
-    # assert dates == {
+    #assert dates == {
     #         "dateId": "1",
     #         "fiscal_date": "2022-01-01",
     #         "fiscal_year": "2022",
