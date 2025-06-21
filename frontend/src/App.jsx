@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { VITE_URL_BACKEND } from "../.env";
+import { miRuta } from "./pages/miRuta.jsx";
 
 function api(){
   fetch({VITE_URL_BACKEND})
@@ -7,23 +8,22 @@ function api(){
 }
 
 function App() {
-  //Estado
-  const [num,setNum] = useState('');
-
-  const sumar = () => {
-  setNum(num+'fstring')
-  }
+  
   return (
     <>
       <div>
         <button onClick={sumar}>+1</button>
         <p>{num}</p>
       </div>
+
+      <h1>Hola mundo</h1>
       <div>{VITE_URL_BACKEND}</div>
+      <br />
+      <br />
+      <miRuta />
     </>
   )
 }
 
 
-//INCOMPLETO NO FUNCIONA 
 export default App

@@ -4,13 +4,15 @@ from flask_cors import CORS  # Importa CORS
 
 #HARCODEAR LAS URL
 import os
-##Esto esta comentado ya que es solo de produccion
 
+from src.routes.user_route import user_route
+##Esto esta comentado ya que es solo de produccion
 #from dotenv import load_dotenv  # Importa load_dotenv
 # Carga el .env con ruta ABSOLUTA (crítico en PythonAnywhere)
 #load_dotenv('/home/luigas/sg_mandho/backend/.env')
 
 app = Flask(__name__)
+app.register_blueprint(user_route)
 
 
 CORS(app, resources={
@@ -20,31 +22,37 @@ CORS(app, resources={
         "allow_headers": ["Content-Type"],
         "supports_credentials": True 
 
+
     },
     r"/auth/*": {
         "origins": [os.getenv('URL_FRONTEND')],
-        "methods": ["GET", "POST", "OPTIONS"],
+        "methods": ["POST"],
         "allow_headers": ["Authorization", "Content-Type"],
         "supports_credentials": True  
     }
 })
 
-# @app.route("/", methos["GET"])
-# def index():
-#     return jsonfy({"messaje": "Hola desde flask inge ige"})
-string = "Hola mundo desde flask"
-
+## Endpoin solo de prueba para el saber si el servidor esta online 
+## 
+## Este endpoint solo devuelve un mensaje de prueba para saber si el servidor esta online
+## 
+## Returns:
+##     Un JSON con un mensaje que indica que el servidor esta online
+## 
 @app.route('/')
 def home():
+    """
+    Solo devuelve un mensaje de prueba para saber si el servidor esta online
+    """
     return jsonify({'message':"¡Funciona!",
                     "index": {
                         "nose": {
                             "inge": [12,4,64,22,4,2,4],
                             'valido': True,
-                        },
-                        "mañoso": len(string)
+                        }
                     },
                     "final": ("si", True),
+
                     }),200
 
 
@@ -70,8 +78,5 @@ def home():
 #             "message": str(e)
 #         },500)
 
-#es_valido funcion para saber si los datos son correctos 
-# obtener_info tiene que ser la funcion que obtiene la info de registro
-# puede ser un objeto el cual tenga la informacion carga como su cargo, manzana, nombre
 if __name__ == '__main__':
     app.run(debug=True)
