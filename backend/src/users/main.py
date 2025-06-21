@@ -4,8 +4,8 @@
 import time
 
 from src.users.models.user import User, validate_user
-from src.users.models.DIM_DATE import DIM_DATE
-from src.users.services.generar_records import create_id
+from src.users.models.dim_date import DIM_DATE
+from src.users.user_utils import create_id
 from src.users.repository.bd_prueba import BdPrueba
 
 #base_de_datos = BdPrueba()
@@ -17,25 +17,12 @@ class Crud:
     """
     def insert_user(self, user_json= dict):
         
-        es_valido = validate_user(user_json)
+        es_valido = validate_user(user_json) # <--- Retorna boleano y el mensaje del error
         
         if es_valido[0]:
+            
             dim_date = user_json["dim_date"]
             
-            
-            user_data = {
-                    "id_user": "1",#create_id(),  # Puedes generar un UUID aquí
-                    "first_name": user_json["nombre"],
-                    "second_name": user_json.get("segundo_nombre", "s/n"),
-                    "last_name": user_json["apellido"],
-                    "second_last_name": user_json.get("segundo_apellido", "s/n"),
-                    "date_of_birth": user_json["fecha_nacimiento"],
-                    "date_user_start": user_json["fecha_inicio"],
-                    "date_user_end": user_json.get("fecha_fin", "s/n"),
-                    "user_manzana": user_json.get("manzana", "s/n"),
-                    "user_street": user_json.get("calle", "s/n"),
-                    "user_number_ext": user_json.get("numero_ext", "s/n")
-                }
             
             dim_date_data = {
                 "dateId": "1",#create_id(),
@@ -49,11 +36,30 @@ class Crud:
                 "day": dim_date["day"],
             }
             
+            
+            user_data = {
+                    "date_id": dim_date_data["dateId"],#create_id(),
+                    "id_user": "1",#create_id(),  # Puedes generar un UUID aquí
+                    "first_name": user_json["nombre"],
+                    "second_name": user_json.get("segundo_nombre", "s/n"),
+                    "last_name": user_json["apellido"],
+                    "second_last_name": user_json.get("segundo_apellido", "s/n"),
+                    "date_of_birth": user_json["fecha_nacimiento"],
+                    "date_user_start": user_json["fecha_inicio"],
+                    "date_user_end": user_json.get("fecha_fin", "s/n"),
+                    "user_manzana": user_json.get("manzana", "s/n"),
+                    "user_street": user_json.get("calle", "s/n"),
+                    "user_number_ext": user_json.get("numero_ext", "s/n")
+                }
+            
+            
             persona = User(**user_data)
             dim_date_registro = DIM_DATE(**dim_date_data)
             
             
             #base_de_datos.save_data(persona, dim_date_registro)#persona, dim_date_registro)
+            persona.mostrar_datos()
+            dim_date_registro.mostrar_datos()
             
             if persona and dim_date_registro:
                 return 200, "Todo bien"  #persona, dim_date_registro

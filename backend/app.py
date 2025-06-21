@@ -52,7 +52,6 @@ def home():
                         }
                     },
                     "final": ("si", True),
-
                     }),200
 
 

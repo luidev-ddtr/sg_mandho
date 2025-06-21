@@ -13,19 +13,20 @@ def test_validate_user():
         "manzana": "A",
         "calle": "Main Street",
         "numero_ext": "123",
-        "dim_date": {
-            "fiscalDate": "2022-01-01",
-            "fiscalYear": "2022",
-            "fiscalMonth": "01",
-            "fiscalDay": "01",
-            "week": "01",
-            "year": "2022",
-            "month": "01",
-            "day": "01"
-        }
     }
+    #     "dim_date": {
+    #         "fiscalDate": "2022-01-01",
+    #         "fiscalYear": "2022",
+    #         "fiscalMonth": "01",
+    #         "fiscalDay": "01",
+    #         "week": "01",
+    #         "year": "2022",
+    #         "month": "01",
+    #         "day": "01"
+    #     }
+    # }
     
     es_valido, mensaje = validate_user(user_json)
     
-    assert es_valido
+    assert es_valido == 200
     assert mensaje == "Todo bien"

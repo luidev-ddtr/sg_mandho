@@ -7,7 +7,7 @@ from src.users.main import Crud
 user_options = Crud()
 
 #Traer mensje de error dinamicos 
-from routes.jsonfy import send_error, send_success
+from src.routes.handle_message import send_error, send_success
 
 user_route = Blueprint('user_route', __name__)
 

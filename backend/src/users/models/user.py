@@ -2,11 +2,12 @@
 # tendra la informacion de los usuarios
 
 class User:
-    def __init__(self, id_user = str, first_name = str, second_name = "s/n", last_name = str, second_last_name = "s/n", date_of_birth = str, date_user_start = str, date_user_end = "s/n",user_manzana = str, user_street = str, user_number_ext = str):
+    def __init__(self, date_id = str, id_user = str, first_name = str, second_name = "s/n", last_name = str, second_last_name = "s/n", date_of_birth = str, date_user_start = str, date_user_end = "s/n",user_manzana = str, user_street = str, user_number_ext = str):
         """
         Constructor de la clase User: Este constructor es el que se encargara de recibir la informacion de los usuarios y poder crearlos y guardarlos en la bd
         
         args:
+            date_id (str): El id de la fecha Requerido
             id_user (str): El id del usuario Requerido
             first_name (str): El nombre del usuario Requerido
             second_name (str): El segundo nombre del usuario
@@ -15,9 +16,9 @@ class User:
             date_of_birth (str): La fecha de nacimiento del usuario Requerido
             date_user_start (str): La fecha de inicio del usuario Requerido
             date_user_end (str): La fecha de fin del usuario 
-            timestamp (str): El timestamp del usuario Requerido
             user_manzana (str): La manzana del usuario
         """
+        self.date_id = date_id
         self.id_user = id_user
         self.first_name = first_name
         self.second_name = second_name
@@ -32,9 +33,22 @@ class User:
         
     # Mostrar los datos que estan en el constructor si se desea
     def __str__(self):
-        return f"User {self.id_user} {self.first_name} {self.second_name} {self.last_name} {self.second_last_name} {self.date_of_birth} {self.date_user_start} {self.date_user_end} {self.manzana} {self.street} {self.number_ext}"
+        return f"User: {self.date_id} {self.id_user} {self.first_name} {self.second_name} {self.last_name} {self.second_last_name} {self.date_of_birth} {self.date_user_start} {self.date_user_end} {self.manzana} {self.street} {self.number_ext}"
     
-    
+    def mostrar_datos(self):
+        print(f"""Id fecha {self.date_id}
+        Id usuario {self.id_user}
+        Nombre {self.first_name}
+        Segundo Nombre {self.second_name}
+        Apellido {self.last_name}
+        Segundo Apellido {self.second_last_name}
+        Fecha Nacimiento {self.date_of_birth}
+        Fecha Inicio {self.date_user_start}
+        Fecha Fin {self.date_user_end}    
+        Manzana {self.manzana}    
+        Calle {self.street}
+        Numero Exterior {self.number_ext}""")
+        
 def validate_user(user_json = dict):
     """
     Se centrara en la verificacion de un usuariom si el usuario cumple con todas las erificaciones se
@@ -48,15 +62,16 @@ def validate_user(user_json = dict):
         str: Se retorna un string de error o exito especifico de que falto o si esta bien 
     """
     
-    campos_requeridos_date = ["fiscal_year", "fiscal_month", "fiscal_day", "year", "month", "day"]
+    # Se deja para despues la tabla de datos fiscuales, ya que aun no se puede implementar completamente
+    #campos_requeridos_date = ["fiscal_year", "fiscal_month", "fiscal_day", "year", "month", "day"]
     
-    claves_date = set(user_json["dim_date"].keys())
-    for clave in campos_requeridos_date:
-        if not clave in claves_date:
-            return False, f"El campo {clave} es requerido en dim_date"
+    # claves_date = set(user_json["dim_date"].keys())
+    # for clave in campos_requeridos_date:
+    #     if not clave in claves_date:
+    #         return False, f"El campo {clave} es requerido en dim_date"
     
     
-    campos_requeridos = ["nombre", "apellido", "fecha_nacimiento", "fecha_inicio", "manzana", "calle", "dim_date"]
+    campos_requeridos = ["nombre", "apellido", "fecha_nacimiento", "fecha_inicio", "manzana", "calle"]
     claves_usuario = set(user_json.keys())
     for clave in campos_requeridos:
         if not clave in claves_usuario:
