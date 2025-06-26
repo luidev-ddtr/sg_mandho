@@ -1,29 +1,34 @@
-import { useState } from "react";
-import { VITE_URL_BACKEND } from "../.env";
-import { miRuta } from "./pages/miRuta.jsx";
+import { useState } from 'react'
+import React, { useEffect } from 'react';
+import {
+  Routes,
+  Route,
+  useLocation
+} from 'react-router-dom';
+import './css/style.css'
 
-function api(){
-  fetch({VITE_URL_BACKEND})
-  console.log("Se hizo peticion")
-}
+import Signup from './pages/Singup.jsx';
+import Inicio from './pages/Inicio.jsx';
+
 
 function App() {
-  
+
+  const location = useLocation();
+
+  useEffect(() => {
+    document.querySelector('html').style.scrollBehavior = 'auto'
+    window.scroll({ top: 0 })
+    document.querySelector('html').style.scrollBehavior = ''
+  }, [location.pathname]); // triggered on route change
+
   return (
     <>
-      <div>
-        <button onClick={sumar}>+1</button>
-        <p>{num}</p>
-      </div>
-
-      <h1>Hola mundo</h1>
-      <div>{VITE_URL_BACKEND}</div>
-      <br />
-      <br />
-      <miRuta />
+      <Routes>
+        <Route excat path='/' element={<Signup />} />
+        {/* <Route path="/signup" element={<Signup />} /> */}
+      </Routes>
     </>
   )
 }
-
 
 export default App
