@@ -3,12 +3,16 @@ import React, { useEffect } from 'react';
 import {
   Routes,
   Route,
-  useLocation
+  useLocation,
+  BrowserRouter
 } from 'react-router-dom';
 import './css/style.css'
 
 import Signup from './pages/Singup.jsx';
 import Inicio from './pages/Inicio.jsx';
+import Menu from './pages/menu.jsx';
+import Navigation from './components/Navigation.jsx';
+
 
 
 function App() {
@@ -22,13 +26,17 @@ function App() {
   }, [location.pathname]); // triggered on route change
 
   return (
-    <>
-      <Routes>
-        <Route excat path='/' element={<Signup />} />
-        {/* <Route path="/signup" element={<Signup />} /> */}
-      </Routes>
+    <> 
+        <Navigation/>
+        <Routes>
+          <Route path='/' element={<Menu/>} />
+          <Route path="/Menu" element={<Menu />} />
+          <Route path="/Signup" element={<Signup />} />
+          <Route path="/Inicio" element={<Inicio />} />
+          {/* <Route path="/signup" element={<Signup />} /> */}
+        </Routes>
     </>
   )
 }
 
-export default App
+export default App;

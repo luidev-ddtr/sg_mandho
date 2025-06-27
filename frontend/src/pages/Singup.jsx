@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import AuthImage from "../images/auth-image.jpg";
 
 function Signup() {
-  return (
+  return ( 
     <main className="bg-white dark:bg-gray-900">
       <div className="relative md:flex">
         {/* Content */}
