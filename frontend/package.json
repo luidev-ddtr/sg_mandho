@@ -2,7 +2,8 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",  "scripts": {
+  "type": "module",
+  "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.5",
     "@tailwindcss/forms": "^0.5.10",
+    "axios": "^1.10.0",
     "chart.js": "^4.4.7",
     "chartjs-adapter-moment": "^1.0.1",
     "clsx": "^2.1.1",
@@ -19,7 +21,9 @@
     "react": "^19.0.0",
     "react-day-picker": "^9.5.1",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.58.1",
     "react-router-dom": "^7.1.5",
+    "react-toast": "^1.0.3",
     "react-transition-group": "^4.4.5",
     "tailwind-merge": "^3.0.1"
   },
