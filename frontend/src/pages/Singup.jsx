@@ -1,9 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { useForm} from 'react-hook-form'
 import AuthImage from "../images/auth-image.jpg";
+import { useNavigate } from "react-router-dom";
+
 
 function Signup() {
+
+  const {register, handleSubmit, formState: 
+    {errors}
+  } = useForm();
+
+  const navigate = useNavigate();
+
+  const onSubmit = handleSubmit(data => {
+                console.log(data)
+              })
+
+
+
   return ( 
     <main className="bg-white dark:bg-gray-900">
       <div className="relative md:flex">
@@ -24,8 +39,9 @@ function Signup() {
 
             <div className="max-w-sm mx-auto w-full px-4 py-8">
               <center><h1 className="text-3xl text-gray-800 dark:text-gray-100 font-bold mb-6">Bienvenido</h1></center>
+
               {/* Form */}
-              <form>
+              <form onSubmit={onSubmit}>
                 <div className="space-y-4">
                   {/* <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="email">
@@ -37,7 +53,10 @@ function Signup() {
                     <label className="block text-sm font-medium mb-1" htmlFor="name">
                       Usuario <span className="text-red-500">*</span>
                     </label>
-                    <input id="name" className="form-input w-full" type="text" />
+                    <input id="nme" className="form-input w-full" type="text" 
+                    {...register("name", {required: true} )}
+                    />
+                    {errors.name && <span className="text-red-500">El campo es requerido</span>} 
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="role">
@@ -45,27 +64,35 @@ function Signup() {
                     </label>
                     <select id="role" className="form-select w-full">
                       <option>Delegado</option>
-                      <option>Developer</option>
-                      <option>Accountant</option>
+                      <option>Subdelegado</option>
+                      <option>Comitiva</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="password">
                       Contraseña
                     </label>
-                    <input id="password" className="form-input w-full" type="password" autoComplete="on" />
+                    <input id="password" className="form-input w-full" type="password" autoComplete="on" 
+                    {...register("password", {required: true} )}
+                    />
+                    {errors.password && <span className="text-red-500">El campo es requerido</span>} 
                   </div>
+                  
                 </div>
                 <div className="flex items-center justify-between mt-6">
                   <div className="mr-1">
                     <label className="flex items-center">
-                      <input type="checkbox" className="form-checkbox" />
+                      <input type="checkbox" className="form-checkbox"
+                      {...register("checkbox", {required: true} )}
+                      />
                       <span className="text-sm ml-2">No soy un robot.</span>
                     </label>
-                  </div>
-                  <Link className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white ml-3 whitespace-nowrap" to="/">
+                    {errors.checkbox && <span className="text-red-500">El campo es requerido</span>}
+                    
+                  </div>  
+                  <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white ml-3 whitespace-nowrap">
                     Ingresar
-                  </Link>
+                  </button>
                 </div>
               </form>
               {/* Footer */}
