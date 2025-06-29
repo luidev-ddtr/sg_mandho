@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getAlldata } from "../api/api.js";
+import { ListaCard } from "./ListaCard.jsx";
 
 function Lista() { 
-    const [data, setData] = useState(null);
     const [error, setError] = useState(null);
+    const  [datos, setDatos] = useState([]);  
 
     useEffect(() => {
         console.log("Página cargada (Lista)");
@@ -11,9 +12,9 @@ function Lista() {
         const loadData = async () => {
             try {
                 const response = await getAlldata();
-                console.log("Respuesta completa:", response);
-                console.log("Datos recibidos:", response.data);
-                setData(response.data);
+                //console.log("Respuesta completa:", response);
+                console.log("Datos recibidos este se guarda en el arreglo:", response.data.body);
+                setDatos(response.data.body);
             } catch (error) {
                 console.error("Error completo:", error);
                 if (error.response) {
@@ -33,28 +34,18 @@ function Lista() {
                 }
             }
         };
-
         loadData();
     }, []);
 
-    return (
-        <>
-            <h1 className="text-3xl color-white">Lista</h1>
-            <p>Lista donde se mostrara la info para interactuar con el backend</p>
-            
-            {error && (
-                <div className="text-red-500 mt-4">
-                    Error: {error}
-                </div>
-            )}
-
-            {data && (
-                <div className="mt-4">
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
-                </div>
-            )}
-        </>
-    );
+return (
+    <>
+        <div className="border-4 checked:in-only-of-type: color-white">
+            <h1 className="font-bold text-2xl color-green">Lista de Clientes</h1>
+            {datos.map((dato) =>
+                <ListaCard key={dato.id} lista={dato}/>)}
+        </div>
+    </>
+);
 }
 
 export default Lista;
