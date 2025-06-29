@@ -15,12 +15,13 @@ app = Flask(__name__)
 app.register_blueprint(user_route)
 
 
+
 CORS(app, resources={
     r"/api/*": {
         "origins": [os.getenv('URL_FRONTEND')],
         "methods": ["GET", "POST", "PUT", "OPTIONS"],
         "allow_headers": ["Content-Type"],
-        "supports_credentials": True 
+        "supports_credentials": False
 
 
     },
@@ -28,7 +29,7 @@ CORS(app, resources={
         "origins": [os.getenv('URL_FRONTEND')],
         "methods": ["POST"],
         "allow_headers": ["Authorization", "Content-Type"],
-        "supports_credentials": True  
+        "supports_credentials": False  
     }
 })
 

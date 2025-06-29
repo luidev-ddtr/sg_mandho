@@ -11,7 +11,7 @@ from src.routes.handle_message import send_error, send_success
 
 user_route = Blueprint('user_route', __name__)
 
-@user_route.route('/create', methods=['POST'])
+@user_route.route('/api/create', methods=['POST'])
 def create_user():
     """
     Este endpoint se encargara de crear un nuevo usuario aunque no tiene argumentos si se conecta mediante
@@ -45,4 +45,32 @@ def create_user():
         
     except Exception as e:
         return send_error(str(e), 500)
+
+
+@user_route.route("/api/read", methods=["GET"])  # Sin slash
+@user_route.route("/api/read/", methods=["GET"])
+def send_info():
+    """
+    Endpoint de prueba para ver si funciona la configuracion con el backend
     
+    Returns:
+        dict: Un diccionario con la información de prueba
+        este diccionario esta serializado para ser Json
+    """
+    try:
+        info_prueba = [{
+            "id": "fsdng12fcs",
+            "nombre": "John",
+            "segundo_nombre": "Doe",
+            "apellido": "Torres",
+            "segundo_apellido": "Garcia",
+            "fecha_nacimiento": "1990-01-01",
+            "fecha_inicio": "2022-01-01",
+            "fecha_fin": "2025-12-31",
+            "manzana": "A",
+            "calle": "Main Street",
+            "numero_ext": "123",
+        }]
+        return send_success("Ahi esta la info", info_prueba, 200)
+    except Exception as e:
+        return send_error(str(e), 500)
