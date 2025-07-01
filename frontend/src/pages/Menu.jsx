@@ -1,17 +1,20 @@
 //import Navigate from "../components/Navigate";
+import React, { useState } from "react";
 import Lista from "../components/Lista";
-
+import SideBar from "../partials/SideBar";
+    
 /**
- * Renders the main menu component of the application.
+ * Este es el menu principal
  * 
- * The menu includes a header with a title, a paragraph indicating it's a menu,
- * and an anchor tag for potential navigation. It also integrates the Lista component
- * which is responsible for displaying information to interact with the backend.
- * The component is styled with Tailwind CSS classes for layout and appearance.
- * The component is in the left sidebar. (1/5 wide and 100 % height)
+ * Contiene un header con un titulo, un enlace a React, y un componente
+ * Lista que muestra una lista de personas
+ * 
+ * @returns {JSX.Element} El menu principal
  */
 
 function Menu () {
+
+        //const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
         <div className="bg-gray-800 ">
             <header className=" active: col-end-11">
