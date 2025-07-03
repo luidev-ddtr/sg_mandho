@@ -9,6 +9,33 @@ function Header({
 }) {
   const [searchModalOpen, setSearchModalOpen] = useState(false)
 
+{/* <div>
+  Diseña un logotipo profesional y vectorizable (apto para exportar a SVG) inspirado en una iglesia tradicional mexicana. El diseño debe ser moderadamente detallado (nivel de complejidad 6 de 10), sin texturas ni degradados, estilo flat.
+
+El logo debe incluir los siguientes elementos clave:
+- Fachada frontal con **tres arcos redondeados** y columnas simplificadas
+- Un **campanario central** por encima del arco del medio, con una **cruz** encima
+- En el arco central, una **representación minimalista de la Virgen de Guadalupe**, con túnica larga, manos juntas en oración y aureola con rayos suaves
+
+Estilo visual:
+- Moderadamente detallado pero limpio y balanceado, con siluetas claras y trazos definidos
+- Sin sombras, sin degradados, sin texturas
+- Formas geométricas limpias y bien organizadas
+- Compatible para convertir a SVG fácilmente
+
+Colores:
+- El logo debe funcionar en **modo claro y oscuro**
+- En modo claro: fondo blanco (`#FFFFFF`), contornos oscuros (`#2D2D2D`), detalles en gris claro (`#E5E5E5`)
+- En modo oscuro: fondo gris oscuro (`bg-gray-800/90` equivalente a `#1F2937E6`), elementos visibles en blanco y gris claro
+- Se permite un toque sutil de color **beige dorado** (`#D6B56B`) para detalles como la aureola de la Virgen
+
+Formato:
+- Proporción cuadrada o vertical
+- Sin fondo (o fondo plano)
+- Estilo flat, ideal para ser usado como ícono de identidad visual religiosa
+
+El diseño debe transmitir espiritualidad, simplicidad, respeto y ser adaptable a materiales impresos y digitales.
+</div> */}
   return (
     <header className={`sticky top-0 before:absolute before:inset-0 before:backdrop-blur-md max-lg:before:bg-white/90 dark:max-lg:before:bg-gray-800/90 before:-z-10 z-30 ${variant === 'v2' || variant === 'v3' ? 'before:bg-white after:absolute after:h-px after:inset-x-0 after:top-full after:bg-gray-200 dark:after:bg-gray-700/60 after:-z-10' : 'max-lg:shadow-xs lg:before:bg-gray-100/90 dark:lg:before:bg-gray-900/90'} ${variant === 'v2' ? 'dark:before:bg-gray-800' : ''} ${variant === 'v3' ? 'dark:before:bg-gray-900' : ''}`}>
       <div className="px-4 sm:px-6 lg:px-8">

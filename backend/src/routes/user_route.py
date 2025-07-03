@@ -38,7 +38,7 @@ def create_user():
         
         estado, mensaje = user_options.insert_user(user_json)
         
-        if 200 <= estado < 300:
+        if 200 <= estado <= 205:
             return send_success(mensaje, estado)
         else:
             return send_error(mensaje, estado)
