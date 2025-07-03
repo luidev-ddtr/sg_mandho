@@ -17,7 +17,8 @@ import Analytics from './pages/Analytics.jsx';
 import Customers from './pages/Customers.jsx'; 
 import ModalPage from './pages/ModalPage.jsx';
 import UserSucces from './pages/UserSucces.jsx';
-import UserRegister from './pages/UseRegister.jsx'
+import UserRegister from './pages/UseRegister.jsx';
+import Account from './pages/account.jsx';
 //import Navigation from './components/Navigation.jsx';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/ModalPage" element={<ModalPage />} />
           <Route path="/UserSucces" element={<UserSucces />} />
           <Route path="/UserRegister" element={<UserRegister />} />
+          <Route path="/Account" element={<Account />} />
           {/* <Route path="/signup" element={<Signup />} /> */}
         </Routes>
     </>

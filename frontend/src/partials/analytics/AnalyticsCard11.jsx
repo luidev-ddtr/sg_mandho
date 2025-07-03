@@ -272,6 +272,7 @@ function AnalyticsCard11() {
           </table>
 
         </div>
+
       </div>
     </div>
   );

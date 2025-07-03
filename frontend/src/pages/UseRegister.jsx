@@ -63,8 +63,12 @@ const schema = yup.object().shape({
   
   n_exterior: yup.string()
     .required('El número exterior es requerido')
-    .matches(/^[0-9]+$/, 'Solo se permiten números'),
-  
+    .test(
+      'valid-format',
+      'Debe ser solo números o "s/n"',
+      (value) => /^[0-9]+$/.test(value) || value?.toLowerCase() === 's/n'
+    ),
+
 fecha_nac: yup
   .mixed() // Cambiamos de date() a mixed() para mayor flexibilidad
   .required('La fecha de nacimiento es requerida')
@@ -111,7 +115,7 @@ fecha_nac: yup
 function UserRegister() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-
+  
   const { 
     register, 
     handleSubmit, 
@@ -145,11 +149,9 @@ function UserRegister() {
                 <div className="mb-8">
                   <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Agregar Usuario</h1>
                 </div>
-
                 <div className="flex-1">
                   <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col">
                     <div className="space-y-6 mb-8 flex-1">
-
                       {/* Nombre y segundo nombre */}
                       <div className="flex space-x-4">
                         <div className="flex-1">

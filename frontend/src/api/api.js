@@ -53,3 +53,40 @@ export const AgregarUsuario = (data) => {
         }
     });
 };
+
+export const MostrarUsuarios = ( ) => {
+
+    // Usa 'api.get' en lugar de 'axios.get'
+    return api.get('read_user/', {
+        //withCredentials: true, // Solo si usas cookies/sesión
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    });
+} 
+
+
+export const MostrarUsuarios1 = ( ) => {
+
+    // Usa 'api.get' en lugar de 'axios.get'
+    console.log("Estoy en MostrarUsuarios1, Funcion de prueba para cargar usarios ");
+    return (
+        [
+        {
+        "id_user": "1",
+        "first_name": "Guadalupe",
+        "second_name": "Maria",
+        "last_name": "Torres",
+        "second_last_name": "Garcia",
+        "date_of_birth": "1990-01-01",
+        "date_user_start": "2022-01-01",
+        "date_user_end": "2025-12-31",
+        "user_manzana": "Tepetate",
+        "user_street": "Main Street",
+        "user_number_ext": "123",
+        "image": "Image01"
+    },
+        ]
+    )
+} 

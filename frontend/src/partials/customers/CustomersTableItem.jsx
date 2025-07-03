@@ -1,6 +1,17 @@
 import React from 'react';
-
+import Image01 from '../../images/user-40-01.jpg';
+import Image02 from '../../images/user-40-02.jpg';
+import ActionMenu from '../../components/ActionMenu';
 function CustomersTableItem(props) {
+    const imageMap = {
+    'Image01': Image01,
+    'Image02': Image02,
+    // Añade más imágenes según necesites
+  };
+
+  // Obtiene la imagen correcta o una por defecto si no existe
+  const userImage = imageMap[props.image] || Image01;
+
   return (
     <tr>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
@@ -28,39 +39,35 @@ function CustomersTableItem(props) {
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div className="flex items-center">
           <div className="w-10 h-10 shrink-0 mr-2 sm:mr-3">
-            <img className="rounded-full" src={props.image} width="40" height="40" alt={props.name} />
+            <img className="rounded-full" src={userImage} width="40" height="40" alt={props.name} />
           </div>
-          <div className="font-medium text-gray-800 dark:text-gray-100">{props.name}</div>
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left">{props.email}</div>
+        <div className="text-left">{props.name}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left">{props.location}</div>
+        <div className="text-left">{props.last_name}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-center">{props.orders}</div>
+        <div className="text-center">{props.birth_date}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left font-medium text-sky-600">{props.lastOrder}</div>
+        <div className="text-center font-medium text-sky-600">{props.manzana}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left font-medium text-green-600">{props.spent}</div>
+        <div className="text-left font-medium text-green-600">{props.address}</div>
+      </td>
+      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap visible">
+        <div className="text-center">{props.date_of_start}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-center">{props.refunds}</div>
+        <div className="text-center">{props.date_of_end}</div>
       </td>
+
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         {/* Menu button */}
-        <button className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 rounded-full">
-          <span className="sr-only">Menu</span>
-          <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
-            <circle cx="16" cy="16" r="2" />
-            <circle cx="10" cy="16" r="2" />
-            <circle cx="22" cy="16" r="2" />
-          </svg>
-        </button>
+        <ActionMenu />
       </td>
     </tr>
   );
