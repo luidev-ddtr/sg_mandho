@@ -11,6 +11,9 @@ from src.routes.handle_message import send_error, send_success
 
 user_route = Blueprint('user_route', __name__)
 
+"""
+Si los entopins llegan a no funcionar probar agregando un / Slash
+"""
 @user_route.route('/api/create', methods=['POST'])
 def create_user():
     """
@@ -48,7 +51,6 @@ def create_user():
 
 
 @user_route.route("/api/read", methods=["GET"])  # Sin slash
-@user_route.route("/api/read/", methods=["GET"])
 def send_info():
     """
     Endpoint de prueba para ver si funciona la configuracion con el backend

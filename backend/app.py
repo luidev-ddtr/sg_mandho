@@ -15,7 +15,6 @@ app = Flask(__name__)
 app.register_blueprint(user_route)
 
 
-
 CORS(app, resources={
     r"/api/*": {
         "origins": [os.getenv('URL_FRONTEND')],
