@@ -49,32 +49,5 @@ class User:
         Calle {self.street}
         Numero Exterior {self.number_ext}""")
         
-def validate_user(user_json = dict):
-    """
-    Se centrara en la verificacion de un usuariom si el usuario cumple con todas las erificaciones se
-    pasara, al siguiente flujo si le falta alguna o esta mal retorna error.
-    
-    Args:
-        user_json (dict): Un diccionario que contiene la información del usuario.
-    
-    Returns:
-        bool: Se retorna true o false
-        str: Se retorna un string de error o exito especifico de que falto o si esta bien 
-    """
-    
-    # Se deja para despues la tabla de datos fiscuales, ya que aun no se puede implementar completamente
-    #campos_requeridos_date = ["fiscal_year", "fiscal_month", "fiscal_day", "year", "month", "day"]
-    
-    # claves_date = set(user_json["dim_date"].keys())
-    # for clave in campos_requeridos_date:
-    #     if not clave in claves_date:
-    #         return False, f"El campo {clave} es requerido en dim_date"
-    
-    
-    campos_requeridos = ["nombre", "apellido", "fecha_nacimiento", "fecha_inicio", "manzana", "calle"]
-    claves_usuario = set(user_json.keys())
-    for clave in campos_requeridos:
-        if not clave in claves_usuario:
-            return False, f"El campo {clave} es requerido en el usuario"
-        
-    return True, "Todo bien"
+
+

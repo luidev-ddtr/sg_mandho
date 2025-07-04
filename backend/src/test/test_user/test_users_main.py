@@ -1,8 +1,8 @@
-from src.users.main import Crud
+from src.users.main import UserCrud
 
 
 def test_insert_user():
-    crud = Crud()
+    crud = UserCrud()
     user_json = {
         "nombre": "John",
         "segundo_nombre": "Doe",

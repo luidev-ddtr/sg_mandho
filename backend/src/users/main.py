@@ -1,17 +1,17 @@
 # Este sera el archio el cual una toda la parte usuarios, 
 # estara encapsulada en esta parte, aqui se recibirar los datos de los entpoins y tambien se 
 # envirarar los datos de los entpoins y a la bd
-import time
-
-from src.users.models.user import User, validate_user
+from src.utils.validate_data import validate_data
 from src.utils.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
+
+from src.users.models.user import User
 from src.users.repository.bd_prueba import BdPrueba
 
 #base_de_datos = BdPrueba()
 
-class Crud:
-    """
+class UserCrud:
+    """ 
     Clase la cual hara la mayoria del curd, aun no hara la parte de mostrar ya que esta se esta legando la bd
     tal vez se haga pero solo como funciones nadamas
     """
@@ -27,9 +27,14 @@ class Crud:
             bool: Se retorna true o false
             str: Se retorna un string de error o exito especifico de que falto o si esta bien 
         """
-        dim_date_data = DIM_DATE()
+
         
-        es_valido = validate_user(user_json) # <--- Retorna boleano y el mensaje del error
+        campos_requeridos = ["nombre", "apellido", "fecha_nacimiento", "fecha_inicio", "manzana", "calle"]
+        tipo_campos = [str, str, str, str, str, str]
+        
+        es_valido = validate_data(user_json, campos_requeridos, tipo_campos, "user") # <--- Retorna boleano y el mensaje del error
+        
+        dim_date_data = DIM_DATE()
         
         if es_valido[0]:
             
@@ -49,7 +54,7 @@ class Crud:
                 }
             
             
-            persona = User(user_data)
+            persona = User(**user_data)
             
             
             persona.mostrar_datos()
@@ -58,6 +63,6 @@ class Crud:
             if persona:
                 return 200, "Se instacio a la persona correctamente"  #persona, dim_date_registro
             else:
-                return 400, "No se pudo guardar la informacion",#persona, dim_date_registro
+                return 501, "No se pudo guardar la informacion",#persona, dim_date_registro
         else:
             return 400, es_valido[1]
