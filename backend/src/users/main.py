@@ -4,8 +4,8 @@
 import time
 
 from src.users.models.user import User, validate_user
-from src.users.models.dim_date import DIM_DATE
-from src.users.user_utils import create_id
+from src.utils.dim_date import DIM_DATE
+from src.utils.id_generator import create_id
 from src.users.repository.bd_prueba import BdPrueba
 
 #base_de_datos = BdPrueba()
@@ -16,30 +16,26 @@ class Crud:
     tal vez se haga pero solo como funciones nadamas
     """
     def insert_user(self, user_json= dict):
+        """
+        Se centrara en la Insersion de un usuario si el usuario cumple con todas las verificaciones se
+        pasara, al siguiente flujo (Insertara en la bd)si le falta alguna o esta mal retorna error.
+        
+        Args:
+            user_json (dict): Un diccionario que contiene la información del usuario.
+        
+        Returns:
+            bool: Se retorna true o false
+            str: Se retorna un string de error o exito especifico de que falto o si esta bien 
+        """
+        dim_date_data = DIM_DATE()
         
         es_valido = validate_user(user_json) # <--- Retorna boleano y el mensaje del error
         
         if es_valido[0]:
             
-            dim_date = user_json["dim_date"]
-            
-            
-            dim_date_data = {
-                "dateId": "1",#create_id(),
-                "fiscal_date": dim_date["fiscal_date"],
-                "fiscal_year": dim_date.get("fiscal_year", time.strftime("%Y")), # Si no se conoce retorna el año 
-                "fiscal_month": dim_date.get("fiscal_month", time.strftime("%m")), # Si no se conoce retorna el mes "fiscalMonth",
-                "fiscal_day": dim_date.get("fiscal_day", "normal"), # Si no se conoce retorna el dia "fiscalDay"],
-                "week": dim_date.get("week", time.strftime("%W")),     # Se deja pendiente por si nesesita la semana del mes o del año            
-                "year": dim_date["year"],
-                "month": dim_date["month"],
-                "day": dim_date["day"],
-            }
-            
-            
             user_data = {
-                    "date_id": dim_date_data["dateId"],#create_id(),
-                    "id_user": "1",#create_id(),  # Puedes generar un UUID aquí
+                    "date_id": dim_date_data.dateId,#create_id(),
+                    "id_user": create_id(),  # Puedes generar un UUID aquí
                     "first_name": user_json["nombre"],
                     "second_name": user_json.get("segundo_nombre", "s/n"),
                     "last_name": user_json["apellido"],
@@ -53,18 +49,15 @@ class Crud:
                 }
             
             
-            persona = User(**user_data)
-            dim_date_registro = DIM_DATE(**dim_date_data)
+            persona = User(user_data)
             
             
-            #base_de_datos.save_data(persona, dim_date_registro)#persona, dim_date_registro)
             persona.mostrar_datos()
-            dim_date_registro.mostrar_datos()
+            #dim_date_registro.mostrar_datos()
             
-            if persona and dim_date_registro:
-                return 200, "Todo bien"  #persona, dim_date_registro
+            if persona:
+                return 200, "Se instacio a la persona correctamente"  #persona, dim_date_registro
             else:
                 return 400, "No se pudo guardar la informacion",#persona, dim_date_registro
         else:
             return 400, es_valido[1]
-
