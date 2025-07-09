@@ -24,17 +24,22 @@ export const AgregarUsuario = (data) => {
 /**
  * Realiza una petición GET a la API para obtener todos los datos de pruba
  * Simplemente funciona para saber si la conexion se ha establecido correctamente
+ * Cabe aclar que esta funcion solo es de pruevba ya que no actualmente aun no exites toda la infraestructura
  * 
  * @returns {Promise<AxiosResponse<any>>} Promesa que se resuelve con la respuesta de la API
  */
 export const getAlldata = () => {
     // Usa 'api.get' en lugar de 'axios.get'
     // La URL 'read/' se unirá a la baseURL: 'http://127.0.0.1:5000/api/read/'
-    return api.get('read_user/', {
+    return api.post('read_user/', {
         //withCredentials: true, // Solo si usas cookies/sesión
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
+        },
+        data: {
+            id_user: '-LON-CERR-322h2fwiu',
+            filters: {}
         }
     });
 };

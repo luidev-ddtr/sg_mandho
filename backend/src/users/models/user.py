@@ -48,6 +48,7 @@ class User:
         Manzana {self.manzana}    
         Calle {self.street}
         Numero Exterior {self.number_ext}""")
+
         
 
 

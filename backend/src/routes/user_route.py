@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request
 
-from src.users.main import UserCrud
+from src.users.user import UserCrud
 
 user_options = UserCrud()
 
@@ -56,7 +56,7 @@ def create_user():
 
 
 
-@user_route.route("/api/user/read_user/", methods=["GET"])  # Sin slash
+@user_route.route("/api/user/read_user/", methods=["POST"])  # Sin slash
 def send_info():
     """
     Endpoint de prueba para ver si funciona la configuracion con el backend
@@ -66,6 +66,27 @@ def send_info():
         este diccionario esta serializado para ser Json
     """
     try:
+        request_data = request.json
+
+        if not request_data:
+            return send_error("No se recibieron datos", 400)
+        
+        state, message, data = user_options.read_user(request_data['data'])
+        print(state)
+        if 200 <= state <= 206:
+            print(f'{message}-{data}-{state}')
+            return send_success(message, data, 200)
+        else:
+            return send_error(message, state)
+        
+    except Exception as e:
+        print(e)
+        return send_error(str(e), 500)
+    
+
+"""
+Informacion de rpeuba para enviar al frontend
+
         info_prueba = [{
             "id": "fsdng12fcs",
             "nombre": "John",
@@ -78,9 +99,6 @@ def send_info():
             "manzana": "A",
             "calle": "Main Street",
             "numero_ext": "123",
-        }]
-        return send_success("Ahi esta la info", info_prueba, 200)
-    except Exception as e:
-        return send_error(str(e), 500)
+        }]"""
     
 

@@ -15,6 +15,9 @@ def casos():
     no hay problema, pero si alguno de los datos de la estructura es por ejemplo una 
     lambda: os.system("rm -rf /")  # Función peligrosa podria hacer cosas inesperadas en el backend
     se requiere hacer mas robusta y extensa para estos casos extremos
+
+    Para cuando se haran solicitudes get se tieen que poner desde el entpoind
+    Un campo request con el valor get, para que al validar los datos se deje pasar esa solicitud
     """
     #PRUEBAS MUY DIFICILES LIMITE DE LA FUNCION  // PASADA
     return [
@@ -28,6 +31,15 @@ def casos():
         "fields_required": ["nombre", "activo", "count"],
         "type_fields": [str, bool, int],
         "result": True,  # ¿Debe aceptar valores falsy pero del tipo correcto?
+        "message": "Todo bien"
+        },
+        {"from": "user",
+        "data": {
+            "request": "get",
+        },
+        "fields_required": ['request'],
+        "type_fields": [str],
+        "result": True,  
         "message": "Todo bien"
         },
         {

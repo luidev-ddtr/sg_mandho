@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request
 
-from src.account.main import AccountCrud
+from src.account.account import AccountCrud
 
 
 account_options = AccountCrud()
@@ -38,7 +38,7 @@ def crate_account():
 
 
 account_route.route('/api/account/read', methods=['POST'])
-def crate_account():
+def read_account():
     """
     En este endpoint se se enviara al frontend la informacion de las cuenta
     , se quiere hacer que tenga 2 mods, uno con el id de la persona para solo mostrar un registro, y otro, con el
@@ -55,7 +55,7 @@ def crate_account():
     try:
 
         if request.method == 'GET':
-           pass
+            pass
            # se deja para despues esta implementacion de get
 
 

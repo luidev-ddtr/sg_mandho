@@ -1,4 +1,4 @@
-from src.users.main import UserCrud
+from src.users.user import UserCrud
 
 
 def test_insert_user():
