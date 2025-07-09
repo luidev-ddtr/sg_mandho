@@ -2,9 +2,9 @@
 
 from flask import Blueprint, request
 
-from src.users.main import Crud
+from src.users.main import UserCrud
 
-user_options = Crud()
+user_options = UserCrud()
 
 #Traer mensje de error dinamicos 
 from src.routes.handle_message import send_error, send_success
@@ -14,7 +14,7 @@ user_route = Blueprint('user_route', __name__)
 """
 Si los entopins llegan a no funcionar probar agregando un / Slash
 """
-@user_route.route('/api/create', methods=['POST'])
+@user_route.route('/api/user/create_user/', methods=['POST'])
 def create_user():
     """
     Este endpoint se encargara de crear un nuevo usuario aunque no tiene argumentos si se conecta mediante
@@ -33,24 +33,30 @@ def create_user():
             
     """
     try:
-        user_json = request.json()
-        
+        user_json = request.json
+
+        #print(user_json)
         if not user_json:
             return send_error("No se recibieron datos", 400)
         
         
-        estado, mensaje = user_options.insert_user(user_json)
+        estado, mensaje = user_options.insert_user(user_json['data'])
         
         if 200 <= estado <= 205:
-            return send_success(mensaje, estado)
+            print(mensaje)
+            return send_success(mensaje, None,estado)
         else:
+            print(mensaje)
             return send_error(mensaje, estado)
         
     except Exception as e:
+        print(e)
         return send_error(str(e), 500)
 
 
-@user_route.route("/api/read", methods=["GET"])  # Sin slash
+
+
+@user_route.route("/api/user/read_user/", methods=["GET"])  # Sin slash
 def send_info():
     """
     Endpoint de prueba para ver si funciona la configuracion con el backend
@@ -76,3 +82,5 @@ def send_info():
         return send_success("Ahi esta la info", info_prueba, 200)
     except Exception as e:
         return send_error(str(e), 500)
+    
+

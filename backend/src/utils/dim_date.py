@@ -87,7 +87,7 @@ class DIM_DATE:
         y los guardara en un diccionario
         """
         self.dim_date_data = dict()
-        self.dateId = create_id()
+        self.dateId = create_id([None, None, None])
         self.fiscal_date = None
         self.fiscal_year = None
         self.fiscal_month = None

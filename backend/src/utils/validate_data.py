@@ -13,6 +13,7 @@ def validate_data(data: dict, fields_required: list, type_fields: list, from_mes
         return False, "Error en el tamaño de los campos o los tipos de los campos"
     
     claves_cuenta = set(data.keys())
+    print(claves_cuenta)
     for clave in fields_required:
         
         if (not clave in claves_cuenta):

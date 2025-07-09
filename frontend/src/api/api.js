@@ -2,8 +2,24 @@ import axios from "axios";
 
 // Instancia de Axios con la URL base configurada
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:5000/api/'
+    baseURL: 'http://127.0.0.1:5000/api/user/'
 });
+
+
+export const AgregarUsuario = (data) => { 
+    
+    // Agrega 'data' como parámetro para enviar el cuerpo de la petición
+    // Usa 'api.post' en lugar de 'axios.post'\
+    console.log("Los datos llegaron correctamente a Api.js en AgregarUsuario",data);
+    return api.post('create_user/', data, { // Pasa 'data' como segundo argumento
+        //withCredentials: true, // Solo si usas cookies/sesión
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    });
+};
+
 
 /**
  * Realiza una petición GET a la API para obtener todos los datos de pruba
@@ -14,7 +30,7 @@ const api = axios.create({
 export const getAlldata = () => {
     // Usa 'api.get' en lugar de 'axios.get'
     // La URL 'read/' se unirá a la baseURL: 'http://127.0.0.1:5000/api/read/'
-    return api.get('read/', {
+    return api.get('read_user/', {
         //withCredentials: true, // Solo si usas cookies/sesión
         headers: {
             'Content-Type': 'application/json',
@@ -28,7 +44,6 @@ export const EnviarCredenciass = (data) => {
     // Agrega 'data' como parámetro para enviar el cuerpo de la petición
     // Usa 'api.post' en lugar de 'axios.post'
     console.log("Los datos llegaron correctamente a Api.js en EnviarCredenciass",data);
-    return
     return api.post('auth/', data, { // Pasa 'data' como segundo argumento
         //withCredentials: true, // Solo si usas cookies/sesión
         headers: {
@@ -38,21 +53,6 @@ export const EnviarCredenciass = (data) => {
     });
 };
 
-
-export const AgregarUsuario = (data) => { 
-    
-    // Agrega 'data' como parámetro para enviar el cuerpo de la petición
-    // Usa 'api.post' en lugar de 'axios.post'
-    console.log("Los datos llegaron correctamente a Api.js en AgregarUsuario",data);
-    return
-    return api.post('create_user/', data, { // Pasa 'data' como segundo argumento
-        //withCredentials: true, // Solo si usas cookies/sesión
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    });
-};
 
 export const MostrarUsuarios = ( ) => {
 

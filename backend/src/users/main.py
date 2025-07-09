@@ -15,7 +15,7 @@ class UserCrud:
     Clase la cual hara la mayoria del curd, aun no hara la parte de mostrar ya que esta se esta legando la bd
     tal vez se haga pero solo como funciones nadamas
     """
-    def insert_user(self, user_json= dict):
+    def insert_user(self, user_json= dict) -> tuple:
         """
         Se centrara en la Insersion de un usuario si el usuario cumple con todas las verificaciones se
         pasara, al siguiente flujo (Insertara en la bd)si le falta alguna o esta mal retorna error.
@@ -40,7 +40,7 @@ class UserCrud:
             
             user_data = {
                     "date_id": dim_date_data.dateId,#create_id(),
-                    "id_user": create_id(),  # Puedes generar un UUID aquí
+                    "id_user": create_id([user_json["nombre"], user_json["apellido"], user_json["manzana"]]),  # Se requiere una lista pare generar el uuid
                     "first_name": user_json["nombre"],
                     "second_name": user_json.get("segundo_nombre", "s/n"),
                     "last_name": user_json["apellido"],

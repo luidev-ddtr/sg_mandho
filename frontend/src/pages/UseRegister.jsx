@@ -7,12 +7,17 @@ import Sidebar from '../partials/SideBar';
 import Header from "../partials/Header";
 import OnboardingImage from "../images/onboarding-image.jpg";
 import { AgregarUsuario } from "../api/api";
+import { AgregarFechaActual } from '../utils/add_date';
+import { AgregarFechaFinVacio } from "../utils/add_date";
 
 // Función para capitalizar la primera letra
 const capitalizeFirstLetter = (value) => {
   if (!value) return value;
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 };
+
+// Agregar fecha de inicio y fecha de fin, ya que estqa no se estan agregando \
+// en las data del json
 
 // Esquema de validación
 const schema = yup.object().shape({
@@ -31,7 +36,7 @@ const schema = yup.object().shape({
       return !value || value.split(' ').length === 1;
     }),
   
-  fs_apellido: yup.string()
+  apellido: yup.string()
     .required('El apellido paterno es requerido')
     .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/, 'Solo se permiten letras')
     .transform(value => capitalizeFirstLetter(value))
@@ -39,7 +44,7 @@ const schema = yup.object().shape({
       return value && value.split(' ').length === 1;
     }),
   
-  sn_apellido: yup.string()
+  segundo_apellido: yup.string()
     .required('El apellido materno es requerido')
     .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/, 'Solo se permiten letras')
     .transform(value => capitalizeFirstLetter(value))
@@ -69,7 +74,7 @@ const schema = yup.object().shape({
       (value) => /^[0-9]+$/.test(value) || value?.toLowerCase() === 's/n'
     ),
 
-fecha_nac: yup
+fecha_nacimiento: yup
   .mixed() // Cambiamos de date() a mixed() para mayor flexibilidad
   .required('La fecha de nacimiento es requerida')
   .test('is-valid-date', 'La fecha de nacimiento no es válida', (value) => {
@@ -125,11 +130,29 @@ function UserRegister() {
     resolver: yupResolver(schema)
   });
 
+
   //Enviar la informacion a la API la cual manda el front
   const onSubmit = (data) => {
-    AgregarUsuario(data);
-    navigate('/UserSucces');
+  // Obtener fecha actual
+  const fechaData = AgregarFechaActual(); // Devuelve { fecha_inicio: "2025-07-07" }
+  const fechaFin = AgregarFechaFinVacio();
+
+  // Agregar fecha_inicio dentro del objeto data
+  const dataConFecha = {
+    ...data,
+    ...fechaData,
+    ...fechaFin
   };
+
+  const allData = {
+    data: dataConFecha
+  };
+
+      AgregarUsuario(allData);
+    //navigate('/UserSucces');
+  };
+
+
 
   return (
     <div className="flex h-[100dvh] overflow-hidden">
@@ -202,47 +225,47 @@ function UserRegister() {
                       {/* Apellidos */}
                       <div className="flex space-x-4">
                         <div className="flex-1">
-                          <label className="block text-sm font-medium mb-1" htmlFor="fs_apellido">
+                          <label className="block text-sm font-medium mb-1" htmlFor="apellido">
                             Apellido paterno <span className="text-red-500">*</span>
                           </label>
                           <input 
-                            id="fs_apellido" 
-                            className={` dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.fs_apellido ? 'border-red-500' : 'border-gray-300'}`} 
+                            id="apellido" 
+                            className={` dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.apellido ? 'border-red-500' : 'border-gray-300'}`} 
                             type="text"
-                            {...register("fs_apellido")}
+                            {...register("apellido")}
                             onBlur={(e) => {
                               if (e.target.value) {
-                                setValue('fs_apellido', capitalizeFirstLetter(e.target.value));
+                                setValue('apellido', capitalizeFirstLetter(e.target.value));
                               }
                             }}
                             placeholder="Escribe tu apellido paterno"
                           />
-                          {errors.fs_apellido && (
+                          {errors.apellido && (
                             <span className="text-red-500 text-sm mt-1 block">
-                              {errors.fs_apellido.message}
+                              {errors.apellido.message}
                             </span>
                           )} 
                         </div>
                         
                         <div className="flex-1">
-                          <label className="block text-sm font-medium mb-1" htmlFor="sn_apellido">
+                          <label className="block text-sm font-medium mb-1" htmlFor="segundo_apellido">
                             Apellido Materno <span className="text-red-500">*</span>
                           </label>
                           <input 
-                            id="sn_apellido" 
-                            className={` dark:text-gray-700 dark:bg-gray-100  form-input w-full rounded-lg ${errors.sn_apellido ? 'border-red-500' : 'border-gray-300'}`} 
+                            id="segundo_apellido" 
+                            className={` dark:text-gray-700 dark:bg-gray-100  form-input w-full rounded-lg ${errors.segundo_apellido ? 'border-red-500' : 'border-gray-300'}`} 
                             type="text"
-                            {...register("sn_apellido")}
+                            {...register("segundo_apellido")}
                             onBlur={(e) => {
                               if (e.target.value) {
-                                setValue('sn_apellido', capitalizeFirstLetter(e.target.value));
+                                setValue('segundo_apellido', capitalizeFirstLetter(e.target.value));
                               }
                             }}
                             placeholder="Escribe tu apellido materno"
                           />
-                          {errors.sn_apellido && (
+                          {errors.segundo_apellido && (
                             <span className="text-red-500 text-sm mt-1 block">
-                              {errors.sn_apellido.message}
+                              {errors.segundo_apellido.message}
                             </span>
                           )} 
                         </div>
@@ -317,19 +340,19 @@ function UserRegister() {
                   {/* Fecha de nacimiento */}
                     <div className="flex space-x-4">
                       <div className="flex-1 relative">
-                        <label className="block text-sm font-medium mb-1" htmlFor="fecha_nac">
+                        <label className="block text-sm font-medium mb-1" htmlFor="fecha_nacimiento">
                           Fecha de Nacimiento <span className="text-red-500">*</span>
                         </label>
                         
                         {/* Contenedor relativo para posicionar el icono */}
                         <div className="relative">
                           <input 
-                            id="fecha_nac" 
+                            id="fecha_nacimiento" 
                             className={`dark:text-gray-900 dark:bg-gray-100 form-input w-full rounded-lg pl-10 pr-3 py-2 ${
-                              errors.fecha_nac ? 'border-red-500' : 'border-gray-300'
+                              errors.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
                             }`} 
                             type="date"
-                            {...register("fecha_nac")}
+                            {...register("fecha_nacimiento")}
                             max={new Date().toISOString().split('T')[0]}
                           />
                           
@@ -351,9 +374,9 @@ function UserRegister() {
                           </div>
                         </div>
                         
-                        {errors.fecha_nac && (
+                        {errors.fecha_nacimiento && (
                           <span className="text-red-500 text-sm mt-1 block">
-                            {errors.fecha_nac.message}
+                            {errors.fecha_nacimiento.message}
                           </span>
                         )} 
                       </div>

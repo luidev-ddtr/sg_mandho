@@ -12,7 +12,7 @@ def create_status(status: str) -> DIM_status:
     Returns:
         DIM_status: Objeto con la informacion para ser introducida en la base de datos
     """
-    dim_status_id = create_id()
+    dim_status_id = create_id([status,None,None ])
     
     status_name = status
     

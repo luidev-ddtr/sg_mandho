@@ -34,7 +34,7 @@ class AccountCrud():
             if estado and dim_date:
                 
                 account_data = {
-                    "dim_account_id": create_id(),
+                    "dim_account_id": create_id( [account_json["start_date"], account_json["end_date"], None]),
                     "dim_date_id": dim_date.dateId,
                     "dim_customer_id": account_json["customer_id"],
                     "dim_status_id": estado.dim_status_id,

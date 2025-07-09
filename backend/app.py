@@ -22,7 +22,6 @@ CORS(app, resources={
         "allow_headers": ["Content-Type"],
         "supports_credentials": False
 
-
     },
     r"/auth/*": {
         "origins": [os.getenv('URL_FRONTEND')],
