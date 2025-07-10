@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from '../partials/SideBar';
 import Header from "../partials/Header";
 import OnboardingImage from "../images/onboarding-image.jpg";
-import { AgregarUsuario } from "../api/api";
+import { AgregarUsuario } from "../api/api_user";
 import { AgregarFechaActual } from '../utils/add_date';
 import { AgregarFechaFinVacio } from "../utils/add_date";
 

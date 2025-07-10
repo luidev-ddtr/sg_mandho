@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAlldata } from "../api/api.js";
+import { getAlldata } from "../api/api_user.js";
 import { ListaCard } from "./ListaCard.jsx";
 
 function Lista() { 

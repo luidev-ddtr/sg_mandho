@@ -6,7 +6,7 @@ import JobListItem from '../partials/job/JobListItem';
 
 import CompanyImage from '../images/company-icon-01.svg';
 import CompanyBg from '../images/company-bg.jpg';
-import { getAlldata } from '../api/api';
+import { getAlldata } from '../api/api_user';
 
 
 function CompanyProfile() {
