@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Customer from './CustomersTableItem';
-import { MostrarUsuarios1 } from '../../api/api';
+import { MostrarUsuarios1 } from '../../api/api_user';
 
 function CustomersTable({
   selectedItems

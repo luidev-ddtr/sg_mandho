@@ -4,7 +4,7 @@ import AuthImage from "../images/auth-image.jpg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { EnviarCredenciass } from "../api/api";
+import { EnviarCredenciass } from "../api/api_user";
 
 function Signup() {
   const { 
