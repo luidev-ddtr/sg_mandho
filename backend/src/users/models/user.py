@@ -49,6 +49,6 @@ class User:
         Calle {self.street}
         Numero Exterior {self.number_ext}""")
 
-        
+
 
 

@@ -6,6 +6,8 @@ from flask_cors import CORS  # Importa CORS
 import os
 
 from src.routes.user_route import user_route
+from src.routes.account_route import account_route
+#from src.routes.
 ##Esto esta comentado ya que es solo de produccion
 #from dotenv import load_dotenv  # Importa load_dotenv
 # Carga el .env con ruta ABSOLUTA (crítico en PythonAnywhere)
@@ -13,6 +15,8 @@ from src.routes.user_route import user_route
 
 app = Flask(__name__)
 app.register_blueprint(user_route)
+app.register_blueprint(account_route)
+app
 
 
 CORS(app, resources={

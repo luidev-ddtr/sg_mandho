@@ -61,11 +61,18 @@ def read(id_user = None, filters = None) -> list:
 
         # return datos
 
-        data = BD_users()
-        if data['id_user'] == id_user:
-            return [data]
-    
-    elif id_user == None and filters != None:
-        return [{}]
+        datas = BD_users()
+        for data in datas:
+            if data['id_user'] == id_user:
+                return data  #para los casos reales tenemos que Segir lo que ya se recibe no podemos
+                #simplemente entregar el el formato que se quiere
+            
+    elif id_user is None and filters is not None:
+
+        if filters == {}:
+            data = BD_users()
+            return data
+        #para los casos reales tenemos que Segir lo que ya se recibe no podemos
+                #simplemente entregar el el formato que se quiere
     else:
         return [{}]
