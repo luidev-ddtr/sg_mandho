@@ -16,5 +16,6 @@ def send_success(message,data, status_code):
     Args:
         message (str): Mensaje de exito
         data (any, optional): Datos a enviar al frontend. Defaults to None.
-        status_code (int): Codigo de estado de la peticion. Defaults to 200."""
+        status_code (int): Codigo de estado de la peticion. Defaults to 200.
+    """
     return jsonify({"status": "success", "body": data, "message": message}), status_code

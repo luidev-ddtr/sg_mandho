@@ -6,18 +6,48 @@ const api = axios.create({
 });
 
 
-export const AgregarUsuario = (data) => { 
-    
-    // Agrega 'data' como parámetro para enviar el cuerpo de la petición
-    // Usa 'api.post' en lugar de 'axios.post'\
-    console.log("Los datos llegaron correctamente a Api.js en AgregarUsuario",data);
-    return api.post('create_user/', data, { // Pasa 'data' como segundo argumento
-        //withCredentials: true, // Solo si usas cookies/sesión
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+/**
+ * Agrega un nuevo usuario a la base de datos.
+ * 
+ * @param {object} data - Objeto con los datos del usuario a agregar.
+ * @returns {Promise<AxiosResponse>} - Promesa que se resuelve con la respuesta del backend (si todo sale bien).
+ * @throws {Error} - Si el backend devuelve un status code fuera del rango 2xx o si el formato de la respuesta no es el esperado.
+ */
+export const AgregarUsuario = async (data) => { 
+    try {
+        console.log("Datos enviados a la API:", data);
+        
+        const response = await api.post('create_user/', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        console.log("Respuesta del backend:", response.data);
+        
+        // Asegúrate de que el backend devuelva el ID en este formato
+        if (response.data && response.data.id) {
+            return response;
+        } else {
+            throw new Error('Formato de respuesta inesperado del backend');
         }
-    });
+    } catch (error) {
+        console.error("Error en AgregarUsuario:", error);
+        
+        // Mejor manejo de errores para el frontend
+        if (error.response) {
+            // El servidor respondió con un status code fuera del rango 2xx
+            const backendError = {
+                message: error.response.data?.message || 'Error en el servidor',
+                status: error.response.status,
+                data: error.response.data
+            };
+            throw backendError;
+        } else {
+            throw error;
+        }
+    }
 };
 
 

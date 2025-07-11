@@ -1,98 +1,180 @@
 import React, { useState } from 'react';
-
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { Link } from 'react-router-dom';
 import Sidebar from '../partials/SideBar';
-import Header from '../partials/Header';
-import CartItems from '../partials/ecommerce/CartItems';
+import Header from "../partials/Header";
+import BarraBusquedaAutomatica from '../components/customers/BarraBusqueda';
+import { crearCuenta } from '../api/api_account';
+
+// Esquema de validación con Yup
+const accountSchema = yup.object().shape({
+  estadoPersona: yup.string()
+    .required('Debe seleccionar un estado para la persona')
+    .oneOf([
+      'Estudiante', 'Inmigrante', 'Pequeño propietario', 
+      'Vecino', 'Ranchero', 'Invalido'
+    ], 'Estado no válido'),
+  fechaCreacion: yup.string().required()
+});
 
 function Cart() {
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
+  // Configuración de react-hook-form
+  const { 
+    register, 
+    handleSubmit, 
+    setValue,
+    reset,
+    watch,
+    formState: { errors } 
+  } = useForm({
+    resolver: yupResolver(accountSchema),
+    defaultValues: {
+      fechaCreacion: new Date().toISOString()
+    }
+  });
+
+  // Seleccionar cliente de los resultados
+  const selectClient = (client) => {
+    setSelectedClient(client);
+    setValue('cliente', client.nombre);
+  };
+
+  // Manejar envío del formulario
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    
+    try {
+      const response = await crearCuenta(data);
+      alert(response.message);
+      reset();
+      setSelectedClient(null);
+    } catch (err) {
+      alert('Error al crear la cuenta');
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="flex h-[100dvh] overflow-hidden">
-
-      {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      {/* Content area */}
+      
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-
-        {/*  Site header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full">
+          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-4xl mx-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
+                Creación de Nueva Cuenta
+              </h2>
 
-            {/* Page content */}
-            <div className="max-w-5xl mx-auto flex flex-col lg:flex-row lg:space-x-8 xl:space-x-16">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                  {/* Sección Cliente con Buscador */}
+                  {/* Sección Cliente con Buscador Automático */}
+                  <BarraBusquedaAutomatica 
+                    register={register}
+                    errors={errors}
+                    setValue={setValue}
+                    selectedClient={selectedClient}
+                    setSelectedClient={setSelectedClient}
+                  />
 
-              {/* Cart items */}
-              <div className="mb-6 lg:mb-0">
-                <div className="mb-3">
-                  <div className="flex text-sm font-medium text-gray-400 dark:text-gray-500 space-x-2">
-                    <span className="text-violet-500">Review</span>
-                    <span>-&gt;</span>
-                    <span className="text-gray-500 dark:text-gray-400">Payment</span>
-                    <span>-&gt;</span>
-                    <span className="text-gray-500 dark:text-gray-400">Confirm</span>
-                  </div>
+                {/* Estado de la persona */}
+                <div className="mb-6">
+                  <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    Estado de la persona <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register('estadoPersona')}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 ${
+                      errors.estadoPersona ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    disabled={isSubmitting}
+                  >
+                    <option value="">Seleccione una opción</option>
+                    <option value="Estudiante">Estudiante</option>
+                    <option value="Inmigrante">Inmigrante</option>
+                    <option value="Pequeño propietario">Pequeño propietario</option>
+                    <option value="Vecino">Vecino</option>
+                    <option value="Ranchero">Ranchero</option>
+                    <option value="Invalido">Invalido</option>
+                  </select>
+                  {errors.estadoPersona && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                      {errors.estadoPersona.message}
+                    </p>
+                  )}
                 </div>
-                <header className="mb-2">
-                  {/* Title */}
-                  <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Shopping Cart (3)</h1>
-                </header>
 
-                {/* Cart items */}
-                <CartItems />
-
-              </div>
-
-              {/* Sidebar */}
-              <div>
-                <div className="bg-white dark:bg-gray-800 p-5 shadow-xs rounded-xl lg:w-72 xl:w-80">
-                  <div className="text-gray-800 dark:text-gray-100 font-semibold mb-2">Order Summary</div>
-                  {/* Order details */}
-                  <ul className="mb-4">
-                    <li className="text-sm w-full flex justify-between py-3 border-b border-gray-200 dark:border-gray-700/60">
-                      <div>Products & Subscriptions</div>
-                      <div className="font-medium text-gray-800 dark:text-gray-100">$205</div>
-                    </li>
-                    <li className="text-sm w-full flex justify-between py-3 border-b border-gray-200 dark:border-gray-700/60">
-                      <div>Shipping</div>
-                      <div className="font-medium text-gray-800 dark:text-gray-100">-</div>
-                    </li>
-                    <li className="text-sm w-full flex justify-between py-3 border-b border-gray-200 dark:border-gray-700/60">
-                      <div>Taxes</div>
-                      <div className="font-medium text-gray-800 dark:text-gray-100">$48</div>
-                    </li>
-                    <li className="text-sm w-full flex justify-between py-3 border-b border-gray-200 dark:border-gray-700/60">
-                      <div>Total due (including taxes)</div>
-                      <div className="font-medium text-green-600">$253</div>
-                    </li>
-                  </ul>
-                  {/* Promo box */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-sm font-medium mb-1" htmlFor="promo">Promo Code</label>
-                      <div className="text-sm text-gray-400 dark:text-gray-500 italic">optional</div>
-                    </div>
-                    <input id="promo" className="form-input w-full mb-2" type="text" />
-                    <button className="btn w-full bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white disabled:border-gray-200 dark:disabled:border-gray-700 disabled:bg-white dark:disabled:bg-gray-800 disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed" disabled>Apply Code</button>
-                  </div>
-                  <div className="mb-4">
-                    <button className="btn w-full bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white">Buy Now - $253.00</button>
-                  </div>
-                  <div className="text-xs text-gray-500 italic text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do <a className="underline hover:no-underline" href="#0">Terms</a>.</div>
+                {/* Fecha de creación */}
+                <div className="mb-6">
+                  <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    Fecha de creación
+                  </label>
+                  <input
+                    type="text"
+                    {...register('fechaCreacion')}
+                    value={new Date(watch('fechaCreacion')).toLocaleDateString('es-ES')}
+                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 cursor-not-allowed"
+                    readOnly
+                  />
                 </div>
-              </div>
 
+                {/* Botones de acción */}
+                <div className="flex items-center justify-between gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <Link
+                    to="/"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 text-gray-900 dark:text-white font-medium rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-95 text-center"
+                  >
+                    <span className="flex items-center justify-center">
+                      <span className="mr-1">&lt;-</span> Regresar al menú
+                    </span>
+                  </Link>
+
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      reset();
+                      setSelectedClient(null);
+                    }}
+                    disabled={isSubmitting}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-100 dark:to-gray-200 text-white dark:text-gray-900 font-medium rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-95"
+                  >
+                    Limpiar
+                  </button>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-100 dark:to-gray-200 text-white dark:text-gray-900 font-medium rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-95 relative overflow-hidden group"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Procesando...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center">
+                        Registrar <span className="ml-1">-&gt;</span>
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-
           </div>
         </main>
-
       </div>
-
     </div>
   );
 }
