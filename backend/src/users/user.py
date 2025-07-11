@@ -61,11 +61,11 @@ class UserCrud:
             #dim_date_registro.mostrar_datos()
             
             if persona:
-                return 200, "Se instacio a la persona correctamente"  #persona, dim_date_registro
+                return 200, "Se instacio a la persona correctamente", persona.id_user  #persona, dim_date_registro
             else:
-                return 501, "No se pudo guardar la informacion",#persona, dim_date_registro
+                return 501, "No se pudo guardar la informacion", None#persona, dim_date_registro
         else:
-            return 400, es_valido[1]
+            return 400, es_valido[1], None
         
 
     def read_user(self, data_json= dict) -> tuple:

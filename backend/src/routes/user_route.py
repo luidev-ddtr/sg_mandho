@@ -27,6 +27,22 @@ def create_user():
         llama a la funcion send_error o send_success las cuales no son mas que un acortador de codigo
         pero en si esas funciones se encargan de enviar el mensaje en formato json
         
+        Se debe cambiar esta parte ya que la api ahira reuqiere obligatoriamente estos campos
+        USUARIO VALIDO 
+        {
+        "success": true,
+        "id": "12345abcde",  // El ID del usuario creado
+        "message": "Usuario registrado exitosamente"
+        }
+
+        USUARIO NO VALIDO
+        {
+        "success": false,
+        "message": "El o EL ERROR QUE HAYA HABIDO ya está registrado",
+        "errors": {
+            "email": "El correo ya existe"
+                }
+        }
         dict: Un diccionario con la respuesta de la API, incluyendo:
             - el estado de la petición (por ejemplo, 200 para éxito).
             - el mensaje de éxito o de error.
@@ -40,11 +56,16 @@ def create_user():
             return send_error("No se recibieron datos", 400)
         
         
-        estado, mensaje = user_options.insert_user(user_json['data'])
+        estado, mensaje, persona_id = user_options.insert_user(user_json['data'])
         
         if 200 <= estado <= 205:
+            data = {
+                "success": True,
+                "id": persona_id,
+                "message": mensaje
+            }
             print(mensaje)
-            return send_success(mensaje, None,estado)
+            return send_success(None, data,estado)
         else:
             print(mensaje)
             return send_error(mensaje, estado)

@@ -120,6 +120,9 @@ fecha_nacimiento: yup
 function UserRegister() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   
   const { 
     register, 
@@ -130,31 +133,44 @@ function UserRegister() {
     resolver: yupResolver(schema)
   });
 
+  const onSubmit = async (formData) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    
+    try {
+      const fechaData = AgregarFechaActual();
+      const fechaFin = AgregarFechaFinVacio();
+      
+      const dataConFecha = {
+        ...formData,
+        ...fechaData,
+        ...fechaFin
+      };
 
-  //Enviar la informacion a la API la cual manda el front
-  const onSubmit = (data) => {
-  // Obtener fecha actual
-  const fechaData = AgregarFechaActual(); // Devuelve { fecha_inicio: "2025-07-07" }
-  const fechaFin = AgregarFechaFinVacio();
+      const requestData = {
+        data: dataConFecha
+      };
 
-  // Agregar fecha_inicio dentro del objeto data
-  const dataConFecha = {
-    ...data,
-    ...fechaData,
-    ...fechaFin
+      const response = await AgregarUsuario(requestData);
+      
+      if (response.data && response.data.id) {
+        setSubmitSuccess(true);
+        // Pequeño delay para que el usuario vea el mensaje de éxito
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        navigate(`/UserSuccess/${response.data.id}`);
+      } else {
+        throw new Error('El backend no devolvió un ID de usuario');
+      }
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      setSubmitError(error.response?.data?.message || error.message || "Error en el registro");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const allData = {
-    data: dataConFecha
-  };
-
-      AgregarUsuario(allData);
-    //navigate('/UserSucces');
-  };
-
-
-
-  return (
+    return (
     <div className="flex h-[100dvh] overflow-hidden">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} variant="v2" />
@@ -172,18 +188,39 @@ function UserRegister() {
                 <div className="mb-8">
                   <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Agregar Usuario</h1>
                 </div>
+                
+                {/* Mensaje de éxito */}
+                {submitSuccess && (
+                  <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center animate-fade-in">
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span>¡Registro exitoso! Redirigiendo...</span>
+                  </div>
+                )}
+                
+                {/* Mensaje de error */}
+                {submitError && (
+                  <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center animate-fade-in">
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span>{submitError}</span>
+                  </div>
+                )}
+
                 <div className="flex-1">
                   <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col">
                     <div className="space-y-6 mb-8 flex-1">
                       {/* Nombre y segundo nombre */}
                       <div className="flex space-x-4">
                         <div className="flex-1">
-                          <label className="block text-sm  mb-1 font-black" htmlFor="nombre">
+                          <label className="block text-sm mb-1 font-black" htmlFor="nombre">
                             Nombre <span className="text-red-500">*</span>
                           </label>
                           <input 
                             id="nombre" 
-                            className={` text-gray-900 dark:bg-gray-100 dark:text-gray-700  form-input w-full rounded-lg ${errors.nombre ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`text-gray-900 dark:bg-gray-100 dark:text-gray-700 form-input w-full rounded-lg ${errors.nombre ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text" 
                             {...register("nombre")}
                             onBlur={(e) => {
@@ -191,9 +228,10 @@ function UserRegister() {
                                 setValue('nombre', capitalizeFirstLetter(e.target.value));
                               }
                             }}
+                            disabled={isSubmitting}
                           />
                           {errors.nombre && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.nombre.message}
                             </span>
                           )} 
@@ -205,7 +243,7 @@ function UserRegister() {
                           </label>
                           <input 
                             id="segundo_nombre" 
-                            className={` text-gray-900 dark:bg-gray-100 dark:text-gray-700 form-input w-full rounded-lg ${errors.segundo_nombre ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`text-gray-900 dark:bg-gray-100 dark:text-gray-700 form-input w-full rounded-lg ${errors.segundo_nombre ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text" 
                             {...register("segundo_nombre")}
                             onBlur={(e) => {
@@ -213,9 +251,10 @@ function UserRegister() {
                                 setValue('segundo_nombre', capitalizeFirstLetter(e.target.value));
                               }
                             }}
+                            disabled={isSubmitting}
                           />
                           {errors.segundo_nombre && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.segundo_nombre.message}
                             </span>
                           )}
@@ -230,7 +269,7 @@ function UserRegister() {
                           </label>
                           <input 
                             id="apellido" 
-                            className={` dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.apellido ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.apellido ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text"
                             {...register("apellido")}
                             onBlur={(e) => {
@@ -239,9 +278,10 @@ function UserRegister() {
                               }
                             }}
                             placeholder="Escribe tu apellido paterno"
+                            disabled={isSubmitting}
                           />
                           {errors.apellido && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.apellido.message}
                             </span>
                           )} 
@@ -253,7 +293,7 @@ function UserRegister() {
                           </label>
                           <input 
                             id="segundo_apellido" 
-                            className={` dark:text-gray-700 dark:bg-gray-100  form-input w-full rounded-lg ${errors.segundo_apellido ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.segundo_apellido ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text"
                             {...register("segundo_apellido")}
                             onBlur={(e) => {
@@ -262,9 +302,10 @@ function UserRegister() {
                               }
                             }}
                             placeholder="Escribe tu apellido materno"
+                            disabled={isSubmitting}
                           />
                           {errors.segundo_apellido && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.segundo_apellido.message}
                             </span>
                           )} 
@@ -278,8 +319,9 @@ function UserRegister() {
                         </label>
                         <select 
                           id="manzana" 
-                          className={`form-select dark:text-gray-800 w-full rounded-lg ${errors.manzana ? 'border-red-500' : 'border-gray-300'}`}
+                          className={`form-select dark:text-gray-800 w-full rounded-lg ${errors.manzana ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                           {...register("manzana")}
+                          disabled={isSubmitting}
                         >
                           <option value="">Seleccione una opción</option>
                           <option value="tepetate">Tepetate</option>
@@ -290,7 +332,7 @@ function UserRegister() {
                           <option value="buenavista">Buena Vista</option>
                         </select>
                         {errors.manzana && (
-                          <span className="text-red-500 text-sm mt-1 block">
+                          <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                             {errors.manzana.message}
                           </span>
                         )}
@@ -304,13 +346,14 @@ function UserRegister() {
                           </label>
                           <input 
                             id="calle" 
-                            className={` dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.calle ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.calle ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text"
                             {...register("calle")}
-                            placeholder="Escribe la dirrecion"
+                            placeholder="Escribe la dirección"
+                            disabled={isSubmitting}
                           />
                           {errors.calle && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.calle.message}
                             </span>
                           )} 
@@ -322,64 +365,65 @@ function UserRegister() {
                           </label>
                           <input 
                             id="n_exterior" 
-                            className={` dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.n_exterior ? 'border-red-500' : 'border-gray-300'}`} 
+                            className={`dark:text-gray-700 dark:bg-gray-100 form-input w-full rounded-lg ${errors.n_exterior ? 'border-red-500' : 'border-gray-300'} ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
                             type="text"
                             {...register("n_exterior")}
                             inputMode="numeric"
                             placeholder="Escribe el numero exterior"
+                            disabled={isSubmitting}
                           />
                           {errors.n_exterior && (
-                            <span className="text-red-500 text-sm mt-1 block">
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
                               {errors.n_exterior.message}
                             </span>
                           )} 
                         </div>
                       </div>
                       
-
-                  {/* Fecha de nacimiento */}
-                    <div className="flex space-x-4">
-                      <div className="flex-1 relative">
-                        <label className="block text-sm font-medium mb-1" htmlFor="fecha_nacimiento">
-                          Fecha de Nacimiento <span className="text-red-500">*</span>
-                        </label>
-                        
-                        {/* Contenedor relativo para posicionar el icono */}
-                        <div className="relative">
-                          <input 
-                            id="fecha_nacimiento" 
-                            className={`dark:text-gray-900 dark:bg-gray-100 form-input w-full rounded-lg pl-10 pr-3 py-2 ${
-                              errors.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
-                            }`} 
-                            type="date"
-                            {...register("fecha_nacimiento")}
-                            max={new Date().toISOString().split('T')[0]}
-                          />
+                      {/* Fecha de nacimiento */}
+                      <div className="flex space-x-4">
+                        <div className="flex-1 relative">
+                          <label className="block text-sm font-medium mb-1" htmlFor="fecha_nacimiento">
+                            Fecha de Nacimiento <span className="text-red-500">*</span>
+                          </label>
                           
-                          {/* Icono de calendario */}
-                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                            <svg 
-                              className="w-5 h-5 text-gray-400 dark:text-gray-500" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
-                            >
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
-                              />
-                            </svg>
+                          {/* Contenedor relativo para posicionar el icono */}
+                          <div className="relative">
+                            <input 
+                              id="fecha_nacimiento" 
+                              className={`dark:text-gray-900 dark:bg-gray-100 form-input w-full rounded-lg pl-10 pr-3 py-2 ${
+                                errors.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
+                              } ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
+                              type="date"
+                              {...register("fecha_nacimiento")}
+                              max={new Date().toISOString().split('T')[0]}
+                              disabled={isSubmitting}
+                            />
+                            
+                            {/* Icono de calendario */}
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                              <svg 
+                                className="w-5 h-5 text-gray-400 dark:text-gray-500" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth={2} 
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                                />
+                              </svg>
+                            </div>
                           </div>
+                          
+                          {errors.fecha_nacimiento && (
+                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
+                              {errors.fecha_nacimiento.message}
+                            </span>
+                          )} 
                         </div>
-                        
-                        {errors.fecha_nacimiento && (
-                          <span className="text-red-500 text-sm mt-1 block">
-                            {errors.fecha_nacimiento.message}
-                          </span>
-                        )} 
-                      </div>
                         
                         <div className="flex-1">
                           {/* Espacio para otro campo si es necesario */}
@@ -387,93 +431,69 @@ function UserRegister() {
                       </div>
                     </div>
                       
-                      {/* Espacio para enviar o ir atras en el formulario  */}
+                    {/* Botones de acción */}
                     <div className="flex items-center justify-between gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                       <Link
                         to="/"
-                        className="
-                          flex-1
-                          px-6 py-3
+                        className={`
+                          flex-1 px-6 py-3
                           bg-gradient-to-r from-gray-100 to-gray-200
                           dark:from-gray-800 dark:to-gray-900
                           text-gray-900 dark:text-white
-                          font-medium rounded-lg
-                          shadow-lg
+                          font-medium rounded-lg shadow-lg
                           transition-all duration-300
-                          transform hover:scale-[1.02]
-                          hover:shadow-xl
-                          active:scale-95
-                          focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
-                          relative overflow-hidden
-                          group
-                          text-center
-                        "
+                          transform hover:scale-[1.02] hover:shadow-xl
+                          active:scale-95 focus:outline-none
+                          relative overflow-hidden group text-center
+                          ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
+                        `}
+                        onClick={(e) => isSubmitting && e.preventDefault()}
                       >
                         <span className="relative z-10 flex items-center justify-center">
                           <span className="mr-1">&lt;-</span> Regresar al menú
                         </span>
-                        
-                        {/* Efecto de hover */}
-                        <span className="
-                          absolute inset-0
-                          bg-gradient-to-r from-blue-100 to-violet-200
-                          dark:from-blue-900 dark:to-violet-800
-                          opacity-0
-                          group-hover:opacity-100
-                          transition-opacity duration-300
-                        "></span>
-                        
-                        {/* Efecto de pulsación */}
-                        <span className="
-                          absolute inset-0
-                          bg-white dark:bg-gray-900
-                          opacity-0
-                          group-active:opacity-20
-                          transition-opacity duration-100
-                        "></span>
                       </Link>
 
                       <button 
                         type="submit" 
-                        className="
-                          flex-1
-                          px-6 py-3
+                        disabled={isSubmitting}
+                        className={`
+                          flex-1 px-6 py-3
                           bg-gradient-to-r from-gray-800 to-gray-900
                           dark:from-gray-100 dark:to-gray-200
                           text-white dark:text-gray-900
-                          font-medium rounded-lg
-                          shadow-lg
+                          font-medium rounded-lg shadow-lg
                           transition-all duration-300
-                          transform hover:scale-[1.02]
-                          hover:shadow-xl
-                          active:scale-95
-                          focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
-                          relative overflow-hidden
-                          group
-                        "
+                          relative overflow-hidden group
+                          ${isSubmitting ? 'cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-xl'}
+                          active:scale-95 focus:outline-none
+                        `}
                       >
-                        <span className="relative z-10 flex items-center justify-center">
-                          Registrar <span className="ml-1">-&gt;</span>
-                        </span>
+                        {isSubmitting ? (
+                          <span className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Procesando...
+                          </span>
+                        ) : (
+                          <span className="relative z-10 flex items-center justify-center">
+                            Registrar <span className="ml-1">-&gt;</span>
+                          </span>
+                        )}
                         
-                        {/* Efecto de hover */}
-                        <span className="
-                          absolute inset-0
-                          bg-gradient-to-r from-violet-600 to-blue-500
-                          dark:from-violet-400 dark:to-blue-300
-                          opacity-0
-                          group-hover:opacity-100
-                          transition-opacity duration-300
-                        "></span>
-                        
-                        {/* Efecto de pulsación */}
-                        <span className="
-                          absolute inset-0
-                          bg-white dark:bg-gray-900
-                          opacity-0
-                          group-active:opacity-20
-                          transition-opacity duration-100
-                        "></span>
+                        {/* Efecto de hover (solo cuando no está submitting) */}
+                        {!isSubmitting && (
+                          <span className="
+                            absolute inset-0
+                            bg-gradient-to-r from-violet-600 to-blue-500
+                            dark:from-violet-400 dark:to-blue-300
+                            opacity-0
+                            group-hover:opacity-100
+                            transition-opacity duration-300
+                          "></span>
+                        )}
                       </button>
                     </div>
                   </form>
