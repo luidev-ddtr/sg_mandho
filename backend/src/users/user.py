@@ -74,7 +74,6 @@ class UserCrud:
         1;- Enviar toda la informacion de la tabla usuarios para ser mostrada en el frontend. Para este caso se planea
         Que ta,bien se puedan recibir algunos filtros, por ejemplo filtrar por edad, fecha de inicio, etc
         2;- Enviar la informacion de una persona en especifico para ser mostrada en el frontend
-
         args:
             data_json (dict): Un diccionario que contiene la información del usuario.
             El diccionario puede tener la siguiente estructura:
@@ -84,30 +83,28 @@ class UserCrud:
                 # Ambos campos pueden estar vacios, y son mutualmente excluyentes ya que no se le aplicaran filtros
                 a un usuario.
             }
-        
         Returns:
             bool: Se retorna true o false
             str: Se retorna un string de error o exito especifico de que falto o si esta bien
             list: Se retorna una lista con la informacion de la persona en caso de que haya un id_user o los filtros
-
         comments:
             Caso 1: Solo hay id_user - Buscar información específica de un usuario
             Caso 2: Solo hay filters - Aplicar filtros
-
         constraints:
             1;- id_user y filters son mutuamente excluyentes
             2; En cualquier caso donde haya un problema la lista se retornara vacia
         """
-
         
         campos_requeridos = ["id_user", "filters"]
         tipo_campos = [str,dict]
+
+        print(f"Respuesta recibida: {data_json}")
         
         respuesta,mensaje = validate_data(data_json, campos_requeridos, tipo_campos, "user") # <--- Retorna boleano y el mensaje del error
         
         if respuesta:
             
-            if "id_user" in data_json and data_json["id_user"]:
+            if data_json["id_user"] and data_json['filters'] == {}:
                 # Caso 1: Solo hay id_user - Buscar información específica de un usuario
                 datos = read(data_json["id_user"], None)
                 
@@ -116,8 +113,13 @@ class UserCrud:
                 else:
                     return 404, "No se encontró información para este usuario", []
                 
-            elif "filters" in data_json and data_json["filters"]:
-                pass
+            elif (data_json["filters"] or not data_json['filters']) and data_json['id_user'] == '':
+                datos = read(None, data_json["filters"])
+                
+                if datos:
+                    return 200, "Se encontraron resultados con estos filtros", datos
+                else:
+                    return 404, "No se encontraron resultados con estos filtros", []
                 # Caso 2: Solo hay filters - Aplicar filtros
                 # Aquí llamarías a tu función que maneja los filtros
                 # resultado_filtros = aplicar_filtros(data_json["filters"])
@@ -126,10 +128,7 @@ class UserCrud:
                 #     return 200, "Filtros aplicados correctamente", resultado_filtros
                 # else:
                 #     return 404, "No se encontraron resultados con estos filtros"
-            else:
-                # Caso 3: No hay ninguno o hay algún error
-                return 400,  "Debes enviar un id_user o un filters", []
-        
+            
         else:
             return 400, mensaje, []
 
