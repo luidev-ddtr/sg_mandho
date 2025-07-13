@@ -1,0 +1,52 @@
+{
+  "title": "Gestión de Personas",
+  "image": "../../images/personas.png",
+  "icon": "👨‍👩‍👧‍👦",
+  "description": "Sistema integral para la administración de residentes y sus datos personales en la comunidad.",
+  "sidebarSections": [
+    {
+      "path": "/personas/usuarios",
+      "label": "Lista de Personas",
+      "shortDescription": "Explora el directorio completo de residentes",
+      "icon": "📋",
+      "longDescription": "Accede a la base de datos completa de personas registradas en el sistema con opciones de búsqueda, filtrado y exportación."
+    },
+    {
+      "path": "/personas/registro",
+      "label": "Nuevo Registro",
+      "shortDescription": "Agrega un nuevo residente al sistema",
+      "icon": "➕",
+      "longDescription": "Formulario completo para registrar nuevos residentes incluyendo datos personales, información de contacto y documentación relevante."
+    }, 
+    {
+      "path": "/personas/cuenta",
+      "label": "Gestión de Cuentas",
+      "shortDescription": "Vincula cuentas a residentes",
+      "icon": "👤",
+      "longDescription": "Administra la creación y vinculación de cuentas de usuario asociadas a los residentes registrados."
+    }
+  ],
+  "mainContent": {
+    "welcomeMessage": "Sistema de Gestión de Residentes",
+    "subtitle": "Administra integralmente la información de la comunidad",
+    "features": [
+      {
+        "title": "Registro Completo",
+        "description": "Captura toda la información personal incluyendo datos demográficos, documentos de identificación y datos de contacto."
+      },
+      {
+        "title": "Vinculación de Cuentas",
+        "description": "Asocia cuentas de usuario a residentes para habilitar acceso al sistema con diferentes niveles de permiso."
+      },
+      {
+        "title": "Directorio Actualizable",
+        "description": "Consulta y actualiza en tiempo real la información de todos los residentes registrados en la comunidad."
+      },
+      {
+        "title": "Gestión Simplificada",
+        "description": "Interfaz intuitiva que facilita la administración de los datos personales con opciones de edición masiva."
+      }
+    ],
+    "instructions": "Seleccione una opción del menú para comenzar. Puede navegar entre las diferentes secciones en cualquier momento para realizar diversas operaciones de gestión."
+  }
+}

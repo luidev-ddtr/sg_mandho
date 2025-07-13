@@ -1,44 +1,76 @@
 import React from 'react';
 import BarChart from '../../charts/BarChart03';
-import { getCssVariable } from '../../utils/Utils';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-function AnalyticsCard03() {
+// Registra los componentes necesarios de Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const MonthlyBarChart = ({ data }) => {
+  // Configuración del gráfico
+  const options = {
+    responsive: true, // Hace el gráfico responsivo
+    maintainAspectRatio: false, // Permite controlar el tamaño libremente
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Datos por Mes',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+    barThickness: 30, // Controla el grosor de las barras
+    categoryPercentage: 0.8, // Controla el espacio entre categorías (meses)
+    barPercentage: 0.9, // Controla el ancho de las barras dentro de cada categoría
+  };
+
+  // Datos del gráfico
   const chartData = {
     labels: [
-      '01-01-2024', '01-02-2024', '02-03-2024',
-      '03-04-2024', '04-05-2024', '05-06-2024',
-      '03-07-2024', '04-08-2024', '05-09-2024',
-      '03-10-2024', '04-11-2024', '05-12-2024',
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
     ],
     datasets: [
       {
-        label: 'Gastos',
-        data: [5000, 4000, 4000, 3800, 5200, 5100, 4500, 4800, 4900, 4700, 5100, 5300],
-        backgroundColor: getCssVariable('--color-violet-700'),
-        hoverBackgroundColor: getCssVariable('--color-violet-800'),
-        barPercentage: 0.7,
-        categoryPercentage: 0.7,
-        borderRadius: 4,
+        label: 'Valores por Mes',
+        data: data || Array(12).fill(0), // Usa datos proporcionados o ceros
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
       },
-      
-      
     ],
   };
 
   return (
-    <div className="col-span-full bg-white dark:bg-gray-800 shadow-xs rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Análisis Financiero</h2>
-      </header>
-      <div className="p-5">
-        <BarChart 
-          data={chartData} 
-          width={window.innerWidth - 100}  // Ajuste dinámico al ancho disponible
-          height={400}  // Altura aumentada para mejor visualización
-        />
-      </div>
+    <div style={{ 
+      position: 'relative', 
+      width: '100%', 
+      minHeight: '400px',
+      margin: '0 auto'
+    }}>
+      <BarChart options={options} data={chartData} />
     </div>
   );
-}
+};
 
-export default AnalyticsCard03;
+export default MonthlyBarChart;

@@ -10,16 +10,34 @@ import './css/style.css';
 
 
 import Signup from './pages/Singup.jsx';
-import Inicio from './pages/Inicio.jsx';
-import Menu from './pages/menu.jsx';
 import CompanyProfile from './pages/CompanyProfile.jsx';
 import Analytics from './pages/Analytics.jsx';
-import Customers from './pages/Customers.jsx'; 
 import ModalPage from './pages/ModalPage.jsx';
-import UserSucces from './pages/UserSucces.jsx';
-import UserRegister from './pages/UseRegister.jsx';
-import Cuenta from './pages/Cuenta.jsx';
+import DynamicModule from './pages/DynamicModule.jsx';
+
+//Personas modulo
+import Customers from './pages/personas/Customers.jsx'; 
+import UserSucces from './pages/personas/UserSucces.jsx';
+import UserRegister from './pages/personas/UseRegister.jsx';
+import Cuenta from './pages/personas/Cuenta.jsx';
 //import Navigation from './components/Navigation.jsx';
+
+/**
+ * The main application component that sets up routing for the application.
+ * It includes various routes for different pages like CompanyProfile, Menu, 
+ * Signup, Inicio, Analytics, Customers, ModalPage, UserSuccess, UserRegister, 
+ * and Cuenta. It also handles scroll behavior on route changes.
+ */
+
+/**
+ * The App component sets up the main routing structure for the application.
+ * It listens for changes in the route location and adjusts the scroll behavior
+ * accordingly to ensure smooth navigation. The component defines various routes
+ * corresponding to different pages such as CompanyProfile, Signup, Analytics,
+ * ModalPage, DynamicModule, UserSuccess, Cuenta, UserRegister, and Customers.
+ * Each route renders its respective component when navigated to, providing
+ * a seamless single-page application experience.
+ */
 
 function App() {
 
@@ -36,17 +54,17 @@ function App() {
       
         <Routes>
           <Route path='/' element={<CompanyProfile />} />
-          <Route path="/Menu" element={<Menu />} />
           <Route path="/Signup" element={<Signup />} />
-          <Route path="/Inicio" element={<Inicio />} />
           <Route path="/CompanyProfile" element={<CompanyProfile />} />
           <Route path="/Analytics" element={<Analytics />} />
-          <Route path="/Customers" element={<Customers />} />
           <Route path="/ModalPage" element={<ModalPage />} />
-          <Route path="/UserSucces/:id" element={<UserSucces />} />
-          <Route path="/UserRegister" element={<UserRegister />} />
-          <Route path="/Cuenta" element={<Cuenta />} />
-          {/* <Route path="/signup" element={<Signup />} /> */}
+          <Route path="/modulo/:moduleName" element={<DynamicModule />} />
+
+          <Route path="/personas/registro_exito/:id" element={<UserSucces />} />
+          <Route path="/personas/Cuenta" element={<Cuenta />} />
+          <Route path="/personas/registro" element={<UserRegister />} />
+          <Route path="/personas/usuarios" element={<Customers />} />
+
         </Routes>
     </>
   )

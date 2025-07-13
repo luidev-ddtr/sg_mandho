@@ -3,10 +3,7 @@ import React, { useState } from 'react';
 import Sidebar from '../partials/SideBar';
 import Header from '../partials/Header';
 import Datepicker from '../components/Datepicker';
-import AnalyticsCard01 from '../partials/analytics/AnalyticsCard01';
-import AnalyticsCard02 from '../partials/analytics/AnalyticsCard02';
 import AnalyticsCard03 from '../partials/analytics/AnalyticsCard03';
-import AnalyticsCard04 from '../partials/analytics/AnalyticsCard04';
 import AnalyticsCard05 from '../partials/analytics/AnalyticsCard05';
 import AnalyticsCard06 from '../partials/analytics/AnalyticsCard06';
 import AnalyticsCard07 from '../partials/analytics/AnalyticsCard07';
@@ -79,7 +76,6 @@ function Analytics() {
               <AnalyticsCard10 />
               {/* Table (Top Products) */}
               <AnalyticsCard11 />
-
             </div>
           </div>
         </main>

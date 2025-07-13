@@ -3,14 +3,18 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link, useNavigate } from "react-router-dom";
-import Sidebar from '../partials/SideBar';
-import Header from "../partials/Header";
-import OnboardingImage from "../images/onboarding-image.jpg";
-import { AgregarUsuario } from "../api/api_user";
-import { AgregarFechaActual } from '../utils/add_date';
-import { AgregarFechaFinVacio } from "../utils/add_date";
+import Sidebar from '../../partials/SideBar';
+import Header from "../../partials/Header";
+import OnboardingImage from "../../images/onboarding-image.jpg";
+import { AgregarUsuario } from "../../api/api_user";
+import { AgregarFechaActual } from '../../utils/add_date';
+import { AgregarFechaFinVacio } from "../../utils/add_date";
 
-// Función para capitalizar la primera letra
+/*
+This JavaScript function, capitalizeFirstLetter, takes a string as input and returns a new string
+ with the first letter capitalized and the rest of the letters in lowercase. If the input is empty 
+ or null, it returns the original value. {UseRegister.jsx:capitalizeFirstLetter}
+ */
 const capitalizeFirstLetter = (value) => {
   if (!value) return value;
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
@@ -117,6 +121,15 @@ fecha_nacimiento: yup
 });
 
 
+/**
+ * Componente de registro de usuarios.
+ * 
+ * Contiene un formulario que solicita los datos personales del usuario y su dirección.
+ * Al enviar el formulario, se llama a la función `onSubmit` que se encarga de
+ * agregar el usuario a la base de datos.
+ * 
+ * @returns {ReactElement} Componente JSX del formulario de registro.
+ */
 function UserRegister() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -158,7 +171,7 @@ function UserRegister() {
         setSubmitSuccess(true);
         // Pequeño delay para que el usuario vea el mensaje de éxito
         await new Promise(resolve => setTimeout(resolve, 1500));
-        navigate(`/UserSuccess/${response.data.id}`);
+        navigate(`/personas/registro_exito/${response.data.id}`);
       } else {
         throw new Error('El backend no devolvió un ID de usuario');
       }
@@ -434,7 +447,7 @@ function UserRegister() {
                     {/* Botones de acción */}
                     <div className="flex items-center justify-between gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                       <Link
-                        to="/"
+                        to="/modulo/personas"
                         className={`
                           flex-1 px-6 py-3
                           bg-gradient-to-r from-gray-100 to-gray-200
