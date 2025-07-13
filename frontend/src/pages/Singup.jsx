@@ -6,6 +6,13 @@ import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { EnviarCredenciass } from "../api/api_user";
 
+/**
+ * Signup component.
+ *
+ * This component will render the signup form and handle the logic for it.
+ *
+ * @returns {React.ReactElement} The signup form component.
+ */
 function Signup() {
   const { 
     register, 

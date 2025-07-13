@@ -1,0 +1,52 @@
+{
+  "title": "Pago de Agua",
+  "image": "../../images/agua.png",
+  "icon": "💧",
+  "description": "Módulo esencial para la gestión eficiente del cobro de servicios de agua potable en la comunidad. Permite registrar pagos, generar recibos y consultar el historial de transacciones.",
+  "sidebarSections": [
+    {
+      "path": "/agua/pagos",
+      "label": "Ver Pagos",
+      "shortDescription": "Consulta el historial completo de pagos de agua.",
+      "icon": "📋",
+      "longDescription": "Accede a un registro detallado de todos los pagos de agua realizados, con opciones de búsqueda y filtrado."
+    },
+    {
+      "path": "/agua/generar",
+      "label": "Generar Pago",
+      "shortDescription": "Registra nuevos pagos de agua de forma rápida.",
+      "icon": "💸",
+      "longDescription": "Proceso guiado en tres sencillos pasos para buscar a la persona, seleccionar su cuenta y registrar el pago del servicio de agua."
+    },
+    {
+      "path": "/agua/reportes",
+      "label": "Reportes",
+      "shortDescription": "Genera informes y estadísticas de los pagos de agua.",
+      "icon": "📊",
+      "longDescription": "Crea reportes detallados sobre la recaudación, cantidad de usuarios con pagos registrados y otras métricas relevantes."
+    }
+  ],
+  "mainContent": {
+    "welcomeMessage": "¡Bienvenido al Módulo de Pago de Agua!",
+    "subtitle": "Facilita la administración y el cobro del servicio de agua potable",
+    "features": [
+      {
+        "title": "Búsqueda Rápida de Personas",
+        "description": "Encuentra rápidamente a la persona a la que deseas cobrar el servicio de agua utilizando su nombre o identificador."
+      },
+      {
+        "title": "Asociación de Cuentas",
+        "description": "Vincula fácilmente el pago a la cuenta de servicio de agua correcta de cada persona, asegurando la precisión en los registros."
+      },
+      {
+        "title": "Proceso de Pago Simplificado",
+        "description": "Realiza el cobro del servicio de agua en solo tres sencillos pasos: busca, selecciona la cuenta y registra el pago."
+      },
+      {
+        "title": "Visibilidad de Estadísticas",
+        "description": "Obtén información útil como la cantidad total de usuarios que han realizado pagos de agua, para un mejor control y análisis."
+      }
+    ],
+    "instructions": "Para empezar, selecciona una de las opciones en el menú lateral. Si necesitas cobrar el servicio de agua, haz clic en 'Generar Pago'. Si deseas revisar los pagos existentes, selecciona 'Ver Pagos'."
+  }
+}

@@ -9,6 +9,17 @@ import CompanyBg from '../images/company-bg.jpg';
 import { getAlldata } from '../api/api_user';
 
 
+/**
+ * Renders the company profile page.
+ *
+ * This component fetches data using the `getAlldata` function and displays it
+ * in a structured format with a sidebar, header, and a list of job items
+ * grouped into categories. It includes the company's background image and
+ * basic information, and provides navigation to job postings.
+ *
+ * The component also manages the sidebar's open state using the `useState` hook.
+ */
+
 function CompanyProfile() {
 
   const data = getAlldata();

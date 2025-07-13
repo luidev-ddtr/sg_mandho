@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
-import Sidebar from '../partials/SideBar';
-import Header from "../partials/Header";
-import BarraBusquedaAutomatica from '../components/customers/BarraBusqueda';
-import { crearCuenta } from '../api/api_account';
+import Sidebar from '../../partials/SideBar';
+import Header from "../../partials/Header";
+import BarraBusquedaAutomatica from '../../components/customers/BarraBusqueda';
+import { crearCuenta } from '../../api/api_account';
 
 // Esquema de validación con Yup
 const accountSchema = yup.object().shape({
@@ -18,6 +18,29 @@ const accountSchema = yup.object().shape({
     ], 'Estado no válido'),
   fechaCreacion: yup.string().required()
 });
+
+/**
+ * Cart component for creating new accounts.
+ * 
+ * This component renders a form to create a new account for a client. It includes
+ * a sidebar and a header, and uses the `react-hook-form` library for form handling
+ * and validation. The form includes a client search bar, a dropdown to select the
+ * client's state, and a read-only field displaying the account creation date.
+ * 
+ * State:
+ * - sidebarOpen: Controls the state of the sidebar.
+ * - isSubmitting: Indicates if the form is currently being submitted.
+ * - selectedClient: Holds the currently selected client from the search results.
+ * 
+ * Methods:
+ * - selectClient: Updates the selected client and sets the form's client field.
+ * - onSubmit: Handles form submission, calls API to create account, and manages
+ *   form state and user feedback.
+ * 
+ * Form Fields:
+ * - estadoPersona: The state of the person, selected from predefined options.
+ * - fechaCreacion: The account creation date, automatically set to current date.
+ */
 
 function Cart() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,6 +69,8 @@ function Cart() {
   };
 
   // Manejar envío del formulario
+  //Aun no se ha asigando a donde se movera cuando se cree la cuenta correctamnete
+  //MOidicar despues 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     
@@ -130,7 +155,7 @@ function Cart() {
                 {/* Botones de acción */}
                 <div className="flex items-center justify-between gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <Link
-                    to="/"
+                    to="/modulo/personas"
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 text-gray-900 dark:text-white font-medium rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-95 text-center"
                   >
                     <span className="flex items-center justify-center">

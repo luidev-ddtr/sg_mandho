@@ -1,0 +1,52 @@
+{
+  "title": "Delegación",
+  "image": "../../images/delegacion.png",
+  "icon": "🏛️",
+  "description": "Módulo central para la gestión integral de los recursos y actividades de la Delegación. Permite registrar y monitorear ingresos, generar informes detallados y configurar parámetros operativos.",
+  "sidebarSections": [
+    {
+      "path": "/delegacion/registros",
+      "label": "Ver Registros",
+      "shortDescription": "Consulta el historial completo de ingresos y movimientos financieros de la Delegación.",
+      "icon": "📜",
+      "longDescription": "Accede a un registro detallado de todas las entradas de dinero, incluyendo donaciones, ingresos municipales y cooperaciones comunitarias, con opciones de búsqueda y filtrado."
+    },
+    {
+      "path": "/delegacion/informes",
+      "label": "Generar Informe",
+      "shortDescription": "Crea informes y estadísticas sobre los flujos financieros y actividades de la Delegación.",
+      "icon": "📈",
+      "longDescription": "Genera reportes personalizados sobre los ingresos por tipo (donaciones, municipio, cooperaciones), periodos específicos y otros datos relevantes para la toma de decisiones."
+    },
+    {
+      "path": "/delegacion/configuracion",
+      "label": "Configuración",
+      "shortDescription": "Administra los ajustes y parámetros generales del módulo de Delegación.",
+      "icon": "⚙️",
+      "longDescription": "Define categorías de ingresos, gestiona usuarios con acceso al módulo y ajusta otras configuraciones importantes para el funcionamiento de la Delegación."
+    }
+  ],
+  "mainContent": {
+    "welcomeMessage": "¡Bienvenido al Módulo de Delegación!",
+    "subtitle": "Administra eficazmente los ingresos y recursos para el desarrollo comunitario",
+    "features": [
+      {
+        "title": "Registro de Diversas Fuentes de Ingreso",
+        "description": "Registra ingresos provenientes de donaciones, aportaciones municipales y cooperaciones de la comunidad, manteniendo un control exhaustivo."
+      },
+      {
+        "title": "Visibilidad Financiera Completa",
+        "description": "Obtén una visión clara de todos los recursos financieros de la Delegación para una gestión transparente y eficiente."
+      },
+      {
+        "title": "Generación de Informes Personalizados",
+        "description": "Crea informes detallados y estadísticas clave para evaluar el desempeño financiero y presentar resultados."
+      },
+      {
+        "title": "Control y Configuración Flexible",
+        "description": "Ajusta las configuraciones del módulo para adaptarlo a las necesidades específicas de la Delegación y mantener la información organizada."
+      }
+    ],
+    "instructions": "Para empezar, selecciona una opción del menú lateral. Si deseas revisar el historial de ingresos, haz clic en 'Ver Registros'. Para generar un nuevo informe o ajustar configuraciones, selecciona la opción correspondiente."
+  }
+}

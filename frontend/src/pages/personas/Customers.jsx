@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import Sidebar from '../partials/SideBar';
-import Header from '../partials/Header';
-import DeleteButton from '../partials/DeleteButton'
-import DateSelect from '../components/DateSelect';
-import FilterButton from '../components/DropdownFilter';
-import CustomersTable from '../partials/customers/CustomersTable';
-import PaginationClassic from '../components/PaginationClassic';
+import Sidebar from '../../partials/SideBar';
+import Header from '../../partials/Header';
+import DeleteButton from '../../partials/DeleteButton'
+import DateSelect from '../../components/DateSelect';
+import FilterButton from '../../components/DropdownFilter';
+import CustomersTable from '../../partials/customers/CustomersTable';
+import PaginationClassic from '../../components/PaginationClassic';
 
 function Customers() {
 

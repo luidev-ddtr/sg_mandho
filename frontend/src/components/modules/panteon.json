@@ -1,0 +1,52 @@
+{
+  "title": "Gestión del Panteón",
+  "image": "../../images/panteon.png",
+  "icon": "⚰️",
+  "description": "Sistema para la administración y registro del panteón de la comunidad, sustentado en faenas y cooperaciones.",
+  "sidebarSections": [
+    {
+      "path": "/panteon/editar",
+      "label": "Informes y Registro",
+      "shortDescription": "Genera informes y gestiona registros del panteón",
+      "icon": "📝",
+      "longDescription": "Accede a la funcionalidad para generar informes detallados y gestionar el registro de inhumaciones y servicios en el panteón."
+    },
+    {
+      "path": "/panteon/usuarios",
+      "label": "Ver Registros",
+      "shortDescription": "Consulta los registros existentes del panteón",
+      "icon": "📖",
+      "longDescription": "Explora y busca entre todos los registros de lotes, inhumaciones y pagos asociados al panteón."
+    },
+    {
+      "path": "/panteon/generar",
+      "label": "Generar Registro",
+      "shortDescription": "Crea nuevos registros o pagos",
+      "icon": "➕",
+      "longDescription": "Formulario para añadir nuevos registros de ocupación de lotes, pagos de faenas o cooperaciones, y otros servicios del panteón."
+    }
+  ],
+  "mainContent": {
+    "welcomeMessage": "Sistema de Gestión del Panteón Comunitario",
+    "subtitle": "Administra los recursos y registros del panteón",
+    "features": [
+      {
+        "title": "Control de Registros",
+        "description": "Mantén un control actualizado de los lotes, inhumaciones y servicios realizados en el panteón."
+      },
+      {
+        "title": "Gestión de Pagos y Cooperaciones",
+        "description": "Asocia pagos a cuentas y registra las cooperaciones y faenas realizadas por la comunidad para el mantenimiento del panteón."
+      },
+      {
+        "title": "Generación de Informes",
+        "description": "Crea informes detallados sobre el estado del panteón, ocupación, ingresos y actividades."
+      },
+      {
+        "title": "Transparencia y Colaboración",
+        "description": "Fomenta la transparencia en la administración del panteón y facilita la colaboración de la comunidad en su mantenimiento."
+      }
+    ],
+    "instructions": "Selecciona una opción del menú lateral para gestionar la información del panteón. Puedes ver registros existentes, generar nuevos o acceder a informes."
+  }
+}
