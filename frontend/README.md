@@ -75,50 +75,30 @@ A continuación, se presenta un diagrama que ilustra la estructura de las carpet
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryBorderColor': '#666' }}}%%
 flowchart TD
-    src["src/"] --> api(api/: Conexiones con el backend usando Axios)
-    src --> charts(charts/: Componentes o lógica para gráficos)
-    src --> components(components/: Componentes reutilizables generales)
-    components --> customers(customers/: Componentes específicos para la gestión de clientes/personas)
-    components --> modules(modules/: Componentes específicos para cada módulo (Panteón, Agua, Delegación))
-    components --> ui(ui/: Componentes de interfaz de usuario atómicos)
-    src --> css(css/: Archivos de estilos CSS)
-    css --> additional-styles(additional-styles/: Estilos adicionales o personalizados)
-    src --> images(images/: Activos de imágenes)
-    src --> lib(lib/: Librerías o utilidades externas/propias)
-    src --> pages(pages/: Páginas principales de la aplicación)
-    pages --> panteon(panteon/: Páginas relacionadas con el módulo de Panteón)
-    pages --> personas(personas/: Páginas relacionadas con el módulo de Personas)
-    src --> partials(partials/: Componentes parciales como Sidebar y Header)
-    partials --> analytics(analytics/: Componentes o lógica para analíticas)
-    partials --> customers_partial(customers/: Componentes parciales relacionados con clientes)
-    partials --> job(job/: Componentes parciales relacionados con trabajos/tareas)
-    src --> utils(utils/: Funciones de utilidad generales)
+    src["src/"] --> api["api/ (Conexiones con el backend usando Axios)"]
+    src --> charts["charts/ (Componentes o lógica para gráficos)"]
+    src --> components["components/ (Componentes reutilizables generales)"]
+    components --> comp_customers["customers/ (Componentes para gestión de clientes)"]
+    components --> modules["modules/ (Componentes por módulo)"]
+    components --> ui["ui/ (Componentes de UI atómicos)"]
+    src --> css["css/ (Archivos de estilos)"]
+    css --> additional_styles["additional-styles/ (Estilos personalizados)"]
+    src --> images["images/ (Activos de imágenes)"]
+    src --> lib["lib/ (Librerías externas)"]
+    src --> pages["pages/ (Páginas principales)"]
+    pages --> panteon["panteon/ (Módulo Panteón)"]
+    pages --> personas["personas/ (Módulo Personas)"]
+    src --> partials["partials/ (Componentes parciales)"]
+    partials --> analytics["analytics/ (Lógica de analíticas)"]
+    partials --> partials_customers["customers/ (Componentes clientes)"]
+    partials --> job["job/ (Componentes de trabajos)"]
+    src --> utils["utils/ (Funciones utilitarias)"]
 
     classDef folder fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
     classDef subfolder fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
     
     class api,charts,components,css,images,lib,pages,partials,utils folder
-    class customers,modules,ui,additional-styles,panteon,personas,analytics,customers_partial,job subfolder
-
-    style api fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style charts fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style components fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style css fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style images fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style lib fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style pages fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style partials fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-    style utils fill:#e1f5fe,stroke:#039be5,stroke-width:2px;
-
-    style customers fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style modules fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style ui fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style additional-styles fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style panteon fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style personas fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style analytics fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style customers_partial fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
-    style job fill:#b3e5fc,stroke:#0288d1,stroke-width:2px;
+    class comp_customers,modules,ui,additional_styles,panteon,personas,analytics,partials_customers,job subfolder
 ```
 Propmt generico para consulta con ia
 
