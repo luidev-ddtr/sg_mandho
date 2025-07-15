@@ -1,4 +1,4 @@
-from src.account.account import AccountCrud
+from src.accounts.account import AccountCrud
 
 def test_insert_account():
     crud = AccountCrud()

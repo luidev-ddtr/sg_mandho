@@ -1,5 +1,6 @@
 #Fichero el cual creara la instancia de flask # 
 from flask import Flask, jsonify
+from flask.wrappers import Response
 from flask_cors import CORS  # Importa CORS
 
 #HARCODEAR LAS URL
@@ -7,6 +8,7 @@ import os
 
 from src.routes.user_route import user_route
 from src.routes.account_route import account_route
+from src.routes.search_real_time import search_route
 #from src.routes.
 ##Esto esta comentado ya que es solo de produccion
 #from dotenv import load_dotenv  # Importa load_dotenv
@@ -16,7 +18,7 @@ from src.routes.account_route import account_route
 app = Flask(__name__)
 app.register_blueprint(user_route)
 app.register_blueprint(account_route)
-app
+app.register_blueprint(search_route)
 
 
 CORS(app, resources={
@@ -35,17 +37,14 @@ CORS(app, resources={
     }
 })
 
-## Endpoin solo de prueba para el saber si el servidor esta online 
-## 
-## Este endpoint solo devuelve un mensaje de prueba para saber si el servidor esta online
-## 
-## Returns:
-##     Un JSON con un mensaje que indica que el servidor esta online
-## 
 @app.route('/')
-def home():
+def home() -> tuple[Response, Literal[200]]:
     """
     Solo devuelve un mensaje de prueba para saber si el servidor esta online
+    Args:
+        None    
+    Returns:
+        tuple[Response, Literal[200]]
     """
     return jsonify({'message':"¡Funciona!",
                     "index": {
@@ -57,28 +56,6 @@ def home():
                     "final": ("si", True),
                     }),200
 
-
-# EJEMPLO DE LOGIN SIN EMBARGO FALTA IMPLEMENTAR SEGURIDAD
-# @app.route("/login", method = ["POST"])
-# def login():
-#     try:
-#         datos = request.json()
-#         usuario, contraseña = datos
-        
-#         if es_valido(usuario,contraseña):
-#             informacion = obtener_info()
-#             return jsonify({"message": "usuario identificado",
-#                             "nombre": informacion.nombre,
-#                             "cargo": informacion.cargo,
-#                             "manazana": informacion.manzana
-#                             },200)
-#         else: 
-#             return jsonify({"message": "usuario no identificado","status":"Error no encontrado"},404)
-#     except Exception as e:
-#         return jsonify({
-#             "status":'error',
-#             "message": str(e)
-#         },500)
 
 if __name__ == '__main__':
     app.run(debug=True)
