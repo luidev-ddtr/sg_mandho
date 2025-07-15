@@ -2,7 +2,7 @@
 # estara encapsulada en esta parte, aqui se recibirar los datos de los entpoins y tambien se 
 # envirarar los datos de los entpoins y a la bd
 from src.utils.validate_data import validate_data
-from src.utils.dim_date import DIM_DATE
+from src.dim_dates.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
 
 from src.users.models.user import User

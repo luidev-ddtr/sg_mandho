@@ -9,9 +9,9 @@ def send_error( message, status_code):
         status_code (int): Codigo de estado de la peticion. Defaults to 500"""
     return jsonify({"status": "error", "message": message}), status_code
 
-def send_success(message,data, status_code):
+def send_success(message,data, status_code):# -> tuple[Response, Any]:
     """funcion la cual maneja los mensajes de exito
-    Pero solo son los que retornaran algo al backend, ya que recibe de parametro datos 
+    Pero solo son los que retornaran algo al frontend, ya que recibe de parametro datos 
     en caso de ser informativo data tiene que ser none
     Args:
         message (str): Mensaje de exito

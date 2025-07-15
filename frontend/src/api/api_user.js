@@ -7,6 +7,38 @@ const api = axios.create({
 
 
 /**
+ * Los datos para el formulario de ususario deben de ir en este orden en el json
+ * 
+ * Solamente cuando se envian del frontend al backend
+ * id de usuario: id_user
+ * nombre: nombre
+ * segundo nombre: segundo_nombre
+ * apellido: apellido
+ * segundo apellido: segundo_apellido
+ * fecha de nacimiento: fecha_nacimiento
+ * fecha de inicio: fecha_inicio
+ * fecha de fin: fecha_fin
+ * manzana: manzana
+ * calle: calle
+ * numero exterior: numero
+ * 
+ * Cuando se reciben del backend vendran en este formato
+ * 
+ * id de usuario: id_user
+ * nombre: first_name`
+ * segundo nombre: second_name
+ * apellido: last_name
+ * segundo apellido: second_last_name
+ * fecha de nacimiento: date_of_birth
+ * fecha de inicio: date_user_start
+ * fecha de fin: date_user_end
+ * manzana: user_manzana
+ * calle: user_street
+ * numero exterior: user_number_ext
+ * 
+ * **/
+
+/**
  * Agrega un nuevo usuario a la base de datos.
  * 
  * @param {object} data - Objeto con los datos del usuario a agregar.

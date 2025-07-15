@@ -7,3 +7,9 @@ class DIM_status:
         """
         self.dim_status_id = dim_status_id
         self.status_name = status_name
+
+    def return_status(self) -> dict[str, str]:
+        return {
+            "dim_status_id": self.dim_status_id,
+            "status_name": self.status_name
+        }   
