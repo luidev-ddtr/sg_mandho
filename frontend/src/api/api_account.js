@@ -35,24 +35,47 @@ export const formatDate = (dateString) => {
 /**
  * Crea una nueva cuenta para un cliente.
  * 
- * @param {object} data - Datos de la cuenta a crear.
- * @returns {Promise<object>} - Promesa que se resuelve con la respuesta del servidor.
- * @throws {Error} - Si ocurre algún error durante la creación.
+ * @param {object} data - Datos de la cuenta a crear en el formato:
+ * {
+ *   status: "inactivo",
+ *   customer_id: string,
+ *   start_date: string (YYYY-MM-DD),
+ *   end_date: "s/n"
+ * }
+ * @returns {Promise<object>} - Promesa que se resuelve con la respuesta del servidor
+ * @throws {Error} - Si ocurre algún error durante la creación
  */
 export const crearCuenta = async (data) => {
   try {
-    const response = await api.post('create_account/', data);
+    // Validación básica de los datos requeridos
+    if (!data.customer_id) {
+      throw new Error('ID de cliente es requerido');
+    }
+    if (!data.start_date) {
+      throw new Error('Fecha de inicio es requerida');
+    }
+
+    const response = await api.post('create/', data);
+    
     return {
       success: true,
-      message: `Cuenta creada exitosamente para ${data.cliente}`,
+      message: `Cuenta creada exitosamente para el cliente ${data.customer_id}`,
       data: response.data
     };
   } catch (err) {
     console.error('Error al crear cuenta:', err);
-    throw err;
+    
+    // Mejor manejo de errores para el frontend
+    const errorResponse = {
+      success: false,
+      message: err.response?.data?.message || err.message || 'Error al crear la cuenta',
+      status: err.response?.status,
+      data: err.response?.data
+    };
+    
+    throw errorResponse;
   }
 };
-
 
 
 

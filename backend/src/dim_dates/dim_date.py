@@ -1,4 +1,3 @@
-import datetime
 from src.utils.id_generator import create_id
 
 """
@@ -47,7 +46,7 @@ class DIM_DATE_MODEL:
         self.fiscal_day = fiscal_day
         self.week = week
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Date {self.dateId} {self.fiscal_date} {self.year} {self.month} {self.day} {self.fiscal_year} {self.fiscal_month} {self.fiscal_day} {self.week}"
     
     def mostrar_datos(self):
@@ -81,7 +80,7 @@ class DIM_DATE:
     
     Agregar mas metodos para que sea mas funcional 
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Constructor de la clase DIM_DATE: Define en none todos los atributos
         y los guardara en un diccionario
@@ -97,7 +96,8 @@ class DIM_DATE:
         self.day = None
         self.week = None
     
-    def Create_dim_date_dic(self):
+    
+    def Create_dim_date_dic(self) -> dict[str, str | None]:
         self.dim_date_data = {
                 "dateId": self.dateId,
                 "fiscal_date": self.fiscal_date,

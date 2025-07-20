@@ -68,5 +68,6 @@ class Create():
             
             return True
         except sqlite3.Error as e:
+            object_conecction.close_conexion()
             print(f"Error al insertar la persona: {e}")
             return False

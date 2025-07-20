@@ -20,6 +20,7 @@ import Customers from './pages/personas/Customers.jsx';
 import UserSucces from './pages/personas/UserSucces.jsx';
 import UserRegister from './pages/personas/UseRegister.jsx';
 import Cuenta from './pages/personas/Cuenta.jsx';
+import Panteon from './pages/panteon/PanteoRegistro.jsx';
 //import Navigation from './components/Navigation.jsx';
 
 /**
@@ -64,6 +65,9 @@ function App() {
           <Route path="/personas/Cuenta" element={<Cuenta />} />
           <Route path="/personas/registro" element={<UserRegister />} />
           <Route path="/personas/usuarios" element={<Customers />} />
+
+          <Route path="/panteon/generar" element={<Panteon />} />
+
 
         </Routes>
     </>

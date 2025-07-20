@@ -11,9 +11,9 @@ import { AgregarFechaActual } from '../../utils/add_date';
 import { AgregarFechaFinVacio } from "../../utils/add_date";
 
 /*
-This JavaScript function, capitalizeFirstLetter, takes a string as input and returns a new string
- with the first letter capitalized and the rest of the letters in lowercase. If the input is empty 
- or null, it returns the original value. {UseRegister.jsx:capitalizeFirstLetter}
+  This JavaScript function, capitalizeFirstLetter, takes a string as input and returns a new string
+  with the first letter capitalized and the rest of the letters in lowercase. If the input is empty 
+  or null, it returns the original value. {UseRegister.jsx:capitalizeFirstLetter}
  */
 const capitalizeFirstLetter = (value) => {
   if (!value) return value;
@@ -120,7 +120,6 @@ fecha_nacimiento: yup
   }),
 });
 
-
 /**
  * Componente de registro de usuarios.
  * 
@@ -166,12 +165,14 @@ function UserRegister() {
       };
 
       const response = await AgregarUsuario(requestData);
+
+      console.log("Respuesta del endpoint front:", response.id);
       
-      if (response.data && response.data.id) {
+      if (response.id) {
         setSubmitSuccess(true);
         // Pequeño delay para que el usuario vea el mensaje de éxito
         await new Promise(resolve => setTimeout(resolve, 1500));
-        navigate(`/personas/registro_exito/${response.data.id}`);
+        navigate(`/personas/registro_exito/${response.id}`);
       } else {
         throw new Error('El backend no devolvió un ID de usuario');
       }

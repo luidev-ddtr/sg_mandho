@@ -54,7 +54,7 @@ def create_user():# -> tuple[Any, Literal[400]] | tuple | tuple[Any, Literal[500
         #print(user_json)
         if not user_json:
             return send_error("No se recibieron datos", 400)
-        
+         
         
         estado, mensaje, persona_id = user_options.insert_user(user_json['data'])
         
@@ -102,10 +102,10 @@ def read_information():# -> tuple[Any, Literal[400]] | tuple[Any, Literal[200]] 
         if not request_data:
             return send_error("No se recibieron datos", 400)
         
-        state, message, data = user_options.read_user(request_data['data'])
-        print(state)
+        state, message, data = user_options.read_user(request_data)
+
         if 200 <= state <= 206:
-            print(f'{message}-{data}-{state}')
+            
             return send_success(message, data, 200)
         else:
             return send_error(message, state)
