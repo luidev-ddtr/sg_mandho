@@ -15,7 +15,7 @@ user_route = Blueprint('user_route', __name__)
 Si los entopins llegan a no funcionar probar agregando un / Slash
 """
 @user_route.route('/api/user/create_user/', methods=['POST'])
-def create_user():
+def create_user():# -> tuple[Any, Literal[400]] | tuple | tuple[Any, Literal[500]]:
     """
     Este endpoint se encargara de crear un nuevo usuario aunque no tiene argumentos si se conecta mediante
     la api create
@@ -60,12 +60,10 @@ def create_user():
         
         if 200 <= estado <= 205:
             data = {
-                "success": True,
                 "id": persona_id,
-                "message": mensaje
-            }
+                }
             print(mensaje)
-            return send_success(None, data,estado)
+            return send_success(mensaje, data,estado)
         else:
             print(mensaje)
             return send_error(mensaje, estado)
@@ -78,13 +76,25 @@ def create_user():
 
 
 @user_route.route("/api/user/read_user/", methods=["POST"])  # Sin slash
-def send_info():
+def read_information():# -> tuple[Any, Literal[400]] | tuple[Any, Literal[200]] | tuple | tuple[Any, Literal[500]]:
     """
-    Endpoint de prueba para ver si funciona la configuracion con el backend
+    Este endpoint se centra en manejar 2 casos principales, la lectura de todos los uaurios o de uno solo, 
+    Funcionamiento:
+        Dentro del post se deben agregar los campos dentro del json los caules son el id_usuario, y el filtro
+        ambis son mutuamente excluyentes, por lo qu eno pueden venir los 2 cargados, por ejemplo, el usuario,
+        puede venir solo como texto vacio, y el filtro el cual es un diccionariio, pueder venir vacio tambien o con sus
+        filtros aplicados
+    
+    Args: 
+        data_json (dict): Un diccionario que contiene la información del usuario.
+        El diccionario puede tener la siguiente estructura:
+        {
+            id_user: str, "id del usuario",
+            filters: dict, "filtros para la busqueda de la informacion de la persona"
+        }
     
     Returns:
-        dict: Un diccionario con la información de prueba
-        este diccionario esta serializado para ser Json
+        Retorna un json con la informacion solicitada dependiendo si es solo un usuario o si es la informacion de mas personas
     """
     try:
         request_data = request.json

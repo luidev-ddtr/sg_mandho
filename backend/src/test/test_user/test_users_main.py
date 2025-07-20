@@ -11,12 +11,12 @@ def test_insert_user():
         "fecha_nacimiento": "1990-01-01",
         "fecha_inicio": "2022-01-01",
         "fecha_fin": "",
-        "manzana": "A",
         "calle": "Main Street",
+        "manzana": "A",
         "numero_ext": "123"
     }
     
-    status_code, message = crud.insert_user(user_json)
+    status_code, message, id_user = crud.insert_user(user_json)
     
     assert status_code == 200
     
@@ -36,6 +36,7 @@ def test_insert_user():
     
     assert message == "Se instacio a la persona correctamente"
     
+    assert 18 == len(id_user)
     #assert dates == {
     #         "dateId": "1",
     #         "fiscal_date": "2022-01-01",

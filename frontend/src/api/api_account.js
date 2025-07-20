@@ -52,3 +52,23 @@ export const crearCuenta = async (data) => {
     throw err;
   }
 };
+
+
+
+
+// Funcion para buscar tambien las cuantas asociadas a la personalbar, y mostrar solo como seleccionable la
+// que sea activa Tambien. Lo de las cuentas activas se debera ver desde otro ModuleNode, para que 
+// no se haga un desorden
+export const MostrarCuentas  = async (id_usuario) => {
+  try {
+      const response = await api.post('read_accounts/', id_usuario);
+      return {
+        success: true,
+        message: 'Cuentas obtenidas exitosamente',
+        data: response.data
+      };
+  } catch (err) {
+    console.error('Error en busqueda de cuentas:', err);
+    throw err;  // Relanza el error para manejo superior
+  }
+}

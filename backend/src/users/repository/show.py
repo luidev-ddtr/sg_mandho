@@ -1,12 +1,9 @@
-import sqlite3
-# Aun se debe crear el modulo de coneccion de la abse de datos, para que funciona bien esta parte, ya que como tal 
-# Esto aun no funciona 
-from src.users.repository.bd_prueba import BD_users
-class conexion_db:
-    def conexion():
+from src.utils.conexion import Conexion
 
-        pass
-def read(id_user = None, filters = None) -> list:
+#Se instancia la clase para todas las funciones 
+object_conection = Conexion() 
+
+def read(id_user = str(), filters = {} ) -> list:
     """
     Funcion la cual se encargara de ir a la base de datos y buscar los registro y aplicar filtros segun sean necesarios
     Args:
@@ -35,44 +32,45 @@ def read(id_user = None, filters = None) -> list:
 
     comments:
         Caso 1: Solo hay id_user - Buscar información específica de un usuario
-        Caso 2: Solo hay filters - Aplicar filtros 
-        Caso 3: si los filtros tienen solo el campo ninguno solamente se seleccionaran todos los campos y se enviaran esos datos
+        Caso 2: si los filtros tienen solo el campo ninguno solamente se seleccionaran todos los campos y se enviaran esos datos
+        Caso 3: Solo hay filters - Aplicar filtros 
     """
+    if id_user and filters is None: 
+        
+        query = f"""SELECT * FROM DIM_Customer WHERE DIM_CustomerId  = '{str(id_user)}'"""
+        object_conection.cursor.execute(query)
+        registros = object_conection.cursor.fetchall()
 
-    if id_user and filters is None:
-        # eSTE SERIA EL CODIGO QUE DEBERIA DE TENER
-        # conexion, cursor = conexion_db.conexion()
-        
-        # query = """
-        # SELECT *
-        # FROM DIM_CUSTOMER   
-        # WHERE id = ?
-        # """
-        # cursor.execute(query, (id_user,))
-        # registro = cursor.fetchone()
-        
-        # if not registro:
-        #     print(f"\n⚠️ No se encontró persona con ID {id_user}\n")
-        #     return None
-        
-        # persona = User(**registro)
-        
-        # datos = [persona.__dict__] #Diccionario con la informacion de la persona dentro
-
-        # return datos
-
-        datas = BD_users()
-        for data in datas:
-            if data['id_user'] == id_user:
-                return data  #para los casos reales tenemos que Segir lo que ya se recibe no podemos
-                #simplemente entregar el el formato que se quiere
+        return [registros]
             
-    elif id_user is None and filters is not None:
-
+    elif (filters == {} or filters) and id_user is None:
         if filters == {}:
-            data = BD_users()
-            return data
-        #para los casos reales tenemos que Segir lo que ya se recibe no podemos
-                #simplemente entregar el el formato que se quiere
+            query = """SELECT * FROM DIM_Customer"""
+            object_conection.cursor.execute(query)
+            
+            registros = object_conection.cursor.fetchall()
+            
+            data_format = []
+            #Registros mapeados a como deben de llamarse en el frontend
+            for registro in registros:
+                #Mapeado a como se enviaran en el frontend
+                persona = {
+                    "id_user": registro[0],
+                    "date_id": registro[1],
+                    "first_name": registro[2],
+                    "second_name": registro[3],
+                    "last_name": registro[4],
+                    "second_last_name": registro[5],
+                    "date_of_birth": registro[6],
+                    "date_user_start": registro[7],
+                    "date_user_end": registro[8],
+                    "manzana": registro[9],
+                    "street": registro[10],
+                    "number_ext": registro[11]
+                }
+                data_format.append(persona)
+            return data_format
+        else:
+            pass
     else:
-        return [{}]
+        return []

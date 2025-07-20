@@ -13,6 +13,8 @@ class AccountCrud():
     """
     Clase la cual sera el metodo principal de la parte de cuentas
     contara con todas las funcionalides principales, ya sea crear, actualizar, leer, eliminar
+
+    AUN SE DEBEN CORREGIR VARIOS ERRORES RELACIONADOS CON LA CUENTA Y LOS USUARIOS
     """
     def insert_account(self, account_json = dict[str: str|int]) -> tuple: 
         """
@@ -38,21 +40,23 @@ class AccountCrud():
         if resultado:
             #Creamos la instancia de clases que se ingresaran a la bd
             dim_date = DIM_DATE()
-        
+            dim_role = 
             estado = create_status(account_json["status"]) # Retorna la instancia de la clase DIM_status para que aqui sea donde
                                                     # se inserte en la bd   
-            valido = cuenta.validate_account(account_json["customer_id"])
+            valido = validate_account(account_json["customer_id"])
+
             if estado and dim_date and valido:
                 
                 account_data = {
-                    "dim_account_id": create_id( [account_json["start_date"], account_json["end_date"], None]),
-                    "dim_date_id": dim_date.dateId,
-                    "dim_customer_id": account_json["customer_id"],
-                    "dim_status_id": estado.dim_status_id,
-                    "start_date": account_json["start_date"],
-                    "end_date": account_json["end_date"]
+                    "DIM_AccountId": create_id([account_json["start_date"], account_json["end_date"], None]),
+                    "DIM_DateId": dim_date.DIM_DateId,  # Asumo que dim_date también sigue el mismo patrón de nombres
+                    "DIM_CustomerId": account_json["customer_id"],
+                    "DIM_RoleId": None,  # Añadido ya que es campo obligatorio en el modelo (falta en tu data original)
+                    "DIM_StatusId": estado.DIM_StatusId,  # Asumo que 'estado' sigue el mismo patrón
+                    "StartDate": account_json["start_date"],
+                    "EndDate": account_json["end_date"]
+                    # timestamp se omite para que se genere automáticamente
                 }
-                
                 
                 # Ingresar los datos a la base de datos 
                 cuenta = DIM_account(**account_data)

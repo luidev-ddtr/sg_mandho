@@ -1,7 +1,7 @@
 from src.utils.validate_data import validate_data
 import pytest
 
-def test_validate_data(casos):
+def test_validate_data(casos) -> None:
     for caso in casos:
         result, message = validate_data(caso["data"], caso["fields_required"], caso["type_fields"], caso["from"])
         assert message == caso["message"]

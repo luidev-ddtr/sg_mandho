@@ -5,7 +5,9 @@ from src.utils.validate_data import validate_data
 from src.dim_dates.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
 
+#validaciones del crud
 from src.users.models.user import User
+from src.users.repository.create import Create
 from src.users.repository.show import read
 
 #base_de_datos = BdPrueba()
@@ -19,15 +21,15 @@ class UserCrud:
         """
         Se centrara en la Insersion de un usuario si el usuario cumple con todas las verificaciones se
         pasara, al siguiente flujo (Insertara en la bd)si le falta alguna o esta mal retorna error.
-        
+
         Args:
             user_json (dict): Un diccionario que contiene la información del usuario.
         
         Returns:
             bool: Se retorna true o false
             str: Se retorna un string de error o exito especifico de que falto o si esta bien 
+            str: Se retorna el id del usuario
         """
-
         
         campos_requeridos = ["nombre", "apellido", "fecha_nacimiento", "fecha_inicio", "manzana", "calle"]
         tipo_campos = [str, str, str, str, str, str]
@@ -39,31 +41,35 @@ class UserCrud:
         if es_valido[0]:
             
             user_data = {
-                    "date_id": dim_date_data.dateId,#create_id(),
-                    "id_user": create_id([user_json["nombre"], user_json["apellido"], user_json["manzana"]]),  # Se requiere una lista pare generar el uuid
-                    "first_name": user_json["nombre"],
-                    "second_name": user_json.get("segundo_nombre", "s/n"),
-                    "last_name": user_json["apellido"],
-                    "second_last_name": user_json.get("segundo_apellido", "s/n"),
-                    "date_of_birth": user_json["fecha_nacimiento"],
-                    "date_user_start": user_json["fecha_inicio"],
-                    "date_user_end": user_json.get("fecha_fin", "s/n"),
-                    "user_manzana": user_json.get("manzana", "s/n"),
-                    "user_street": user_json.get("calle", "s/n"),
-                    "user_number_ext": user_json.get("numero_ext", "s/n")
-                }
-            
+                "DIM_CustomerId": create_id([user_json["nombre"], user_json["apellido"], user_json["manzana"]]),
+                "DIM_DateId": dim_date_data.dateId,
+                "CustomerName": user_json["nombre"],
+                "CustomerMiddleName": user_json.get("segundo_nombre") or "s/n",
+                "CustomerLastName": user_json["apellido"],
+                "CustomerSecondLastName": user_json.get("segundo_apellido") or "s/n",
+                "CustomerDateBirth": user_json["fecha_nacimiento"],
+                "CustomerDateStart": user_json["fecha_inicio"],
+                "CustomerDateEnd": user_json.get("fecha_fin") or "s/n",
+                "CustomerAdress": user_json.get("calle") or "s/n",
+                "CustomerFraction": user_json.get("manzana") or "s/n",
+                "CustomerNumberext": user_json.get("numero_ext") or "s/n"
+            }
             
             persona = User(**user_data)
             
-            
+            #BANDERA DE VALIDACION AQUI
             persona.mostrar_datos()
-            #dim_date_registro.mostrar_datos()
             
-            if persona:
-                return 200, "Se instacio a la persona correctamente", persona.id_user  #persona, dim_date_registro
+            object_insert = Create()
+
+            #This method retuns true or false
+            response = object_insert.insert_user(persona)
+            #dim_date_registro.mostrar_datos()
+            print(type(persona.DIM_CustomerId))
+            if response:
+                return 200, "Se instacio a la persona correctamente", persona.DIM_CustomerId  
             else:
-                return 501, "No se pudo guardar la informacion", None#persona, dim_date_registro
+                return 501, "No se pudo guardar la informacion", None
         else:
             return 400, es_valido[1], None
         
@@ -72,7 +78,7 @@ class UserCrud:
         """
         Esta funcion se encargara de leer los usuarios de la base de datos, hara 2 cosas pricipales
         1;- Enviar toda la informacion de la tabla usuarios para ser mostrada en el frontend. Para este caso se planea
-        Que ta,bien se puedan recibir algunos filtros, por ejemplo filtrar por edad, fecha de inicio, etc
+        Que tambien se puedan recibir algunos filtros, por ejemplo filtrar por edad, fecha de inicio, etc
         2;- Enviar la informacion de una persona en especifico para ser mostrada en el frontend
         args:
             data_json (dict): Un diccionario que contiene la información del usuario.
@@ -106,6 +112,7 @@ class UserCrud:
             
             if data_json["id_user"] and data_json['filters'] == {}:
                 # Caso 1: Solo hay id_user - Buscar información específica de un usuario
+                # Solamente se pasa el valor, ya no se pasa el diccionario
                 datos = read(data_json["id_user"], None)
                 
                 if datos:
@@ -113,13 +120,15 @@ class UserCrud:
                 else:
                     return 404, "No se encontró información para este usuario", []
                 
-            elif (data_json["filters"] or not data_json['filters']) and data_json['id_user'] == '':
-                datos = read(None, data_json["filters"])
+            elif data_json["filters"] == {} and data_json['id_user'] == '':
                 
+                datos = read(None, data_json["filters"])
+                print(datos)
                 if datos:
                     return 200, "Se encontraron resultados con estos filtros", datos
                 else:
                     return 404, "No se encontraron resultados con estos filtros", []
+                
                 # Caso 2: Solo hay filters - Aplicar filtros
                 # Aquí llamarías a tu función que maneja los filtros
                 # resultado_filtros = aplicar_filtros(data_json["filters"])

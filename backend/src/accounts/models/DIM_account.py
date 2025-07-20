@@ -1,16 +1,25 @@
+class DIM_Account:
+    def __init__(self, DIM_AccountId, DIM_DateId, DIM_CustomerId, DIM_RoleId, DIM_StatusId, StartDate, EndDate=None, timestamp=None):
+        """
+        Clase que mapea exactamente la tabla DIM_Account de la base de datos.
+        Los nombres de los parámetros coinciden exactamente con los nombres de las columnas.
+        """
+        self.DIM_AccountId = DIM_AccountId
+        self.DIM_DateId = DIM_DateId
+        self.DIM_CustomerId = DIM_CustomerId
+        self.DIM_RoleId = DIM_RoleId
+        self.DIM_StatusId = DIM_StatusId
+        self.StartDate = StartDate
+        self.EndDate = EndDate
+        self.timestamp = timestamp
 
-class DIM_account:
-    def __init__(self, dim_account_id, dim_date_id, dim_customer_id, dim_status_id, start_date, end_date: str="s/n"):
-        """
-        Esta es la clase que mapeara la base de datos, una vez que los datos esten limpios pasan por esta clase la cual 
-        los envia a la base de datos
-        """
-        self.dim_account_id = dim_account_id
-        self.dim_date_id = dim_date_id
-        self.dim_customer_id = dim_customer_id
-        self.dim_status_id = dim_status_id
-        self.start_date = start_date
-        self.end_date = end_date
     def __str__(self):
-        return f"Account {self.dim_account_id} {self.dim_date_id} {self.dim_customer_id} {self.dim_status_id} {self.start_date} {self.end_date}"
-
+        return (f"DIM_Account("
+                f"DIM_AccountId={self.DIM_AccountId}, "
+                f"DIM_DateId={self.DIM_DateId}, "
+                f"DIM_CustomerId={self.DIM_CustomerId}, "
+                f"DIM_RoleId={self.DIM_RoleId}, "
+                f"DIM_StatusId={self.DIM_StatusId}, "
+                f"StartDate={self.StartDate}, "
+                f"EndDate={self.EndDate}, "
+                f"timestamp={self.timestamp})")
