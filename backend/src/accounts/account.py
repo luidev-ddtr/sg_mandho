@@ -4,10 +4,18 @@ from src.dim_dates.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
 
 # importaciones espeficias de insert_account
-from src.accounts.services.get_status import create_status
-from src.accounts.models.DIM_account import DIM_account
+from src.accounts.repository.insert import insert
+from src.accounts.services.validate import validate_account
+from src.accounts.models.DIM_account import DIM_Account
+from src.dim_status.status import DIM_status
+
+#Importaciones de mostrar o leer ceuntas
 from src.accounts.repository.show import show_account
-from src.accounts.services.get_status import validate_account
+#importacion de roles
+from src.dim_roles.role import Role
+
+#Manejadro de los roles para cuenta, ya que es a donde esta asociado
+handler_role = Role()
 
 class AccountCrud():
     """
@@ -40,31 +48,44 @@ class AccountCrud():
         if resultado:
             #Creamos la instancia de clases que se ingresaran a la bd
             dim_date = DIM_DATE()
-            dim_role = 
-            estado = create_status(account_json["status"]) # Retorna la instancia de la clase DIM_status para que aqui sea donde
-                                                    # se inserte en la bd   
+            
+            # Se crea el rol asociado y se obtiene el id
+            valid, dim_role_id, message = handler_role.insert_role(account_json)
+            
+            print(f"El id del rol es: {dim_role_id} {message} {valid}")
+            if not valid:
+                print("Termino porque no era valido al insertr el rol")
+                return 501, message
+            
+            #Estatus sera para ver si el pago ya esta pendiente o pagado, los roles seran los que tomaran la fucniona ctual de estatus
+            estado = DIM_status()
             valido = validate_account(account_json["customer_id"])
 
             if estado and dim_date and valido:
                 
                 account_data = {
-                    "DIM_AccountId": create_id([account_json["start_date"], account_json["end_date"], None]),
-                    "DIM_DateId": dim_date.DIM_DateId,  # Asumo que dim_date también sigue el mismo patrón de nombres
+                    "DIM_AccountId": create_id([account_json["start_date"], account_json["end_date"], account_json["customer_id"]]),
+                    "DIM_DateId": dim_date.dateId, 
                     "DIM_CustomerId": account_json["customer_id"],
-                    "DIM_RoleId": None,  # Añadido ya que es campo obligatorio en el modelo (falta en tu data original)
-                    "DIM_StatusId": estado.DIM_StatusId,  # Asumo que 'estado' sigue el mismo patrón
+                    "DIM_RoleId": dim_role_id,
+                    "DIM_StatusId": estado.get_status_id("","account"),  # Asumo que 'estado' sigue el mismo patrón
                     "StartDate": account_json["start_date"],
                     "EndDate": account_json["end_date"]
                     # timestamp se omite para que se genere automáticamente
                 }
                 
                 # Ingresar los datos a la base de datos 
-                cuenta = DIM_account(**account_data)
+                cuenta = DIM_Account(**account_data)
                 
-                mensaje = "Cuenta creada con exito"
-                return 200, mensaje
+                request, message = insert(cuenta)
+
+                if request:
+                    mensaje = "Cuenta creada con exito"
+                    return 200, mensaje
+                else:
+                    return 501, f"Error inesperado: {message}"
             else:
-                
+                print("Termino por que estado, o dim_date o valido es falso")
                 return 501, mensaje
         else:
             return 400, mensaje

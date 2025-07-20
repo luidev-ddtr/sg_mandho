@@ -41,7 +41,7 @@ class UserCrud:
         if es_valido[0]:
             
             user_data = {
-                "DIM_CustomerId": create_id([user_json["nombre"], user_json["apellido"], user_json["manzana"]]),
+                "DIM_CustomerId": create_id([user_json["nombre"], user_json["apellido"], user_json["fecha_inicio"]]),
                 "DIM_DateId": dim_date_data.dateId,
                 "CustomerName": user_json["nombre"],
                 "CustomerMiddleName": user_json.get("segundo_nombre") or "s/n",
@@ -54,7 +54,6 @@ class UserCrud:
                 "CustomerFraction": user_json.get("manzana") or "s/n",
                 "CustomerNumberext": user_json.get("numero_ext") or "s/n"
             }
-            
             persona = User(**user_data)
             
             #BANDERA DE VALIDACION AQUI
@@ -65,7 +64,6 @@ class UserCrud:
             #This method retuns true or false
             response = object_insert.insert_user(persona)
             #dim_date_registro.mostrar_datos()
-            print(type(persona.DIM_CustomerId))
             if response:
                 return 200, "Se instacio a la persona correctamente", persona.DIM_CustomerId  
             else:
@@ -103,8 +101,6 @@ class UserCrud:
         
         campos_requeridos = ["id_user", "filters"]
         tipo_campos = [str,dict]
-
-        print(f"Respuesta recibida: {data_json}")
         
         respuesta,mensaje = validate_data(data_json, campos_requeridos, tipo_campos, "user") # <--- Retorna boleano y el mensaje del error
         
@@ -123,7 +119,7 @@ class UserCrud:
             elif data_json["filters"] == {} and data_json['id_user'] == '':
                 
                 datos = read(None, data_json["filters"])
-                print(datos)
+                
                 if datos:
                     return 200, "Se encontraron resultados con estos filtros", datos
                 else:

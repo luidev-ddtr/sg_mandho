@@ -68,6 +68,26 @@ function Onboarding04() {
                         text-center
                       "
                     >
+                    
+                    <Link 
+                      to="/personas/Cuenta" 
+                      className="
+                        flex-1 px-4 py-3 md:px-6 md:py-3
+                        bg-white dark:bg-gray-700
+                        border border-gray-300 dark:border-gray-600
+                        text-gray-800 dark:text-gray-200
+                        font-medium rounded-lg
+                        shadow-lg
+                        transition-all duration-300
+                        transform hover:scale-[1.02]
+                        hover:shadow-xl
+                        active:scale-95
+                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
+                        relative overflow-hidden
+                        group
+                        text-center
+                      "
+                    ></Link>
                       <span className="relative z-10 flex items-center justify-center">
                         Ir al menú <span className="ml-1">-&gt;</span>
                       </span>

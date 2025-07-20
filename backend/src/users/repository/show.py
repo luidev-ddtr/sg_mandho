@@ -1,7 +1,5 @@
 from src.utils.conexion import Conexion
-
-#Se instancia la clase para todas las funciones 
-object_conection = Conexion() 
+import sqlite3
 
 def read(id_user = str(), filters = {} ) -> list:
     """
@@ -35,42 +33,55 @@ def read(id_user = str(), filters = {} ) -> list:
         Caso 2: si los filtros tienen solo el campo ninguno solamente se seleccionaran todos los campos y se enviaran esos datos
         Caso 3: Solo hay filters - Aplicar filtros 
     """
-    if id_user and filters is None: 
-        
-        query = f"""SELECT * FROM DIM_Customer WHERE DIM_CustomerId  = '{str(id_user)}'"""
-        object_conection.cursor.execute(query)
-        registros = object_conection.cursor.fetchall()
+    print(f"Id user: {id_user}, Filtros: {filters}")
+    object_conection = Conexion() 
+    try:
+        #Se instancia la clase para todas las funciones  
+        if id_user and filters is None: 
+            conn ,cursor  = object_conection.conexion()
+            query = f"""SELECT * FROM DIM_Customer WHERE DIM_CustomerId  = '{str(id_user)}'"""
+            cursor.execute(query)
+            registros = cursor.fetchall()
+            return [registros]
+                
 
-        return [registros]
-            
-    elif (filters == {} or filters) and id_user is None:
-        if filters == {}:
-            query = """SELECT * FROM DIM_Customer"""
-            object_conection.cursor.execute(query)
-            
-            registros = object_conection.cursor.fetchall()
-            
-            data_format = []
-            #Registros mapeados a como deben de llamarse en el frontend
-            for registro in registros:
-                #Mapeado a como se enviaran en el frontend
-                persona = {
-                    "id_user": registro[0],
-                    "date_id": registro[1],
-                    "first_name": registro[2],
-                    "second_name": registro[3],
-                    "last_name": registro[4],
-                    "second_last_name": registro[5],
-                    "date_of_birth": registro[6],
-                    "date_user_start": registro[7],
-                    "date_user_end": registro[8],
-                    "manzana": registro[9],
-                    "street": registro[10],
-                    "number_ext": registro[11]
-                }
-                data_format.append(persona)
-            return data_format
+        elif (filters == {} or filters) and id_user is None:
+            if filters == {}:
+                conn ,cursor  = object_conection.conexion()
+                query = """SELECT * FROM DIM_Customer"""
+                cursor.execute(query)
+                registros = cursor.fetchall()
+                
+                data_format = []
+                #Registros mapeados a como deben de llamarse en el frontend
+                for registro in registros:
+                    #Mapeado a como se enviaran en el frontend
+                    persona = {
+                        "id_user": registro[0],
+                        "date_id": registro[1],
+                        "first_name": registro[2],
+                        "second_name": registro[3],
+                        "last_name": registro[4],
+                        "second_last_name": registro[5],
+                        "date_of_birth": registro[6],
+                        "date_user_start": registro[7],
+                        "date_user_end": registro[8],
+                        "manzana": registro[9],
+                        "street": registro[10],
+                        "number_ext": registro[11]
+                    }
+                    data_format.append(persona)
+                object_conection.close_conexion()
+                return data_format
+            else:
+                print("No se encontraron registros con los filtros proporcionados")
+                object_conection.close_conexion()
+                pass
         else:
-            pass
-    else:
+            print("Error inesperado")
+            object_conection.close_conexion()
+            return []
+    except sqlite3.Error as e:
+        print(f"Error al realizar la consulta: {e}")
+        object_conection.close_conexion()
         return []

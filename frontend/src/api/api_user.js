@@ -47,8 +47,6 @@ const api = axios.create({
  */
 export const AgregarUsuario = async (data) => { 
     try {
-        console.log("Datos enviados a la API:", data);
-        
         const response = await api.post('create_user/', data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -56,32 +54,26 @@ export const AgregarUsuario = async (data) => {
             }
         });
 
-        console.log("Respuesta del backend:", response.data);
+        console.log("Respuesta completa del backend:", response); // Verifica toda la respuesta
         
-        // Asegúrate de que el backend devuelva el ID en este formato
-        if (response.data && response.data.id) {
-            return response;
+        // Asegúrate de que response.data existe
+        if (!response.data) {
+            throw new Error('No se recibieron datos del backend');
+        }
+
+        // Verifica la estructura esperada
+        if (response.data.status === 'success') {
+            return {
+                id: response.data.body.id,
+            };
         } else {
-            throw new Error('Formato de respuesta inesperado del backend');
+            throw new Error(response.data.message || 'Respuesta inesperada del backend');
         }
     } catch (error) {
         console.error("Error en AgregarUsuario:", error);
-        
-        // Mejor manejo de errores para el frontend
-        if (error.response) {
-            // El servidor respondió con un status code fuera del rango 2xx
-            const backendError = {
-                message: error.response.data?.message || 'Error en el servidor',
-                status: error.response.status,
-                data: error.response.data
-            };
-            throw backendError;
-        } else {
-            throw error;
-        }
+        throw error; // Re-lanza el error para manejarlo en el componente
     }
-};
-
+}
 
 /**
  * Realiza una petición GET a la API para obtener todos los datos de pruba
@@ -121,17 +113,43 @@ export const EnviarCredenciass = (data) => {
 };
 
 
-export const MostrarUsuarios = ( ) => {
+/**
+ * Realiza una petición GET a la API para obtener la lista de usuarios.
+ * 
+ * @returns {Promise<AxiosResponse>} - Promesa que se resuelve con la respuesta del backend, conteniendo los datos de los usuarios.
+ * @throws {Error} - Si ocurre un error durante la petición HTTP.
+ */
 
-    // Usa 'api.get' en lugar de 'axios.get'
-    return api.get('read_user/', {
-        //withCredentials: true, // Solo si usas cookies/sesión
+export const MostrarUsuarios = (data) => {
+    return api.post('read_user/', data, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
+    })
+    .then(response => {
+        console.log("Respuesta completa del backend:", response);
+        
+        // Asegúrate que response.data existe
+        if (!response.data) {
+            throw new Error('No se recibieron datos del backend');
+        }
+
+        // Verifica la estructura esperada
+        if (response.data.status === 'success') {
+            return {
+                data: response.data.body,
+                // Agrega otros campos si son necesarios
+            };
+        } else {
+            throw new Error(response.data.message || 'Respuesta inesperada del backend');
+        }
+    })
+    .catch(error => {
+        console.error("Error en MostrarUsuarios:", error);
+        throw error; // Re-lanza el error para manejarlo en el componente
     });
-} 
+};
 
 
 export const MostrarUsuarios1 = ( ) => {

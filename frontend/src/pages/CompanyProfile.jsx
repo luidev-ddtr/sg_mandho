@@ -6,7 +6,7 @@ import JobListItem from '../partials/job/JobListItem';
 
 import CompanyImage from '../images/company-icon-01.svg';
 import CompanyBg from '../images/company-bg.jpg';
-import { getAlldata } from '../api/api_user';
+//import { getAlldata } from '../api/api_user';
 
 
 /**
@@ -22,9 +22,9 @@ import { getAlldata } from '../api/api_user';
 
 function CompanyProfile() {
 
-  const data = getAlldata();
+  //const data = getAlldata();
 
-  console.log(data);
+  //console.log(data);
 
   const items = [
     // Group 1

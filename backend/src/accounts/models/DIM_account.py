@@ -11,7 +11,6 @@ class DIM_Account:
         self.DIM_StatusId = DIM_StatusId
         self.StartDate = StartDate
         self.EndDate = EndDate
-        self.timestamp = timestamp
 
     def __str__(self):
         return (f"DIM_Account("
@@ -21,5 +20,4 @@ class DIM_Account:
                 f"DIM_RoleId={self.DIM_RoleId}, "
                 f"DIM_StatusId={self.DIM_StatusId}, "
                 f"StartDate={self.StartDate}, "
-                f"EndDate={self.EndDate}, "
-                f"timestamp={self.timestamp})")
+                f"EndDate={self.EndDate} ")
