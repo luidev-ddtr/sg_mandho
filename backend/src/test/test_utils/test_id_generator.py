@@ -1,7 +1,7 @@
 from src.utils.id_generator import create_id
 
 
-def test_create_id():
+def test_create_id() -> None:
     """
     Este test solo funciona para generar los id, sin embargo si alguno de los datos que se 
     ingresan, son por ejemplo numericos (no alcanzara a rellenar los 3 espacios que le deriuan tocar, por lo

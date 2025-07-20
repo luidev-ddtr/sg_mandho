@@ -1,9 +1,11 @@
 // src/components/BarraBusquedaAutomatica.js
 import React, { useState, useEffect } from 'react';
 import { useDebounce } from '../../utils/useDebounce';
-import { buscarClientes, formatDate } from '../../api/api_account';
+import { formatDate } from '../../api/api_account';
+import { buscarClientes } from '../../api/api_busqueda_persona';
 
 const BarraBusquedaAutomatica = ({ 
+  name = 'cliente',
   register, 
   errors, 
   setValue, 
@@ -47,7 +49,7 @@ const BarraBusquedaAutomatica = ({
       alert(client.reason || 'Este usuario no está disponible');
       return;
     }
-    
+    setValue(name, client.id)
     setSelectedClient(client);
     setValue('cliente', client.nombre_completo);
     setSearchResults([]);
@@ -158,9 +160,9 @@ const BarraBusquedaAutomatica = ({
                           <div className="text-gray-800 dark:text-gray-200 font-medium">
                             {persona.nombre_completo}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {/* <div className="text-xs text-gray-500 dark:text-gray-400">
                             ID: {persona.id}
-                          </div>
+                          </div> */}
                         </td>
                         <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
                           {persona.direccion}

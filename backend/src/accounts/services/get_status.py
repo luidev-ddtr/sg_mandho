@@ -1,6 +1,8 @@
 #from src.account.models.DIM_account import DIM_account
 from src.accounts.models.DIM_status import DIM_status
+from src.utils.conexion import Conexion
 
+object_connection = Conexion()
 
 def create_status(status: str) -> DIM_status:
     """
@@ -36,8 +38,11 @@ def validate_account(user_id: str) -> bool:
     returns:
         bool: retorna false si se pasa el limite de cuentas, si no retorna false
     """
+
     #Se hace la conexion
-    n_cuentas = 0
+    query = f"SELECT COUNT(*) FROM DIM_account WHERE DIM_CustomerId = '{user_id}'"
+    n_cuentas = object_connection.cursor.execute(query)[0][0]
+    
     if n_cuentas < 10:
         return True
     else:

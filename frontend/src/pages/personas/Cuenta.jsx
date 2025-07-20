@@ -5,11 +5,12 @@ import * as yup from 'yup';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../partials/SideBar';
 import Header from "../../partials/Header";
-import BarraBusquedaAutomatica from '../../components/customers/BarraBusqueda';
+import BarraBusquedaAutomatica  from '../../components/customers/BarraBusqueda';
 import { crearCuenta } from '../../api/api_account';
 
 // Esquema de validación con Yup
 const accountSchema = yup.object().shape({
+  clienteId: yup.string().required('Debe seleccionar un cliente'),
   estadoPersona: yup.string()
     .required('Debe seleccionar un estado para la persona')
     .oneOf([
@@ -40,6 +41,9 @@ const accountSchema = yup.object().shape({
  * Form Fields:
  * - estadoPersona: The state of the person, selected from predefined options.
  * - fechaCreacion: The account creation date, automatically set to current date.
+ * 
+ * -modificaciones, Se actuaizo para que tambien se mande el id del ciente seleccionado, ademas de que se tiene que validar si se eliguio a una\
+ * persona correctamente
  */
 
 function Cart() {
@@ -49,6 +53,7 @@ function Cart() {
 
   // Configuración de react-hook-form
   const { 
+    name = 'cliente', // Valor por defecto
     register, 
     handleSubmit, 
     setValue,
@@ -65,17 +70,28 @@ function Cart() {
   // Seleccionar cliente de los resultados
   const selectClient = (client) => {
     setSelectedClient(client);
-    setValue('cliente', client.nombre);
+    setValue('clienteId', client.id); // Guarda el ID para el formulario
+    setValue('clienteNombre', client.nombre_completo); // Opcional: para mostrar
   };
 
   // Manejar envío del formulario
   //Aun no se ha asigando a donde se movera cuando se cree la cuenta correctamnete
   //MOidicar despues 
   const onSubmit = async (data) => {
+    if (!selectedClient) {
+      alert('Debe seleccionar un cliente');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
-      const response = await crearCuenta(data);
+      const payload = {
+        ...data,
+        cliente: selectedClient.id // Asegúrate que el backend espera esto
+      };
+      
+      const response = await crearCuenta(payload);
       alert(response.message);
       reset();
       setSelectedClient(null);
@@ -104,6 +120,7 @@ function Cart() {
                   {/* Sección Cliente con Buscador */}
                   {/* Sección Cliente con Buscador Automático */}
                   <BarraBusquedaAutomatica 
+                    name="clienteId" // Nuevo prop
                     register={register}
                     errors={errors}
                     setValue={setValue}

@@ -27,34 +27,8 @@ CORS(app, resources={
         "methods": ["GET", "POST", "PUT", "OPTIONS"],
         "allow_headers": ["Content-Type"],
         "supports_credentials": False
-
-    },
-    r"/auth/*": {
-        "origins": [os.getenv('URL_FRONTEND')],
-        "methods": ["POST"],
-        "allow_headers": ["Authorization", "Content-Type"],
-        "supports_credentials": False  
     }
 })
-
-@app.route('/')
-def home() -> tuple[Response, Literal[200]]:
-    """
-    Solo devuelve un mensaje de prueba para saber si el servidor esta online
-    Args:
-        None    
-    Returns:
-        tuple[Response, Literal[200]]
-    """
-    return jsonify({'message':"¡Funciona!",
-                    "index": {
-                        "nose": {
-                            "inge": [12,4,64,22,4,2,4],
-                            'valido': True,
-                        }
-                    },
-                    "final": ("si", True),
-                    }),200
 
 
 if __name__ == '__main__':

@@ -67,4 +67,5 @@ def read_account() -> tuple[Response, Literal[400]] | tuple[Response, int] | tup
             else:
                 return send_error(mensaje, estado)
     except Exception as e:
+        print(e)
         return send_error(str(e), 500)
