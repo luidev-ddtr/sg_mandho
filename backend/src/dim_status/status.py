@@ -1,3 +1,4 @@
+from typing import Any, Never
 from src.utils.conexion import Conexion
 class DIM_status:
     """Esta clase tendra la unica funcion de devolder el id asociado a un nombre , de estado, por ejemplo
@@ -6,8 +7,9 @@ class DIM_status:
     """
 
     def __init__(self) -> None:
-        StatusName = None
-        StatusId = None
+        self.StatusName = None
+        self.StatusId = None
+        self.conexion = None
 
     def get_status_id(self, StatusName: str, from_message: str) -> int:
         """
@@ -40,3 +42,29 @@ class DIM_status:
 
             self.conexion.close_conexion()
             return StatusId[0]
+        
+    def get_status(self, id) -> tuple[tuple[Any], Any] | tuple[()]:
+        """
+        Funcion la cual obtendra el registro del estado segun su id
+        Args:
+            id (int): Id del estado
+        Returns:
+            object: Objeto con la informacion del estado
+        """ 
+
+        self.conexion = Conexion()
+
+        query = f"SELECT * FROM DIM_status WHERE DIM_StatusId = ?"
+
+        self.conexion.cursor.execute(query, (id,))
+
+        status = self.conexion.cursor.fetchone()
+
+        self.conexion.close_conexion()
+
+        if status:
+            self.StatusId = status[0],
+            self.StatusName = status[1] 
+            return  self.StatusId , self.StatusName
+        else:
+            return ()

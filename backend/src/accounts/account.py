@@ -11,6 +11,8 @@ from src.dim_status.status import DIM_status
 
 #Importaciones de mostrar o leer ceuntas
 from src.accounts.repository.show import show_account
+from src.accounts.services.validate import convertir_a_formato_legible
+
 #importacion de roles
 from src.dim_roles.role import Role
 
@@ -90,44 +92,86 @@ class AccountCrud():
         else:
             return 400, mensaje
         
-    
-    def read_account(self, persona_id = str) -> tuple[int, str, list]:
+        
+    def read_account(self, persona_id: str = None) -> tuple[int, str, list]:
         """
-        Esta funcion es simple, solamente retornara cuentas, y si no el string que recibe 
-        es none o vacio retornara todas las cuentas, y si si tiene un id valido retornara la informacion
-        de esa cuenta
+        Esta función retorna información de cuentas. Puede manejar tres escenarios:
+        1. Cuando no se proporciona ID (None) - Retorna todas las cuentas
+        2. Cuando se proporciona un ID vacío ("") - Retorna todas las cuentas
+        3. Cuando se proporciona un ID válido - Retorna información específica de esa cuenta
+
+        La información se retorna en un formato legible para el cliente, donde los IDs
+        son reemplazados por información descriptiva cuando es necesario.
 
         Args:
-            persona_id (str): El id de la cuenta que se desea mostrar
+            persona_id (str, optional): El id de la cuenta que se desea mostrar. 
+                                    Si es None o vacío (""), retorna todas las cuentas.
+                                    Defaults to None.
 
         Returns:
-            int: Se retorna un codigo de error o exito
-            str: Se retorna un string de error o exito especifico de que falto o si esta bien
-            list: Se retorna un alista la cual debe contener en su interior los diccionarios que contengan la ifnomaccion de las cuentas asociadas
-            se debe respetar este formato, ya que es asi como se pide en el frontend
+            tuple: Contiene tres elementos:
+                - int: Código de estado (200 para éxito, 400 para error)
+                - str: Mensaje descriptivo del resultado
+                - list: Lista de diccionarios con información de las cuentas, 
+                        cada diccionario contiene:
+                        {
+                            "DIM_AccountId": str,  # ID de la cuenta
+                            "DIM_DateId": str,     # Información legible de fecha
+                            "customer_id": str,    # ID del cliente
+                            "DIM_RoleId": str,     # Rol legible (ej: "Admin", "Usuario")
+                            "DIM_StatusId": str,  # Estado legible (ej: "Activo", "Inactivo")
+                            "startDate": str,      # Fecha de inicio en formato YYYY-MM-DD
+                            "endDate": str,        # Fecha de fin en formato YYYY-MM-DD
+                        }
+                        
+                        Si no se encuentran cuentas, retorna lista vacía []
+
+        Ejemplo de retorno exitoso:
+            (200, "Datos obtenidos correctamente", [
+                {
+                    "DIM_AccountId": "1qwger$whtwefa",
+                    "DIM_DateId": "Enero 2022 - Diciembre 2022",
+                    "customer_id": "weargsrheynbFGTGFHTWRg",
+                    "DIM_RoleId": "Administrador",
+                    "DIM_StatusId": "Activo",
+                    "startDate": "2022-01-01", 
+                    "endDate": "2022-12-31",
+                }
+                # ... más registros
+            ])
+
+        Ejemplo de error:
+            (400, "No se encontraron cuentas", [])
         """
         campos_requeridos = ["id_user"]
         tipo_campos = [str]
         esvalido, mensaje = validate_data(persona_id, campos_requeridos, tipo_campos, "account")
         
         if esvalido:
-            if persona_id['id_user'] == "":
+            if persona_id is None or persona_id.get('id_user', "") == "":
+                # Caso: Mostrar todas las cuentas
                 datos = show_account(None)
                 if datos:
-                    return 200, mensaje, datos
-                else:
-                    mensaje = "No se encontraron cuentas"
-                    return 400, mensaje, [] 
-                
-            elif persona_id['id_user']:
-                datos = show_account(persona_id['id_user'])
-
-                if datos:
-                    return 200, mensaje, datos
+                    # Aquí se transformarían los IDs a información legible
+                    datos_legibles = convertir_a_formato_legible(datos)
+                    if datos_legibles:
+                        return 200, "Todas las cuentas obtenidas correctamente", datos_legibles
+                    else:
+                        mensaje = "Ocurrio un error mientras se buscaban los datos "
+                        return 400, mensaje, []
                 else:
                     mensaje = "No se encontraron cuentas"
                     return 400, mensaje, []
+                
+            elif persona_id['id_user']:
+                # Caso: Mostrar cuenta específica
+                datos = show_account(persona_id['id_user'])
+                if datos:
+                    # Aquí se transformarían los IDs a información legible
+                    datos_legibles = convertir_a_formato_legible(datos)
+                    return 200, "Cuenta obtenida correctamente", datos_legibles
+                else:
+                    mensaje = "No se encontró la cuenta especificada"
+                    return 400, mensaje, []
         else:
             return 400, mensaje, []
-
-    

@@ -77,14 +77,27 @@ export const crearCuenta = async (data) => {
   }
 };
 
-
-
 // Funcion para buscar tambien las cuantas asociadas a la personalbar, y mostrar solo como seleccionable la
 // que sea activa Tambien. Lo de las cuentas activas se debera ver desde otro ModuleNode, para que 
 // no se haga un desorden
+// Ejemplo de como se llegarian las cuentas en la funcion
+//         Ejemplo de retorno exitoso:
+//             data: 
+//                    {"success": true, message: "Datos obtenidos correctamente", [
+//                 {
+//                     "DIM_AccountId": "1qwger$whtwefa",
+//                     "customer_id": "juanito torres cruz",
+//                     "DIM_RoleId": "Administrador",
+//                     "DIM_StatusId": "Activo",
+//                     "startDate": "2022-01-01", 
+//                     "endDate": "2022-12-31",
+//                 }
+//                 # ... más registros
+//             ]
+//                }
 export const MostrarCuentas  = async (id_usuario) => {
   try {
-      const response = await api.post('read_accounts/', id_usuario);
+      const response = await api.post('read/', id_usuario);
       return {
         success: true,
         message: 'Cuentas obtenidas exitosamente',

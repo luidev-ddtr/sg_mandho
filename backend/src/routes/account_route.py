@@ -6,7 +6,9 @@ from flask.wrappers import Response
 from src.accounts.account import AccountCrud
 from src.users.user import UserCrud
 
-from src.routes.handle_message import send_error, send_success 
+from src.routes.handle_message import send_error, send_success
+
+#Importaciones para crear cuenta
 
 account_options = AccountCrud()
 personas = UserCrud()
@@ -53,18 +55,18 @@ def read_account() -> tuple[Response, Literal[400]] | tuple[Response, int] | tup
 
     """
     try:
-        if request.method == 'POST':
-            account_json = request.json
+        account_json = request.json
 
-            if not account_json:
-                return send_error("No se recibieron datos", 400)
-            
-            persona_id = account_json['id_user']
-            estado, mensaje, datos = account_options.read_account(persona_id)
-            if 200 <= estado <= 205:
-                return send_success(mensaje,datos, estado)
-            else:
-                return send_error(mensaje, estado)
+        if not account_json:
+            return send_error("No se recibieron datos", 400)
+        
+        persona_id = account_json['id_user']
+        
+        estado, mensaje, datos = account_options.read_account(persona_id)
+        if 200 <= estado <= 205:
+            return send_success(mensaje,datos, estado)
+        else:
+            return send_error(mensaje, estado)
     except Exception as e:
         print(e)
         return send_error(str(e), 500)

@@ -19,7 +19,7 @@
       "longDescription": "Formulario completo para registrar nuevos residentes incluyendo datos personales, información de contacto y documentación relevante."
     }, 
     {
-      "path": "/personas/cuenta",
+      "path": "/cuentas/cuenta",
       "label": "Gestión de Cuentas",
       "shortDescription": "Vincula cuentas a residentes",
       "icon": "👤",

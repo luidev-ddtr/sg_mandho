@@ -1,4 +1,5 @@
 from src.utils.conexion import Conexion
+from src.users.models.user import User
 import sqlite3
 
 def read(id_user = str(), filters = {} ) -> list:
@@ -81,6 +82,60 @@ def read(id_user = str(), filters = {} ) -> list:
             print("Error inesperado")
             object_conection.close_conexion()
             return []
+    except sqlite3.Error as e:
+        print(f"Error al realizar la consulta: {e}")
+        object_conection.close_conexion()
+        return []
+    
+def get_user(id_user = str()):# -> list:
+    """
+    Funcion para optener la informacion de un usuario en especifico
+    Args:
+        id_user (str, optional): Id del usuario. Defaults to None.
+    Returns:
+        list: Con el registro encontrado o error en caso contrario
+    """
+
+    print(f"Id user: {id_user}")
+
+    object_conection = Conexion() 
+    
+
+    try:
+        # Se instancia la clase para todas las funciones  
+        conn, cursor = object_conection.conexion()
+
+        # Usando parámetros seguros para evitar SQL injection
+        query = "SELECT * FROM DIM_Customer WHERE DIM_CustomerId = ?"
+        cursor.execute(query, (id_user,))
+
+        registros = cursor.fetchall()
+        object_conection.close_conexion()
+
+        if registros:  # Si se encontraron resultados
+            # Tomamos el primer registro (asumiendo búsqueda por ID devuelve solo 1)
+            primer_registro = registros[0]
+            
+            # Mapeo manual de la tupla a los parámetros de User
+            # IMPORTANTE: Asegúrate que el orden de las columnas coincide con tu SELECT *
+            registro = User(
+                DIM_DateId=primer_registro[0],
+                DIM_CustomerId=primer_registro[1],
+                CustomerName=primer_registro[2],
+                CustomerMiddleName=primer_registro[3],
+                CustomerLastName=primer_registro[4],
+                CustomerSecondLastName=primer_registro[5],
+                CustomerDateBirth=primer_registro[6],
+                CustomerDateStart=primer_registro[7],
+                CustomerDateEnd=primer_registro[8],
+                CustomerFraction=primer_registro[9],
+                CustomerAdress=primer_registro[10],
+                CustomerNumberext=primer_registro[11]
+            )
+            return registro  # Devuelve el objeto User directamente
+        else:
+            return []  # O puedes lanzar una excepción si lo prefieres
+    
     except sqlite3.Error as e:
         print(f"Error al realizar la consulta: {e}")
         object_conection.close_conexion()
