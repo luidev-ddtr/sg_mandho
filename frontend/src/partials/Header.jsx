@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SearchModal from '../components/ModalSearch';
 import UserMenu from '../components/DropdownProfile';
+import ThemeToggle from '../components/ThemeToggle';
 
 function Header({
   sidebarOpen,
@@ -71,7 +72,7 @@ El diseño debe transmitir espiritualidad, simplicidad, respeto y ser adaptable 
 
             {/* Divider más alto para coincidir con el header */}
             <hr className="w-px h-8 bg-gray-200 dark:bg-gray-700/60 border-none" />
-            
+            <ThemeToggle />
             {/* UserMenu - No necesita cambios ya que se adaptará */}
             <UserMenu align="right" />
           </div>

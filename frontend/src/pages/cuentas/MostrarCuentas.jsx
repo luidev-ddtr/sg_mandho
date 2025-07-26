@@ -13,8 +13,10 @@ function Customers() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/*******  1479148a-031d-488a-a64f-6a43f1bdacf5  *******/
+/**
+ * Handles selected items from the customers table and updates state.
+ * @param {object[]} selectedItems - An array of objects with `id` and `name` properties
+ */
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };

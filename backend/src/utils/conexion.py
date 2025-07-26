@@ -94,7 +94,7 @@ class Conexion:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-            print("Conexión cerrada correctamente. (desde método cerrar_conexion)")
+            print("Cerrado: Desde clase conexion ")
         except sqlite3.Error as e:
             print(f"Error al cerrar la conexión: {e}")
             raise

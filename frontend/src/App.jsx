@@ -19,8 +19,11 @@ import DynamicModule from './pages/DynamicModule.jsx';
 import Customers from './pages/personas/Customers.jsx'; 
 import UserSucces from './pages/personas/UserSucces.jsx';
 import UserRegister from './pages/personas/UseRegister.jsx';
-import Cuenta from './pages/personas/Cuenta.jsx';
 import Panteon from './pages/panteon/PanteoRegistro.jsx';
+
+//Cuentas modulo
+import Cuenta from './pages/cuentas/Cuenta.jsx';
+import mosntrarCuentas from './pages/cuentas/MostrarCuentas.jsx';
 //import Navigation from './components/Navigation.jsx';
 
 /**
@@ -62,11 +65,13 @@ function App() {
           <Route path="/modulo/:moduleName" element={<DynamicModule />} />
 
           <Route path="/personas/registro_exito/:id" element={<UserSucces />} />
-          <Route path="/personas/Cuenta" element={<Cuenta />} />
           <Route path="/personas/registro" element={<UserRegister />} />
           <Route path="/personas/usuarios" element={<Customers />} />
 
           <Route path="/panteon/generar" element={<Panteon />} />
+
+          <Route path="/cuentas/mostrar" element={<mosntrarCuentas />} />
+          <Route path="/Cuentas/Cuenta" element={<Cuenta />} />
 
 
         </Routes>

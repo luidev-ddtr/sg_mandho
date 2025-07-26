@@ -7,6 +7,7 @@ from src.utils.id_generator import create_id
 
 from src.dim_roles.models.DIM_role import DIM_ROLE
 from src.dim_roles.repository.create import insert_role
+
 class Role:
     """"
     Clase la cual manejara los roles de los usuarios, tendra asociaciones con cuenta y con la tabla rol
@@ -54,7 +55,7 @@ class Role:
             return False, "","No se puede crear un rol con start date y end date"
         
         role_format = {
-            "DIM_RoleID": create_id([role_data["status"], role_data["customer_id"], roles[role_data["status"]]]),
+            "DIM_RoleID": create_id([role_data["status"], role_data["customer_id"], role_data["start_date"]]),  # Esto garantiza que solo se puedan agregar 1 cuenta asociada por dia
             "RoleName": role_data["status"],
             "RoleType": roles[role_data["status"]],
             "RoleStartDate": role_data["start_date"],

@@ -1,4 +1,8 @@
-def show_account(account_id: str|None) -> dict[str, str]:
+from typing import Any
+
+from src.utils.conexion import Conexion
+from src.accounts.models.DIM_account import DIM_Account
+def show_account(account_id: str|None) -> list[DIM_Account]|list[Any]:
     """
     Funcion la cual se engara de obtener la informacion de la cuenta que se desea mostrar
     recibe un parametro si el parametro es none devuelve toda la informacion de las cuentas
@@ -13,3 +17,21 @@ def show_account(account_id: str|None) -> dict[str, str]:
     constrains:
             Si no se encuentra el id se retorna un diccionario vacio
     """
+
+    if account_id is None:
+        conecion = Conexion()
+
+        query = f"SELECT * FROM DIM_Account"
+        conecion.cursor.execute(query)
+
+        account = conecion.cursor.fetchone()
+
+        conecion.close_conexion()
+        print("Datos crudos de la bd: ", account)
+        if account:
+            accounst = []
+            for i in range(len(account)):
+                accounst.append(DIM_Account(account[0], account[1], account[2], account[3], account[4], account[5], account[6]))
+            return accounst
+        else:
+            return []
