@@ -78,10 +78,12 @@ CREATE TABLE DIM_Service (
 -- Tabla DIM_ServiceDetails
 CREATE TABLE DIM_ServiceDetails (
     DIM_ServiceDetailsId TEXT PRIMARY KEY,
-    DIM_DateId INTEGER,
+    DIM_DateId TEXT,
     DIM_ServiceId TEXT,
     ServiceDetailesType TEXT,
-    amount REAL,
+    amount REAL CHECK (amount >= 0),
+	StartDate TEXT NOT NULL,
+    EndDate TEXT NOT NULL, --Los pagos son anuales, ya se conce por defecto la fecha en la que se se vence el pago
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
     FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
     FOREIGN KEY (DIM_ServiceId) REFERENCES DIM_Service(DIM_ServiceId)
@@ -90,11 +92,11 @@ CREATE TABLE DIM_ServiceDetails (
 -- Tabla DIM_ServiceOwners
 CREATE TABLE DIM_ServiceOwners (
     DIM_ServiceOwnersId TEXT PRIMARY KEY,
-    DIM_DateId INTEGER,
+    DIM_DateId TEXT,
     DIM_ServiceId TEXT,
     DIM_CustomerId TEXT,
-    StartDate TEXT,
-    EndDate TEXT,
+    StartDate TEXT NOT NULL,
+    EndDate TEXT DEFAULT 's/n',
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
     FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
     FOREIGN KEY (DIM_ServiceId) REFERENCES DIM_Service(DIM_ServiceId),
@@ -111,12 +113,12 @@ CREATE TABLE DIM_Movement (
 -- Tabla FACT_Revenue
 CREATE TABLE FACT_Revenue (
     FACT_RevenueId TEXT PRIMARY KEY,
-    DIM_DateId INTEGER,
+    DIM_DateId TEXT,
     DIM_AccountId TEXT,
     DIM_ServiceDetailsId TEXT,
     DIM_MovementId TEXT,
     DIM_StatusId TEXT,
-    amount REAL,
+    amount REAL NOT NULL,
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
     FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
     FOREIGN KEY (DIM_AccountId) REFERENCES DIM_Account(DIM_AccountId),
@@ -125,7 +127,8 @@ CREATE TABLE FACT_Revenue (
     FOREIGN KEY (DIM_StatusId) REFERENCES DIM_Status(DIM_StatusId)
 );
 
---Hasta aqui se modificon las tablas
+--se modificaron 3 tablas puesto que tenian algunos campos con tipos de datos incorrectos, asi como la tabla DIM_ServiceDetails que no tenia el campo StartDate y EndDate
+
 --INSERSION DE DATOS PREDEFINIDOS EN DIM_STATUS
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status1', 'activo');
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status2', 'inactivo');
