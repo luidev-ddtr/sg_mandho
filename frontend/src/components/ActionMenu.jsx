@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ModalBlank from './ModalBlank'; // Asegúrate de importar tu componente Modal
+import ModalBlank from './ModalBlank';
+import AccountsTableModal from './accounts/AccounsTable'; // Importa el componente de cuentas
 
-function ActionMenu({ userId, onEdit, onDelete }) {
+function ActionMenu({ userId, onEdit, onDelete, id_user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [accountsModalOpen, setAccountsModalOpen] = useState(false); // Estado para el modal de cuentas
   const menuRef = useRef(null);
 
   // Cerrar el menú al hacer clic fuera
@@ -30,7 +32,7 @@ function ActionMenu({ userId, onEdit, onDelete }) {
       >
         <span className="sr-only">Menu</span>
         <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
-          <circle cx="16" cy="16" r="2" />
+          <circle cx="16" cy="16" r="2" /> 
           <circle cx="10" cy="16" r="2" />
           <circle cx="22" cy="16" r="2" />
         </svg>
@@ -63,11 +65,11 @@ function ActionMenu({ userId, onEdit, onDelete }) {
             className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={(e) => {
               e.stopPropagation();
+              setAccountsModalOpen(true);
               setIsOpen(false);
-              // Aquí puedes agregar otra acción
             }}
           >
-            Otra acción
+            Ver Cuentas
           </button>
         </div>
       )}
@@ -149,6 +151,14 @@ function ActionMenu({ userId, onEdit, onDelete }) {
           </div>
         </div>
       </ModalBlank>
+
+      {/* Modal de Ver Cuentas */}
+      {accountsModalOpen && (
+        <AccountsTableModal 
+          id_user={id_user} // Pasamos el id_user como prop
+          onClose={() => setAccountsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

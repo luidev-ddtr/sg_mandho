@@ -95,16 +95,68 @@ export const crearCuenta = async (data) => {
 //                 # ... más registros
 //             ]
 //                }
-export const MostrarCuentas  = async (id_usuario) => {
+export const MostrarCuentas = async (filters) => {
   try {
-      const response = await api.post('read/', id_usuario);
+    const { id_user, status } = filters || {};
+    
+    if (!id_user) {
       return {
         success: true,
-        message: 'Cuentas obtenidas exitosamente',
-        data: response.data
+        message: 'ID de usuario no proporcionado',
+        data: { body: [] }
       };
+    }
+
+    const response = await api.post('read/', { id_user });
+    
+    // Si la respuesta es un array vacío o no tiene body
+    if (Array.isArray(response.data) && response.data.length === 0) {
+      return {
+        success: true,
+        message: 'El usuario no tiene cuentas asociadas',
+        data: { body: [] }
+      };
+    }
+
+    // Obtener las cuentas del formato de respuesta
+    let cuentas = [];
+    if (response.data && Array.isArray(response.data.body)) {
+      cuentas = response.data.body;
+      console.log('Cuentas obtenidas: desde la api xdxd', cuentas);
+    } else if (Array.isArray(response.data)) {
+      cuentas = response.data;
+    }
+
+    // Filtrar por estado activo si se especificó
+    let cuentasFiltradas = cuentas;
+    if (status) {
+      const estadoBuscado = status.toLowerCase();
+      cuentasFiltradas = cuentas.filter(cuenta => 
+        cuenta.DIM_StatusId?.toLowerCase() === estadoBuscado
+      );
+    }
+
+    return {
+      success: true,
+      data: { body: cuentasFiltradas }
+    };
+    
   } catch (err) {
-    console.error('Error en busqueda de cuentas:', err);
-    throw err;  // Relanza el error para manejo superior
+    console.error('Error en búsqueda de cuentas:', err);
+    
+    // Manejo específico para error 404
+    if (err.response?.status === 404) {
+      return {
+        success: true,
+        message: 'El usuario no tiene cuentas asociadas',
+        data: { body: [] }
+      };
+    }
+    
+    return {
+      success: false,
+      message: err.response?.data?.message || err.message || 'Error al obtener cuentas',
+      data: { body: [] }
+    };
   }
-}
+};

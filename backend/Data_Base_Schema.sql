@@ -51,21 +51,6 @@ CREATE TABLE DIM_Customer (
     FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId)
 );
 
--- Tabla DIM_Service
-CREATE TABLE DIM_Service (
-    DIM_ServiceId TEXT PRIMARY KEY,
-    ServiceName TEXT NOT NULL,
-    amount REAL NOT NULL CHECK(amount >= 0),
-    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
-);
-
--- Tabla DIM_Movement
-CREATE TABLE DIM_Movement (
-    DIM_MovementId TEXT PRIMARY KEY,
-    MovementName TEXT NOT NULL,
-    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
-);
-
 -- Tabla DIM_Account
 CREATE TABLE DIM_Account (
     DIM_AccountId TEXT PRIMARY KEY,
@@ -82,42 +67,99 @@ CREATE TABLE DIM_Account (
     FOREIGN KEY (DIM_StatusId) REFERENCES DIM_Status(DIM_StatusId)
 );
 
--- Tabla FACT_Revenue
-CREATE TABLE FACT_Revenue (
-    FACT_RevenueId TEXT PRIMARY KEY,
-    DIM_DateId TEXT NOT NULL,
-    DIM_AccountId TEXT NOT NULL,
-    DIM_ServiceId TEXT NOT NULL,
-    DIM_MovementId TEXT NOT NULL,
-    DIM_StatusId TEXT NOT NULL,
-    amount REAL NOT NULL CHECK(amount >= 0),
-    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
-    FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
-    FOREIGN KEY (DIM_AccountId) REFERENCES DIM_Account(DIM_AccountId),
-    FOREIGN KEY (DIM_ServiceId) REFERENCES DIM_Service(DIM_ServiceId),
-    FOREIGN KEY (DIM_MovementId) REFERENCES DIM_Movement(DIM_MovementId),
-    FOREIGN KEY (DIM_StatusId) REFERENCES DIM_Status(DIM_StatusId)
+--Se modificaron desde aqui las para agregar modificaciones de servicios y movimientos
+-- Tabla DIM_Service
+CREATE TABLE DIM_Service (
+    DIM_ServiceId TEXT PRIMARY KEY,
+    ServiceName TEXT,
+    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
 );
 
 -- Tabla DIM_ServiceDetails
 CREATE TABLE DIM_ServiceDetails (
     DIM_ServiceDetailsId TEXT PRIMARY KEY,
-    DIM_DateId TEXT NOT NULL,
-    DIM_ServiceId TEXT NOT NULL,
-    DIM_CustomerId TEXT NOT NULL,
-    amount REAL NOT NULL CHECK(amount >= 0),
+    DIM_DateId INTEGER,
+    DIM_ServiceId TEXT,
+    ServiceDetailesType TEXT,
+    amount REAL,
+    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
+    FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
+    FOREIGN KEY (DIM_ServiceId) REFERENCES DIM_Service(DIM_ServiceId)
+);
+
+-- Tabla DIM_ServiceOwners
+CREATE TABLE DIM_ServiceOwners (
+    DIM_ServiceOwnersId TEXT PRIMARY KEY,
+    DIM_DateId INTEGER,
+    DIM_ServiceId TEXT,
+    DIM_CustomerId TEXT,
+    StartDate TEXT,
+    EndDate TEXT,
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
     FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
     FOREIGN KEY (DIM_ServiceId) REFERENCES DIM_Service(DIM_ServiceId),
     FOREIGN KEY (DIM_CustomerId) REFERENCES DIM_Customer(DIM_CustomerId)
 );
 
+-- Tabla DIM_Movement
+CREATE TABLE DIM_Movement (
+    DIM_MovementId TEXT PRIMARY KEY,
+    MovementName TEXT,
+    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
+);
+
+-- Tabla FACT_Revenue
+CREATE TABLE FACT_Revenue (
+    FACT_RevenueId TEXT PRIMARY KEY,
+    DIM_DateId INTEGER,
+    DIM_AccountId TEXT,
+    DIM_ServiceDetailsId TEXT,
+    DIM_MovementId TEXT,
+    DIM_StatusId TEXT,
+    amount REAL,
+    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
+    FOREIGN KEY (DIM_DateId) REFERENCES DIM_Date(DIM_DateId),
+    FOREIGN KEY (DIM_AccountId) REFERENCES DIM_Account(DIM_AccountId),
+    FOREIGN KEY (DIM_ServiceDetailsId) REFERENCES DIM_ServiceDetails(DIM_ServiceDetailsId),
+    FOREIGN KEY (DIM_MovementId) REFERENCES DIM_Movement(DIM_MovementId),
+    FOREIGN KEY (DIM_StatusId) REFERENCES DIM_Status(DIM_StatusId)
+);
+
+--Hasta aqui se modificon las tablas
 --INSERSION DE DATOS PREDEFINIDOS EN DIM_STATUS
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status1', 'activo');
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status2', 'inactivo');
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status4', 'pagado');
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status5', 'pendiente');
 INSERT INTO DIM_Status(DIM_StatusId, StatusName) VALUES ('status3', 'desactivado'); 
+
+-- Insertar roles en la tabla DIM_Role
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('9bce4ac0-5414-561d', 'delegado', 'administrador', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('bfd06808-257d-5710', 'comitiva', 'administrador', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('dbae332e-87a9-5fc3', 'subdelegado', 'administrador', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('c77ea6a3-4baa-523e', 'estudiante', 'usuario', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('822bbdbb-964d-50a6', 'ranchero', 'usuario', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('dcd3a2ee-69c1-545d', 'vecino', 'usuario', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('e2a5d805-8738-5069', 'inmigrante', 'usuario', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('74789a1e-2fc7-5131', 'pequeño propietario', 'usuario', '2000-01-01', '2100-01-01');
+
+INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
+VALUES ('e03b67a8-f9d7-5e9d', 'invalido', 'inactivo', '2000-01-01', '2100-01-01');
 
 -- Índices adicionales para mejorar el rendimiento
 -- CREATE INDEX idx_customer_date ON DIM_Customer(DIM_DateId);

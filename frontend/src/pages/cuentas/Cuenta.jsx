@@ -122,7 +122,8 @@ function Cart() {
                     setValue={setValue}
                     selectedClient={selectedClient}
                     setSelectedClient={setSelectedClient}
-                  />
+                  /> 
+                 {/* Otros formas campos del formulario Deberan ser importados en componentes dinamicos */}
 
                   <div className="mb-6">
                     <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">

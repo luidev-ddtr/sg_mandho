@@ -105,3 +105,19 @@ Propmt generico para consulta con ia
 
 
 me ayudas a hacer el siguiente cambio en mi barra lateral, <objetivo>Cambiar una parte de esta, y que toda la parte donde actualmente dice persona sea dinamica</objetivo> <como lo haremos></como lo haremos> <interfaz></interfaz>
+
+// {
+//   ubicacion_de_la_pagina: 'src/pages/DynamicGeneratePay.jsx',
+//   obtener_cuenta:{ 
+//   nombre: BarraBusquedaConCuentas, ruta: src/components/accounts/GetAccount.jsx
+//           },
+//  panteon:{ nombre: 'crear_panteon',
+//    ruta: 'src/components/modules/crear/crear_panteon.json'},
+//  agua:{ nombre: 'crear_agua',
+//    ruta: 'src/components/modules/crear/crear_agua.json'},
+// delegacion:{ nombre: 'crear_delegacion',
+//    ruta: 'src/components/modules/crear/crear_delegacion.json'},
+// feria:{ nombre: 'crear_feria',
+//    ruta: 'src/components/modules/crear/crear_feria.json'},
+//   };
+// src/pages/DynamicGeneratePay.jsx

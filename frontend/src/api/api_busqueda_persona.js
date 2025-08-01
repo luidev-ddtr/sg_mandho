@@ -53,41 +53,42 @@ const api = axios.create({
  *   }
  * ]
  */
-export const buscarClientes = async (query) => {
+export const buscarClientes = async (query, signal = null) => {
   try {
-    // 1. Realiza petición GET al endpoint 'search_client'
-    const response = await api.get('search_client/', {
-      params: {
-        q: query  // Parámetro de búsqueda enviado en la URL como query string
-      }
-    });
+    // Configuración de la petición con posibilidad de cancelación
+    const config = {
+      params: { q: query }
+    };
+    
+    // Agregar señal de cancelación si está disponible
+    if (signal) {
+      config.signal = signal;
+    }
 
-    // 2. Transforma la respuesta del servidor
+    // Realizar petición GET con manejo de cancelación
+    const response = await api.get('search_client/', config);
+
+    // Transformar la respuesta del servidor
     return response.data.results.map(cliente => ({
-      // ID del cliente (usa cliente.id como primario, falla a cliente.data.user_id)
       id: cliente.id || cliente.data?.user_id || '',
-      
-      // Nombre completo combinando first_name, second_name y last_name
       nombre_completo: `${cliente.data?.first_name || ''} ${cliente.data?.second_name || ''} ${cliente.data?.last_name || ''}`.trim(),
-      
-      // Dirección combinando street y number_ext
       direccion: `${cliente.data?.street || ''} ${cliente.data?.number_ext || ''}`.trim(),
-      
-      // Fecha de inicio del usuario (date_user_start)
       fecha_creacion: cliente.data?.date_user_start || '',
-      
-      // Manzana/zona del cliente
       manzana: cliente.data?.manzana || '',
-      
-      // Flag de disponibilidad (siempre true en esta implementación)
-      selectable: cliente.data.selectable  ||true,
-      
-      // Motivo de inactividad (siempre vacío en esta implementación)
-      reason: cliente.data.reason  ||''
+      selectable: cliente.data?.selectable ?? true, // Usamos operador nullish coalescing
+      reason: cliente.data?.reason || ''
     }));
     
   } catch (err) {
+    // Manejar error de cancelación específicamente
+    if (axios.isCancel(err)) {
+      console.log('Búsqueda cancelada para:', query);
+      return []; // Devolver array vacío en lugar de lanzar error
+    }
+    
     console.error('Error en búsqueda:', err);
-    throw err;  // Relanza el error para manejo superior
+    
+    // Relanzar otros tipos de errores
+    throw err;
   }
 };

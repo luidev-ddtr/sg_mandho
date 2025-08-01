@@ -13,7 +13,7 @@ from src.routes.handle_message import send_error, send_success
 account_options = AccountCrud()
 personas = UserCrud()
 
-account_route = Blueprint('account_route', __name__,url_prefix='/api/account/')
+account_route = Blueprint('account_route', __name__, url_prefix='/api/account/')
 
 @account_route.route('create/', methods=['POST'])
 def crate_account():# -> tuple[Response, Literal[400]] | tuple[Response, Any] | tuple[Response, Literal[500]]:
@@ -60,10 +60,9 @@ def read_account() -> tuple[Response, Literal[400]] | tuple[Response, int] | tup
         if not account_json:
             return send_error("No se recibieron datos", 400)
         
-        persona_id = account_json['id_user']
-        
-        estado, mensaje, datos = account_options.read_account(persona_id)
+        estado, mensaje, datos = account_options.read_account(account_json)
         if 200 <= estado <= 205:
+            #print(datos)
             return send_success(mensaje,datos, estado)
         else:
             return send_error(mensaje, estado)

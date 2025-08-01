@@ -88,7 +88,7 @@ class UserCrud:
                 a un usuario.
             }
         Returns:
-            bool: Se retorna true o false
+            int: Se retorna un codigo de estado HTTP
             str: Se retorna un string de error o exito especifico de que falto o si esta bien
             list: Se retorna una lista con la informacion de la persona en caso de que haya un id_user o los filtros
         comments:
@@ -97,6 +97,9 @@ class UserCrud:
         constraints:
             1;- id_user y filters son mutuamente excluyentes
             2; En cualquier caso donde haya un problema la lista se retornara vacia
+
+
+            CREAR UN FILTRO PARA QUE RECHACE A TODOS LOS ADMINSITRADORES DESDE LA INTERFAZ DE USUARIO
         """
         
         campos_requeridos = ["id_user", "filters"]

@@ -1,0 +1,9 @@
+{
+  "title": "Generar Pago de Servicio de Feria",
+  "formTitle": "Detalles del Pago de Feria",
+  "submitText": "Registrar Pago de Feria",
+  "successTitle": "Pago de Feria Registrado",
+  "successMessage": "El pago del servicio de feria ha sido registrado para",
+  "componentType": "feria",
+  "description": "Este módulo está diseñado para **registrar pagos** de servicios o conceptos relacionados con la feria. Incluye un **formulario específico** para los detalles del pago, se encarga del registro de la transacción y proporciona una **confirmación satisfactoria**. Su integración con el endpoint `/api/pagos/feria` permite un flujo de datos eficiente."
+}

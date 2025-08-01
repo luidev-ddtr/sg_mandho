@@ -11,6 +11,7 @@ import os
 from src.routes.user_route import user_route
 from src.routes.account_route import account_route
 from src.routes.search_real_time import search_route
+from src.routes.auth_route import auth_route
 #from src.routes.
 ##Esto esta comentado ya que es solo de produccion
 #from dotenv import load_dotenv  # Importa load_dotenv
@@ -21,6 +22,7 @@ app = Flask(__name__)
 app.register_blueprint(user_route)
 app.register_blueprint(account_route)
 app.register_blueprint(search_route)
+app.register_blueprint(auth_route)
 
 
 CORS(app, resources={

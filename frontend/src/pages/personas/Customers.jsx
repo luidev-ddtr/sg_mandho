@@ -13,8 +13,6 @@ function Customers() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/*******  1479148a-031d-488a-a64f-6a43f1bdacf5  *******/
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };

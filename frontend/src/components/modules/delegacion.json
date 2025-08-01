@@ -12,8 +12,8 @@
       "longDescription": "Accede a un registro detallado de todas las entradas de dinero, incluyendo donaciones, ingresos municipales y cooperaciones comunitarias, con opciones de búsqueda y filtrado."
     },
     {
-      "path": "/delegacion/informes",
-      "label": "Generar Informe",
+      "path": "/modulos/crear_pago/delegacion",
+      "label": "Generar pago",
       "shortDescription": "Crea informes y estadísticas sobre los flujos financieros y actividades de la Delegación.",
       "icon": "📈",
       "longDescription": "Genera reportes personalizados sobre los ingresos por tipo (donaciones, municipio, cooperaciones), periodos específicos y otros datos relevantes para la toma de decisiones."

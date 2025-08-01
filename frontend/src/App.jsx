@@ -19,7 +19,9 @@ import DynamicModule from './pages/DynamicModule.jsx';
 import Customers from './pages/personas/Customers.jsx'; 
 import UserSucces from './pages/personas/UserSucces.jsx';
 import UserRegister from './pages/personas/UseRegister.jsx';
-import Panteon from './pages/panteon/PanteoRegistro.jsx';
+
+//crear pago modulo
+import DynamicGeneratePay from './pages/DynamicGeneratePay.jsx'
 
 //Cuentas modulo
 import Cuenta from './pages/cuentas/Cuenta.jsx';
@@ -68,10 +70,11 @@ function App() {
           <Route path="/personas/registro" element={<UserRegister />} />
           <Route path="/personas/usuarios" element={<Customers />} />
 
-          <Route path="/panteon/generar" element={<Panteon />} />
-
           <Route path="/cuentas/mostrar" element={<mosntrarCuentas />} />
           <Route path="/Cuentas/Cuenta" element={<Cuenta />} />
+
+          {/* Para poder acceder a crear un pago se accede a este componente dinamico */}
+          <Route path="/modulos/crear_pago/:moduleName" element={<DynamicGeneratePay />} />
 
 
         </Routes>

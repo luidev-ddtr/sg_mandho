@@ -51,6 +51,7 @@ def convertir_a_formato_legible(datos_crudos: list) -> list:
     estado = DIM_status()
     datos_legibles = []
     for cuenta in datos_crudos:
+        print("Dim role de la cuenta", cuenta.DIM_RoleId)
         persona = get_user(cuenta.DIM_CustomerId)
         rol = get_role(cuenta.DIM_RoleId)
         status = estado.get_status(cuenta.DIM_StatusId) 

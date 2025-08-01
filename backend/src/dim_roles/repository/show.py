@@ -23,7 +23,7 @@ def get_role(id_role = str()):# -> DIM_ROLE | list:# -> DIM_ROLE | list:
     object_connection = Conexion()
     try:
         # Consulta con columnas explícitas (ajustadas al número correcto de parámetros)
-        query = """SELECT * FROM DIM_Role WHERE DIM_RoleID = ?"""
+        query = """SELECT DIM_RoleID, RoleName, RoleType, RoleStartDate, RoleEndDate FROM DIM_Role WHERE DIM_RoleID = ?"""
         # Ejecutar la consulta
         cursor = object_connection.cursor
         cursor.execute(query, (id_role,))
@@ -34,15 +34,7 @@ def get_role(id_role = str()):# -> DIM_ROLE | list:# -> DIM_ROLE | list:
 
         if result:  # Si se encontraron resultados
             # Tomamos el primer registro (asumiendo búsqueda por ID devuelve solo 1)
-            primer_registro = result[0]
-
-            role = DIM_ROLE(
-                DIM_RoleID=primer_registro[0],
-                RoleName=primer_registro[1],
-                RoleType=primer_registro[2],
-                RoleStartDate=primer_registro[3],
-                RoleEndDate=primer_registro[4],
-            )
+            role = DIM_ROLE(*result)
             return role
         else:
             return []

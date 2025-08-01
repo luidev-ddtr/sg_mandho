@@ -26,7 +26,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
     ], 
     personas: [
       { path: "/personas/usuarios", label: "lista de personas" },
-      { path: "/personas/Cuenta", label: "crear cuenta" },
+      { path: "/cuentas/cuenta", label: "crear cuenta" },
       { path: "/personas/registro", label: "Agregar persona" }
     ],
     agua: [

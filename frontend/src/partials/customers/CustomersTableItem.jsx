@@ -67,7 +67,9 @@ function CustomersTableItem(props) {
 
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         {/* Menu button */}
-        <ActionMenu />
+        <ActionMenu 
+          id_user={props.id}
+        />
       </td>
     </tr>
   );

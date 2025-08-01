@@ -19,7 +19,7 @@
       "longDescription": "Explora y busca entre todos los registros de lotes, inhumaciones y pagos asociados al panteón."
     },
     {
-      "path": "/panteon/generar",
+      "path": "/modulos/crear_pago/delegacion",
       "label": "Generar Registro",
       "shortDescription": "Crea nuevos registros o pagos",
       "icon": "➕",
