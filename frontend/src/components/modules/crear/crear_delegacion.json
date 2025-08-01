@@ -1,0 +1,9 @@
+{
+  "title": "Generar Pago de Servicio de Delegación",
+  "formTitle": "Detalles del Pago de Delegación",
+  "submitText": "Registrar Pago de Delegación",
+  "successTitle": "Pago de Delegación Registrado",
+  "successMessage": "El pago del servicio de delegación ha sido registrado para",
+  "componentType": "delegacion",
+  "description": "Este módulo permite el **registro de pagos** correspondientes a diversos servicios o trámites gestionados por la delegación. Ofrece un **formulario intuitivo** para la captura de información, procesa y guarda los datos de la transacción, y proporciona un **mensaje de confirmación** al finalizar. Se conecta con el endpoint `/api/pagos/delegacion` para asegurar una integración adecuada con los sistemas de la delegación."
+}

@@ -24,14 +24,27 @@ def show_account(account_id: str|None) -> list[DIM_Account]|list[Any]:
         query = f"SELECT * FROM DIM_Account"
         conecion.cursor.execute(query)
 
-        account = conecion.cursor.fetchone()
+        accounts = conecion.cursor.fetchall()
 
         conecion.close_conexion()
-        print("Datos crudos de la bd: ", account)
-        if account:
-            accounst = []
-            for i in range(len(account)):
-                accounst.append(DIM_Account(account[0], account[1], account[2], account[3], account[4], account[5], account[6]))
-            return accounst
+        print("Datos crudos de la bd: ", accounts)
+        if accounts:
+            return [DIM_Account(*account) for account in accounts]
+        else:
+            return []
+        
+    elif account_id:
+        conecion = Conexion()
+
+        query = f"SELECT * FROM DIM_Account WHERE DIM_CustomerId = ?"
+        conecion.cursor.execute(query, (account_id,))
+
+        accounts = conecion.cursor.fetchall()
+
+        conecion.close_conexion()
+        print("Datos crudos de la bd: ", accounts)
+        if accounts:
+            
+            return [DIM_Account(*account) for account in accounts]
         else:
             return []

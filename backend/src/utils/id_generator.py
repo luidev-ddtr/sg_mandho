@@ -27,3 +27,27 @@ def create_id(data: list) -> str:
     uuid_string = str(uuid_obj)
     
     return uuid_string[:18]  # SE retornan caracteres totalmente aleatorios
+
+
+if __name__ == "__main__":
+    #Generar id para la tabla DIM_Role  #Las fechas son para startdate, enddate se puede poner dentro de 100 anios
+    # info = [
+    #     ["delegado", "administrador", "2000-01-01"],
+    #     ["comitiva", "administrador", "2000-01-01"],
+    #     ["subdelegado", "administrador", "2000-01-01"],
+    #     ["estudiante", "usuario", "2000-01-01"],
+    #     ["ranchero", "usuario", "2000-01-01"],
+    #     ["vecino", "usuario", "2000-01-01"],
+    #     ["inmigrante", "usuario", "2000-01-01"],
+    #     ["pequeño propietario", "usuario", "2000-01-01"],
+    #     ["invalido", "inactivo", "2000-01-01"]
+    # ]
+    datos =[
+    ["Juan", "Perez", "2025-01-01"],
+    [None, None, None]
+    ]
+
+    for registro in datos:
+        print(create_id(registro))
+    #     data = info[i]
+    #     print(create_id(data))

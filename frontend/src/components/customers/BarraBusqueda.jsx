@@ -1,5 +1,5 @@
 // src/components/BarraBusquedaAutomatica.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDebounce } from '../../utils/useDebounce';
 import { formatDate } from '../../api/api_account';
 import { buscarClientes } from '../../api/api_busqueda_persona';
@@ -16,7 +16,8 @@ const BarraBusquedaAutomatica = ({
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchQuery, 300); // 300ms de debounce
+  const inputRef = useRef(null);
+  const debouncedSearchTerm = useDebounce(searchQuery, 300);
 
   // Efecto para búsqueda automática
   useEffect(() => {
@@ -35,8 +36,11 @@ const BarraBusquedaAutomatica = ({
         setSearchResults(results);
       } catch (err) {
         console.error('Error en búsqueda:', err);
+        setSearchResults([]);
       } finally {
         setIsSearching(false);
+        // Restaurar el foco después de la búsqueda
+        inputRef.current?.focus();
       }
     };
 
@@ -49,7 +53,7 @@ const BarraBusquedaAutomatica = ({
       alert(client.reason || 'Este usuario no está disponible');
       return;
     }
-    setValue(name, client.id)
+    setValue(name, client.id);
     setSelectedClient(client);
     setValue('cliente', client.nombre_completo);
     setSearchResults([]);
@@ -104,12 +108,14 @@ const BarraBusquedaAutomatica = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
+                ref={inputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 p-2 focus:outline-none text-gray-700 dark:text-gray-200 bg-transparent"
                 placeholder="Buscar por nombre, dirección o manzana..."
                 disabled={isSearching}
+                autoComplete="off"
               />
               {searchQuery && (
                 <button
@@ -118,6 +124,7 @@ const BarraBusquedaAutomatica = ({
                     setSearchQuery('');
                     setSearchResults([]);
                     setHasSearched(false);
+                    inputRef.current?.focus();
                   }}
                   className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-full"
                 >
@@ -160,9 +167,6 @@ const BarraBusquedaAutomatica = ({
                           <div className="text-gray-800 dark:text-gray-200 font-medium">
                             {persona.nombre_completo}
                           </div>
-                          {/* <div className="text-xs text-gray-500 dark:text-gray-400">
-                            ID: {persona.id}
-                          </div> */}
                         </td>
                         <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
                           {persona.direccion}
@@ -180,7 +184,6 @@ const BarraBusquedaAutomatica = ({
               </div>
             </div>
           )}
-
           {hasSearched && searchResults.length === 0 && !isSearching && (
             <div className="p-4 text-center text-gray-500 bg-white dark:bg-gray-700 rounded-lg shadow mb-2">
               No se encontraron resultados para "{searchQuery}"

@@ -128,7 +128,7 @@ function CustomersTable({ selectedItems }) {
                   last_name={customer.last_name + ' ' + customer.second_last_name}
                   birth_date={customer.date_of_birth}
                   manzana={customer.manzana}
-                  address={customer.date_user_start + ' ' + customer.number_ext}
+                  address={customer.street + ' ' + customer.number_ext}
                   date_of_start={customer.date_user_start}
                   date_of_end={customer.date_user_end}
                   handleClick={handleClick}

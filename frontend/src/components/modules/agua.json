@@ -12,7 +12,7 @@
       "longDescription": "Accede a un registro detallado de todos los pagos de agua realizados, con opciones de búsqueda y filtrado."
     },
     {
-      "path": "/agua/generar",
+      "path": "/modulos/crear_pago/agua",
       "label": "Generar Pago",
       "shortDescription": "Registra nuevos pagos de agua de forma rápida.",
       "icon": "💸",

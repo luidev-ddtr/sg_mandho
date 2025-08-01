@@ -6,6 +6,9 @@ import JobListItem from '../partials/job/JobListItem';
 
 import CompanyImage from '../images/company-icon-01.svg';
 import CompanyBg from '../images/company-bg.jpg';
+
+import { useAuth } from '../utils/AuthContext';
+
 //import { getAlldata } from '../api/api_user';
 
 
@@ -25,7 +28,18 @@ function CompanyProfile() {
   //const data = getAlldata();
 
   //console.log(data);
+  // En cualquier componente hijo
+  function UserProfile() {
+    const { state } = useAuth();
+    
+    useEffect(() => {
+      console.log("Estado global actualizado:", state.usuario);
+    }, [state]);
 
+    return (
+      <div>{state.usuario ? `Hola ${state.usuario.nombre}` : 'No logueado'}</div>
+    );
+  }
   const items = [
     // Group 1
     [

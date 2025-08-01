@@ -1,6 +1,7 @@
+from typing import Any, Literal
 from src.utils.conexion import Conexion
 
-def insert_role(data: object) -> None:
+def insertar_role(rolename: str)  -> tuple[Literal[True], Any] | tuple[Literal[False], Literal['']] | None:
     """Método responsable de insertar un rol a la base de datos
     
     Tabla: Table DIM_Role {
@@ -21,28 +22,22 @@ def insert_role(data: object) -> None:
     object_conecction = Conexion()
     try:
         # Consulta con columnas explícitas (ajustadas al número correcto de parámetros)
-        query = """
-        INSERT INTO DIM_Role (
-            DIM_RoleID,
-            RoleName,
-            RoleType,
-            RoleStartDate,
-            RoleEndDate
-        ) VALUES ( ?, ?, ?, ?, ?)"""
+        query = f"""
+        SELECT DIM_RoleId FROM DIM_Role WHERE RoleName = '{rolename}'"""
 
-        values = (
-            data.DIM_RoleID,
-            data.RoleName,
-            data.RoleType,
-            data.RoleStartDate,
-            data.RoleEndDate,
-        )
-        object_conecction.cursor.execute(query, values)
-        object_conecction.save_changes()
+
+        object_conecction.cursor.execute(query)
+        
+        id = object_conecction.cursor.fetchone()
         object_conecction.close_conexion()
-        print("Rol insertado correctamente.")
-        return True
+        print(f"ID obtenido: {id}")
+        if id is not None:
+            return True, id[0]
+        else:
+            print(f"ID obtenido: {id}, y su tipo es: {type(id)}")
+            return False, ""
+        
     except Exception as e:
         print(e)
         object_conecction.close_conexion()
-        return False
+        return False, ""

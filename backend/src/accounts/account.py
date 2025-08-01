@@ -150,7 +150,7 @@ class AccountCrud():
         if esvalido:
             if persona_id is None or persona_id.get('id_user', "") == "":
                 # Caso: Mostrar todas las cuentas
-                datos = show_account(None)
+                datos = show_account(None) #Se manda como paremetro para que devuelva todas las cuentas
                 if datos:
                     # Aquí se transformarían los IDs a información legible
                     datos_legibles = convertir_a_formato_legible(datos)
@@ -161,10 +161,11 @@ class AccountCrud():
                         return 400, mensaje, []
                 else:
                     mensaje = "No se encontraron cuentas"
-                    return 400, mensaje, []
+                    return 404, mensaje, []
                 
             elif persona_id['id_user']:
                 # Caso: Mostrar cuenta específica
+                print(persona_id['id_user'])
                 datos = show_account(persona_id['id_user'])
                 if datos:
                     # Aquí se transformarían los IDs a información legible
@@ -172,6 +173,6 @@ class AccountCrud():
                     return 200, "Cuenta obtenida correctamente", datos_legibles
                 else:
                     mensaje = "No se encontró la cuenta especificada"
-                    return 400, mensaje, []
+                    return 404, mensaje, []
         else:
             return 400, mensaje, []
