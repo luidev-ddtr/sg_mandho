@@ -4,52 +4,5 @@
   "submitText": "Registrar Pago de Agua",
   "successTitle": "Pago de Agua Registrado",
   "successMessage": "El pago del servicio de agua ha sido registrado para",
-  "componentType": "agua",
-  "validations": {
-    "serviceType": {
-      "required": "El tipo de servicio es requerido",
-      "oneOf": {
-        "values": ["tomas", "consumo", "agregar_toma"],
-        "message": "Debe ser uno de: tomas, consumo o agregar_toma"
-      }
-    },
-    "amount": {
-      "required": "El monto es requerido",
-      "type": "number",
-      "min": {
-        "value": 1,
-        "message": "El monto mínimo es $1"
-      },
-      "max": {
-        "value": 10000,
-        "message": "El monto máximo es $10,000"
-      }
-    },
-    "description": {
-      "maxLength": {
-        "value": 255,
-        "message": "La descripción no puede exceder 255 caracteres"
-      }
-    }
-  },
-  "defaultValues": {
-    "serviceType": "tomas",
-    "amount": 360,
-    "serviceName": "agua"
-  },
-  "conditionalLogic": {
-    "amount": {
-      "readOnlyWhen": ["tomas", "consumo"],
-      "defaultValueWhen": {
-        "tomas": 360,
-        "consumo": 360
-      }
-    },
-    "description": {
-      "defaultValueWhen": {
-        "tomas": "Pago por toma de agua",
-        "consumo": "Pago por consumo de agua"
-      }
-    }
-  }
+  "componentType": "agua"
 }

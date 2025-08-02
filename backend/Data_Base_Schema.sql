@@ -164,6 +164,40 @@ VALUES ('74789a1e-2fc7-5131', 'pequeño propietario', 'usuario', '2000-01-01', '
 INSERT INTO DIM_Role (DIM_RoleId, RoleName, RoleType, RoleStartDate, RoleEndDate) 
 VALUES ('e03b67a8-f9d7-5e9d', 'invalido', 'inactivo', '2000-01-01', '2100-01-01');
 
+
+-- Insertar registros en la tabla DIM_Movement Solo son 2 registros
+insert into DIM_Movement; 
+(DIM_MovementId, MovementName) VALUES
+('d3e7d32b-d440-5048', 'ingreso');
+insert into DIM_Movement 
+
+(DIM_MovementId, MovementName) VALUES
+('9d8dff92-630b-5f51', 'egreso');
+
+
+-- insertar registros en la tabla DIM_service
+insert into DIM_Service
+(DIM_ServiceId,ServiceName)
+VALUES
+('1fbd9d83-7a85-50ec','agua');
+
+insert into DIM_Service
+(DIM_ServiceId,ServiceName)
+VALUES
+('17259752-21dd-5d83','feria');
+
+insert into DIM_Service
+(DIM_ServiceId,ServiceName)
+VALUES
+('e2d33355-5186-597c','panteon');
+
+insert into DIM_Service
+(DIM_ServiceId,ServiceName)
+VALUES
+('acf85e49-6bce-5a8b','delegacion');
+
+
+
 -- Índices adicionales para mejorar el rendimiento
 -- CREATE INDEX idx_customer_date ON DIM_Customer(DIM_DateId);
 -- CREATE INDEX idx_account_customer ON DIM_Account(DIM_CustomerId);

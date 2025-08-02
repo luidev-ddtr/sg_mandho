@@ -42,9 +42,21 @@ if __name__ == "__main__":
     #     ["pequeño propietario", "usuario", "2000-01-01"],
     #     ["invalido", "inactivo", "2000-01-01"]
     # ]
-    datos =[
-    ["Juan", "Perez", "2025-01-01"],
-    [None, None, None]
+    # datos =[
+    # ["Juan", "Perez", "2025-01-01"],
+    # [None, None, None]
+    # ]
+
+    # datos = [
+    #     ["ingreso"],
+    #     ["egreso"]
+    # ]
+
+    datos = [
+        ["agua", "comitiva"],
+        ["feria", "comitiva"],
+        ["panteon", "comitiva"],
+        ["delegacion", "comitiva"],
     ]
 
     for registro in datos:

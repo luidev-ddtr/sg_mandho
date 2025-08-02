@@ -20,6 +20,6 @@ def validate_data(data: dict, fields_required: list, type_fields: list, from_mes
             return False, f"El campo {clave} es requerido en {from_message}"
         
         if (type(data[clave]) != type_fields[fields_required.index(clave)]):
-            return False, f"El tipo de dato es incorrecto"
+            return False, f"El tipo de dato en el campo {clave} es incorrecto"
         
     return True, "Todo bien"

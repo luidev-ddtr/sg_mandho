@@ -167,20 +167,27 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
   };
 
   // Renderizado (igual que antes)
-  return (
+return (
     <div className="mb-6">
       {formValues.cliente ? (
         <div className="space-y-4">
-          {/* Información del cliente seleccionado */}
-          <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+          {/* Información del cliente seleccionado - MODIFICADO PARA MEJOR LEGIBILIDAD */}
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium text-gray-800 dark:text-gray-200">
+              <div className="space-y-3">
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   {formValues.cliente.nombre_completo}
                 </p>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 space-y-1">
-                  <p>Dirección: {formValues.cliente.direccion}</p>
-                  <p>Fecha de registro: {formatDate(formValues.cliente.fecha_creacion)}</p>
+                <div className="text-base space-y-2">
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">Manzana:</span> {formValues.cliente.manzana}
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">Dirección:</span> {formValues.cliente.direccion}.
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <span className="font-medium">Fecha de registro:</span> {formatDate(formValues.cliente.fecha_creacion)}
+                  </p>
                 </div>
               </div>
               <button
@@ -196,7 +203,7 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
             </div>
           </div>
 
-          {/* Información de la cuenta activa */}
+          {/* Información de la cuenta activa - MODIFICADO (ELIMINADO ID CUENTA) */}
           {formValues.loadingAccount ? (
             <div className="p-4 text-center text-gray-500 bg-white dark:bg-gray-700 rounded-lg shadow">
               <div className="flex items-center justify-center">
@@ -208,27 +215,25 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
               </div>
             </div>
           ) : formValues.activeAccount ? (
-            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-3">
                 Cuenta activa:
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
+                <table className="min-w-full text-base">
                   <thead className="text-left bg-gray-100 dark:bg-gray-700">
                     <tr>
-                      <th className="py-2 px-3">ID Cuenta</th>
-                      <th className="py-2 px-3">Cliente</th>
-                      <th className="py-2 px-3">Rol</th>
-                      <th className="py-2 px-3">Estado</th>
+                      <th className="py-2 px-4 w-1/3">Cliente</th>
+                      <th className="py-2 px-4 w-1/3">Rol</th>
+                      <th className="py-2 px-4 w-1/3">Estado</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="py-2 px-3">{formValues.activeAccount.DIM_AccountId}</td>
-                      <td className="py-2 px-3">{formValues.activeAccount.DIM_customerId}</td>
-                      <td className="py-2 px-3">{formValues.activeAccount.DIM_RoleId}</td>
-                      <td className="py-2 px-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                      <td className="py-3 px-4">{formValues.activeAccount.DIM_customerId}</td>
+                      <td className="py-3 px-4">{formValues.activeAccount.DIM_RoleId}</td>
+                      <td className="py-3 px-4">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                           {formValues.activeAccount.DIM_StatusId}
                         </span>
                       </td>
@@ -353,7 +358,7 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
         </>
       )}
 
-      {/* Mostrar errores de validación */}
+       {/* Mostrar errores de validación */}
       {errors.cliente && (
         <div className="mt-2 text-sm text-red-600 dark:text-red-400">
           {errors.cliente.message}

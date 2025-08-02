@@ -34,8 +34,20 @@ const parentSchema = yup.object().shape({
     .min(2000, 'El año no puede ser menor a 2000')
     .max(new Date().getFullYear(), 'El año no puede ser mayor al actual')
     .integer('El año debe ser un número entero'),
+  cantidadRecibida: yup
+    .number()
+    .typeError('La cantidad debe ser un número válido')
+    .required('La cantidad recibida es requerida')
+    .positive('La cantidad debe ser positiva')
+    .integer('La cantidad debe ser un número entero')
+    .test(
+      'max-amount',
+      function(value) {
+        const { amount } = this.options.context || {};
+        return value <= (amount || Infinity);
+      }
+    )
 });
-
 
 const DynamicGeneratePay = () => {
   const { moduleName } = useParams();
@@ -65,6 +77,7 @@ const DynamicGeneratePay = () => {
   const [isModuleChildValid, setIsModuleChildValid] = useState(false);
   const [isParentValid, setIsParentValid] = useState(false);
 
+
   // Configurar react-hook-form con validaciones Yup solo para campos del padre
   const { 
     register, 
@@ -73,10 +86,14 @@ const DynamicGeneratePay = () => {
   } = useForm({
     resolver: yupResolver(parentSchema),
     defaultValues: {
-      metodoPago: 'efectivo'
+      metodoPago: 'efectivo', 
     },
-    mode: 'onChange'
+    mode: 'onChange',
+    context: {
+    amount: moduleData?.amount || 0 // Pasar el amount al contexto para las validaciones
+  }
   });
+
 
   // Efecto para validar el formulario padre
   useEffect(() => {
@@ -128,44 +145,68 @@ const DynamicGeneratePay = () => {
     setIsModuleChildValid(valid);
   }, []);
 
+//Se DEBE VALIDAR AUN SI FUCNINA CORRECTMAENTE 
+const onSubmit = async (data) => {
+  try {
+    if (!usuario) {
+      throw new Error('No hay usuario logueado');
+    }
+    
+    setIsSubmitting(true);
+    const payload = {
+      ...data,
+      DIM_OnwerCustomerId: usuario.DIM_CustomerId,
+      DIM_AccountId: accountData.accountId,
+      DIM_CustomerId: accountData.customerId,
+      ServiceName: moduleName,
+      fecha: fechaActual, 
+      serviceDetailsType: moduleData.serviceType,
+      amount: moduleData.amount,
+      AnioPago: data.anioPago,
+      movementName: "ingreso",
+      FactAmount: data.cantidadRecibida
+    };
 
-  const onSubmit = async (data) => {
-    try {
-          if (!usuario) {
-            throw new Error('No hay usuario logueado');
-            }
-          
-      setIsSubmitting(true); // Ahora sí está definido
-      const payload = {
-        ...data,
-        DIM_OnwerCustomerId: usuario.DIM_CustomerId, // Usamos el ID del usuario logue
-        DIM_AccountId: accountData.accountId, // Usamos el accountId del estado
-        DIM_CustomerId: accountData.customerId, // Usamos el customerId del estado
-        ServiceName: moduleName,
-        fecha: fechaActual, 
-        serviceDaetailsType: moduleData.serviceType,
-        amount: moduleData.amount,
-        AnioPago: data.anioPago, // Añadimos el año al payload
-        //MovementName: // Agregar otro campo especificando es que insertar dinero
-      };
-        const response = await crearRegistroPago(payload);
-        
-        setMessage({ 
-          text: `Pago registrado exitosamente para ${ accountData.customerName || 'el cliente'}`, 
-          type: 'success' 
-        });
-        setShowSuccessOptions(true);
-      
-        } catch (err) {
-          setMessage({ 
-            text: getErrorMessage(err), 
-            type: 'error' 
-          });
-          console.error(err);
-        } finally {
-          setIsSubmitting(false);
-        }
-  };
+    const response = await crearRegistroPago(payload);
+    
+    // Verificar si la respuesta del backend indica un error
+    if (response && !response.success) {
+      const errorMessage = response.message || 
+                         response.data?.message || 
+                         'Error desconocido al procesar el pago';
+      throw new Error(errorMessage);
+    }
+
+    // Usar los mensajes del módulo desde moduleConfig
+    setMessage({ 
+      text: `${moduleConfig.successMessage || 'Pago registrado exitosamente para'} ${accountData.customerName || 'el cliente'}`, 
+      type: 'success' 
+    });
+    setShowSuccessOptions(true);
+    
+  } catch (err) {
+    // Manejo mejorado de errores
+    let errorMessage = 'Error al procesar el pago';
+    
+    if (err.response) {
+      // Error de Axios
+      errorMessage = err.response.data?.message || 
+        err.response.data?.error || 
+        err.message;
+    } else if (err.message) {
+      // Error personalizado o del backend
+      errorMessage = err.message;
+    }
+
+    setMessage({ 
+      text: errorMessage, 
+      type: 'error' 
+    });
+    console.error('Error en onSubmit:', err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
     // Manejador para recibir datos de la cuenta
   const handleAccountData = useCallback((data) => {
@@ -243,7 +284,6 @@ const DynamicGeneratePay = () => {
       </div>
     );
   }
-
   return (
     <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -278,35 +318,78 @@ const DynamicGeneratePay = () => {
               )}
 
               {/* Campos comunes - Siempre visibles */}
-              {/* Nuevo campo para el año de pago */}
-              <div className="mb-6 w-full md:w-1/2">
-                <div className="relative">
-                  <label 
-                    htmlFor="anioPago"
-                    className="block text-gray-700 dark:text-gray-300 font-medium mb-2"
-                  >
-                    Año de Pago <span className="text-red-500">*</span>
-                    <span 
-                      className="ml-2 text-gray-500 dark:text-gray-400 cursor-help"
-                      title="Indique el año al que corresponde este pago. Puede ser el año actual o años anteriores."
+              <div className="flex flex-wrap -mx-3 mb-6"> {/* Contenedor flex para alinear horizontalmente */}
+                {/* Campo Año de Pago */}
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                  <div className="relative">
+                    <label
+                      htmlFor="anioPago"
+                      className="block text-gray-700 dark:text-gray-300 font-medium mb-2"
                     >
-                      (ℹ️)
-                    </span>
-                  </label>
-                  <input
-                    id="anioPago"
-                    type="number"
-                    {...register('anioPago')}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-300"
-                    placeholder="Ej: 2023"
-                    min="2000"
-                    max={new Date().getFullYear()}
-                  />
-                  {errors.anioPago && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                      {errors.anioPago.message}
-                    </p>
-                  )}
+                      Año de Pago <span className="text-red-500">*</span>
+                      <span
+                        className="ml-2 text-gray-500 dark:text-gray-400 cursor-help"
+                        title="Indique el año al que corresponde este pago. Puede ser el año actual o años anteriores."
+                      >
+                        (ℹ️)
+                      </span>
+                    </label>
+                    <input
+                      id="anioPago"
+                      type="number"
+                      {...register('anioPago')}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-300"
+                      placeholder="Ej: 2023"
+                      min="2000"
+                      max={new Date().getFullYear()}
+                    />
+                    {errors.anioPago && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors.anioPago.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Campo Cantidad Recibida */}
+                <div className="w-full md:w-1/2 px-3">
+                  <div className="relative">
+                    <label
+                      htmlFor="cantidadRecibida"
+                      className="block text-gray-700 dark:text-gray-300 font-medium mb-2"
+                    >
+                      Cantidad Recibida <span className="text-red-500">*</span>
+                      <span
+                        className="ml-2 text-gray-500 dark:text-gray-400 cursor-help"
+                        title={`Ingrese la cantidad recibida en efectivo (máximo: $${moduleData?.amount || 0})`}
+                      >
+                        (ℹ️)
+                      </span>
+                    </label>
+                    <input
+                      id="cantidadRecibida"
+                      type="number"
+                      {...register('cantidadRecibida', {
+                        valueAsNumber: true,
+                        validate: (value) => {
+                          console.log('Validating cantidadRecibida:', value, 'Max allowed:', moduleData?.amount);
+                          return value <= (moduleData?.amount || Infinity);
+                        }
+                      })}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-300"
+                      placeholder={`Máximo: $${moduleData?.amount || 0}`}
+                      min="1"
+                      max={moduleData?.amount || undefined}
+                      step="1"
+                    />
+                    {errors.cantidadRecibida && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors.cantidadRecibida?.type === 'max' 
+                          ? `La cantidad no puede ser mayor a $${moduleData?.amount || 0}`
+                          : errors.cantidadRecibida?.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -343,7 +426,6 @@ const DynamicGeneratePay = () => {
                   )} */}
                 </div>
               </div>
-
               <div className="flex justify-end">
                 <button
                   type="submit"
