@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:5000/api/pagos/'
+    baseURL: 'http://127.0.0.1:5000/api/payment/'
 });
 
 /**
@@ -24,11 +24,12 @@ const api = axios.create({
 export const crearRegistroPago = async (data) => {
     try {
 
-        if (!data.DIM_AccountId || !data.DIM_CustomerId || !data.ServiceName) return; //modificar
+        if (!data.DIM_AccountId || !data.DIM_CustomerId || !data.ServiceName || !data.DIM_OnwerCustomerId 
+            || !data.serviceDaetailsType || !data.amount || !data.anioPago || !data.FactAmount ) return; //modificar
 
         console.log("Datos enviados para crear el pago:", data);
 
-    //     const response = await api.post('create/', data);
+        const response = await api.post('create/', data);
 
     // return { data: response.data }; // Asigna los datos = response.data;
     } catch (error) {

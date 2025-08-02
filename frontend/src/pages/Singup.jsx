@@ -1,22 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { ObtenerUsuario } from '../api/api_auth';  // Importamos la función
+import { ObtenerUsuario } from '../api/api_auth';
 import AuthImage from "../images/auth-image.jpg";
-// Importa el hook useAuth desde el contexto
 import { useAuth } from '../utils/AuthContext';
-import { useNavigate } from 'react-router-dom'; // Cambiado a useNavigate
+import { useNavigate } from 'react-router-dom';
 
-
-  // Obtén la función dispatch del contexto
-
-/**
- * Signup component.
- *
- * This component will render the signup form and handle the logic for it.
- *
- * @returns {React.ReactElement} The signup form component.
- */
 function Signup() {
   const { 
     register, 
@@ -26,9 +15,9 @@ function Signup() {
   } = useForm({
     mode: 'onChange'
   });
+
   const { dispatch } = useAuth();
-  const navigate = useNavigate(); // Usamos useNavigate para redirigir
-  
+  const navigate = useNavigate();
   const [recaptchaError, setRecaptchaError] = useState(null);
   const RECAPTCHA_SITE_KEY = "6Lfah3MrAAAAAAJa92wl13WILgSPPJ9Ep6z41hY8";
 
@@ -47,7 +36,6 @@ function Signup() {
         payload: userData.data
       });
 
-      // Usa la función navigate en lugar del componente
       navigate('/'); 
 
       console.log("Usuario cargado en el estado global:", userData.data);
