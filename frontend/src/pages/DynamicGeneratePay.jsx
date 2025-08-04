@@ -100,8 +100,10 @@ const DynamicGeneratePay = () => {
     setIsParentValid(isParentFormValid);
   }, [isParentFormValid]);
 
-  // Validación completa (hijo + padre)
-  const isFormValid = isChildValid && isParentValid;
+  // Validación completa (hijo + padre + módulo si aplica)
+  const isFormValid = isChildValid && 
+                     isParentValid && 
+                     (moduleConfig ? (moduleConfig.componentType === 'obtener_cuenta' ? true : isModuleChildValid) : false);
 
   // Cargar configuración del módulo
   useEffect(() => {
@@ -145,14 +147,18 @@ const DynamicGeneratePay = () => {
     setIsModuleChildValid(valid);
   }, []);
 
-//Se DEBE VALIDAR AUN SI FUCNINA CORRECTMAENTE 
 const onSubmit = async (data) => {
   try {
+    console.log("Iniciando onSubmit...");
     if (!usuario) {
       throw new Error('No hay usuario logueado');
     }
     
     setIsSubmitting(true);
+    console.log("Datos del formulario padre:", data);
+    console.log("Datos de la cuenta:", accountData);
+    console.log("Datos del módulo:", moduleData);
+    
     const payload = {
       ...data,
       DIM_OnwerCustomerId: usuario.DIM_CustomerId,
@@ -167,22 +173,26 @@ const onSubmit = async (data) => {
       FactAmount: data.cantidadRecibida
     };
 
+    console.log("Payload a enviar:", payload);
+    
     const response = await crearRegistroPago(payload);
     
-    // Verificar si la respuesta del backend indica un error
-    if (response && !response.success) {
-      const errorMessage = response.message || 
-                         response.data?.message || 
+    // Modificado: Verificar si la respuesta contiene un mensaje de éxito
+    if (response && response.message === "Pago creado satisfactoriamente") {
+      // Usar los mensajes del módulo desde moduleConfig
+      setMessage({ 
+        text: `${moduleConfig.successMessage || 'Pago registrado exitosamente para'} ${accountData.customerName || 'el cliente'}`, 
+        type: 'success' 
+      });
+      console.log("Pago registrado exitosamente");
+      setShowSuccessOptions(true);
+    } else {
+      // Si no es el mensaje esperado, tratar como error
+      const errorMessage = response?.message || 
+                         response?.data?.message || 
                          'Error desconocido al procesar el pago';
       throw new Error(errorMessage);
     }
-
-    // Usar los mensajes del módulo desde moduleConfig
-    setMessage({ 
-      text: `${moduleConfig.successMessage || 'Pago registrado exitosamente para'} ${accountData.customerName || 'el cliente'}`, 
-      type: 'success' 
-    });
-    setShowSuccessOptions(true);
     
   } catch (err) {
     // Manejo mejorado de errores
@@ -198,11 +208,11 @@ const onSubmit = async (data) => {
       errorMessage = err.message;
     }
 
+    console.error('Error en onSubmit:', err);
     setMessage({ 
       text: errorMessage, 
       type: 'error' 
     });
-    console.error('Error en onSubmit:', err);
   } finally {
     setIsSubmitting(false);
   }
@@ -213,8 +223,9 @@ const onSubmit = async (data) => {
     setAccountData(data); // Ahora setAccountData está definido
   }, []);
 
-  const handleModuleData = useCallback((data) => {
-    setModuleData(data); // Ahora setModuleData está definido
+  // Modificado para hacer merge con datos existentes
+  const handleModuleData = useCallback((newData) => {
+    setModuleData(prev => ({ ...prev, ...newData }));
   }, []);
 
   // Renderizar componente de búsqueda de cuenta con validación

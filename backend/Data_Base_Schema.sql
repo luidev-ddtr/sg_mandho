@@ -81,7 +81,7 @@ CREATE TABLE DIM_ServiceDetails (
     DIM_DateId TEXT,
     DIM_ServiceId TEXT,
     ServiceDetailesType TEXT,
-    amount REAL CHECK (amount >= 0),
+    amount REAL CHECK (amount >= 0.0),
 	StartDate TEXT NOT NULL,
     EndDate TEXT NOT NULL, --Los pagos son anuales, ya se conce por defecto la fecha en la que se se vence el pago
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')),
@@ -195,6 +195,39 @@ insert into DIM_Service
 (DIM_ServiceId,ServiceName)
 VALUES
 ('acf85e49-6bce-5a8b','delegacion');
+
+
+-- Estos servicios se deberan renovar anualmente para que se mantengan actualizado, solo deberia cambia star, y endate
+--Registro de peuba metido en service details, SE DEBERA ACOMPLETAR COIN TODOS LOS TIPOS DE SERVICIO DE CADA COMITIVA
+insert into DIM_ServiceDetails 
+(DIM_ServiceDetailsId, DIM_DateId, DIM_ServiceId, ServiceDetailesType, amount, StartDate, EndDate)
+VALUES
+('4942db5a-04b2-57b2', '080c33d3-7f33-55d7', '1fbd9d83-7a85-50ec', 'consumo', 360.0, '2025-01-01', '2025-12-31');
+
+insert into DIM_ServiceDetails
+(DIM_ServiceDetailsId, DIM_DateId, DIM_ServiceId, ServiceDetailesType ,amount, StartDate, EndDate)
+VALUES
+('d8e3ce13-aef7-5594', '080c33d3-7f33-55d7', '1fbd9d83-7a85-50ec', 'tomas', 360.0, '2025-01-01', '2025-12-31');
+
+insert into DIM_ServiceDetails
+(DIM_ServiceDetailsId, DIM_DateId, DIM_ServiceId, ServiceDetailesType, amount, StartDate, EndDate)
+VALUES
+('cb6a2afc-1318-5658', '080c33d3-7f33-55d7', 'e2d33355-5186-597c', 'faenap', 300.0, '2025-01-01', '2025-12-31');
+
+insert into DIM_ServiceDetails
+(DIM_ServiceDetailsId, DIM_DateId, DIM_ServiceId, ServiceDetailesType, amount, StartDate, EndDate)
+VALUES
+('41ba58e0-500f-53ef', '080c33d3-7f33-55d7', 'e2d33355-5186-597c', 'cooperacionp', 400.0, '2025-01-01', '2025-12-31');
+
+
+
+
+--Registro de un ususario en la tabla propiertarios, solo se hizzo para testear, ya que Se deberan agregar bien
+insert into DIM_ServiceOwners
+(DIM_ServiceOwnersId, DIM_DateId, DIM_ServiceId, DIM_CustomerId, StartDate, EndDate )
+VALUES
+('0901a1e6-8779-5695', '080c33d3-7f33-55d7', '1fbd9d83-7a85-50ec', 'ed37cb83-f080-5e41', '2025-01-01', '2025-12-31');
+
 
 
 

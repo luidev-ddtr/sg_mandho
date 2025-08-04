@@ -6,8 +6,11 @@ from src.dim_service.DIM_Service import DIM_Service
 
 from src.utils.id_generator import create_id
 
+#Si esta clase se hace predefinida, se esta logica no sera tan utils hasta que la clase sea creada
+# y se cree en la interfaz un metodo para poder interactusl con ella
 class ServiceDetailsCrud:
     """Class to handle CRUD operations for service details."""
+
 
     def insert_service_details(self, service_details_json: dict) -> tuple:
         """

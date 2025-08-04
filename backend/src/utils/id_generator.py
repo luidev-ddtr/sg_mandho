@@ -52,11 +52,21 @@ if __name__ == "__main__":
     #     ["egreso"]
     # ]
 
+    # datos = [
+    #     ["agua", "comitiva"],
+    #     ["feria", "comitiva"],
+    #     ["panteon", "comitiva"],
+    #     ["delegacion", "comitiva"],
+    # ]
+
+    # datos = [
+    #     ["consumo", '350.00']
+    # ]
+
     datos = [
-        ["agua", "comitiva"],
-        ["feria", "comitiva"],
-        ["panteon", "comitiva"],
-        ["delegacion", "comitiva"],
+        ['1fbd9d83-7a85-50ec', 'tomas', '2025-12-31'],
+        ['e2d33355-5186-597c', 'faenap', '2025-12-31'],
+        ['e2d33355-5186-597c', 'cooperacionp', '2025-12-31'],
     ]
 
     for registro in datos:
