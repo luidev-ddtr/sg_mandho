@@ -4,5 +4,6 @@
   "submitText": "Registrar Pago de Agua",
   "successTitle": "Pago de Agua Registrado",
   "successMessage": "El pago del servicio de agua ha sido registrado para",
-  "componentType": "agua"
+  "componentType": "agua",
+  "menuPath": "/modulo/agua" 
 }

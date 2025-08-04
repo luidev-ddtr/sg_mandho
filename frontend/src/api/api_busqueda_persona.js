@@ -86,7 +86,7 @@ export const buscarClientes = async (query, signal = null) => {
       return []; // Devolver array vacío en lugar de lanzar error
     }
     
-    console.error('Error en búsqueda:', err);
+    //console.error('Error en búsqueda:', err);
     
     // Relanzar otros tipos de errores
     throw err;

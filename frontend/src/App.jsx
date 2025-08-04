@@ -26,6 +26,7 @@ import DynamicGeneratePay from './pages/DynamicGeneratePay.jsx'
 //Cuentas modulo
 import Cuenta from './pages/cuentas/Cuenta.jsx';
 import mosntrarCuentas from './pages/cuentas/MostrarCuentas.jsx';
+import PaymentStatus from './pages/PaymentStatus.jsx';  
 //import Navigation from './components/Navigation.jsx';
 
 /**
@@ -75,6 +76,8 @@ function App() {
 
           {/* Para poder acceder a crear un pago se accede a este componente dinamico */}
           <Route path="/modulos/crear_pago/:moduleName" element={<DynamicGeneratePay />} />
+
+          <Route path="/modulos/estado_pago" element={<PaymentStatus />} />
 
 
         </Routes>
