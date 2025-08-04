@@ -1,7 +1,6 @@
 // src/pages/DynamicGeneratePay.jsx
 import React, { useState, useEffect, lazy, Suspense, useCallback  } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Sidebar from '../partials/SideBar';
@@ -9,6 +8,7 @@ import Header from "../partials/Header";
 import LoadingSpinner from '../components/LoadingSpinner';
 import { crearRegistroPago } from '../api/pagos/api_crear_pago.js';
 import { useAuth } from "../utils/AuthContext";
+import { useParams, useNavigate } from 'react-router-dom';
 
 
 // Componentes dinámicos (carga diferida)
@@ -50,6 +50,7 @@ const parentSchema = yup.object().shape({
 });
 
 const DynamicGeneratePay = () => {
+  const navigate = useNavigate();
   const { moduleName } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // <- Aquí se corrige el error
@@ -122,7 +123,8 @@ const DynamicGeneratePay = () => {
           submitText: moduleJson.default.submitText || "Generar Pago",
           componentType: COMPONENT_CONFIG[`pago_${moduleName}`] ? `pago_${moduleName}` : 'obtener_cuenta',
           successTitle: moduleJson.default.successTitle || "Pago Registrado",
-          successMessage: moduleJson.default.successMessage || "El pago ha sido registrado para"
+          successMessage: moduleJson.default.successMessage || "El pago ha sido registrado para",
+          menuPath: moduleJson.default.menuPath
         };
         
         setModuleConfig(config);
@@ -149,15 +151,11 @@ const DynamicGeneratePay = () => {
 
 const onSubmit = async (data) => {
   try {
-    console.log("Iniciando onSubmit...");
     if (!usuario) {
       throw new Error('No hay usuario logueado');
     }
     
     setIsSubmitting(true);
-    console.log("Datos del formulario padre:", data);
-    console.log("Datos de la cuenta:", accountData);
-    console.log("Datos del módulo:", moduleData);
     
     const payload = {
       ...data,
@@ -173,51 +171,41 @@ const onSubmit = async (data) => {
       FactAmount: data.cantidadRecibida
     };
 
-    console.log("Payload a enviar:", payload);
-    
     const response = await crearRegistroPago(payload);
     
-    // Modificado: Verificar si la respuesta contiene un mensaje de éxito
     if (response && response.message === "Pago creado satisfactoriamente") {
-      // Usar los mensajes del módulo desde moduleConfig
-      setMessage({ 
-        text: `${moduleConfig.successMessage || 'Pago registrado exitosamente para'} ${accountData.customerName || 'el cliente'}`, 
-        type: 'success' 
-      });
-      console.log("Pago registrado exitosamente");
-      setShowSuccessOptions(true);
-    } else {
-      // Si no es el mensaje esperado, tratar como error
-      const errorMessage = response?.message || 
-                         response?.data?.message || 
-                         'Error desconocido al procesar el pago';
-      throw new Error(errorMessage);
+      // Redirigir a página de éxito
+      navigate(`/modulos/estado_pago/?type=success&text=${encodeURIComponent(
+        `${moduleConfig.successMessage || 'Pago registrado exitosamente para'} ${accountData.customerName || 'el cliente'}`
+      )}&customerName=${encodeURIComponent(accountData.customerName || '')}&menuPath=${encodeURIComponent(moduleConfig.menuPath || '/')}`);
+      
+      // Terminar la ejecución aquí con return
+      return;
     }
     
-  } catch (err) {
-    // Manejo mejorado de errores
+    // Solo llegar aquí si no fue exitoso
+    const errorMessage = response?.message || 
+                       response?.data?.message || 
+                       'Error desconocido al procesar el pago';
+    throw new Error(errorMessage);
+    
+  } catch (err) { 
+    console.error('❌ Error en onSubmit:', err.message);
     let errorMessage = 'Error al procesar el pago';
     
     if (err.response) {
-      // Error de Axios
       errorMessage = err.response.data?.message || 
         err.response.data?.error || 
         err.message;
     } else if (err.message) {
-      // Error personalizado o del backend
       errorMessage = err.message;
     }
-
-    console.error('Error en onSubmit:', err);
-    setMessage({ 
-      text: errorMessage, 
-      type: 'error' 
-    });
+    
+    navigate(`/modulos/estado_pago/?type=error&text=${encodeURIComponent(errorMessage)}&customerName=${encodeURIComponent(accountData?.customerName || '')}&menuPath=${encodeURIComponent(moduleConfig.menuPath || '/')}`);
   } finally {
     setIsSubmitting(false);
   }
 };
-
     // Manejador para recibir datos de la cuenta
   const handleAccountData = useCallback((data) => {
     setAccountData(data); // Ahora setAccountData está definido
@@ -383,7 +371,7 @@ const onSubmit = async (data) => {
                       {...register('cantidadRecibida', {
                         valueAsNumber: true,
                         validate: (value) => {
-                          console.log('Validating cantidadRecibida:', value, 'Max allowed:', moduleData?.amount);
+                          // console.log('Validating cantidadRecibida:', value, 'Max allowed:', moduleData?.amount);
                           return value <= (moduleData?.amount || Infinity);
                         }
                       })}

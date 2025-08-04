@@ -122,7 +122,7 @@ export const MostrarCuentas = async (filters) => {
     let cuentas = [];
     if (response.data && Array.isArray(response.data.body)) {
       cuentas = response.data.body;
-      console.log('Cuentas obtenidas: desde la api xdxd', cuentas);
+      //console.log('Cuentas obtenidas: desde la api xdxd', cuentas);
     } else if (Array.isArray(response.data)) {
       cuentas = response.data;
     }
@@ -142,7 +142,7 @@ export const MostrarCuentas = async (filters) => {
     };
     
   } catch (err) {
-    console.error('Error en búsqueda de cuentas:', err);
+    //console.error('Error en búsqueda de cuentas:', err);
     
     // Manejo específico para error 404
     if (err.response?.status === 404) {

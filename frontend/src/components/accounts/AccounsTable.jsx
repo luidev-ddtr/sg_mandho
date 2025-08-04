@@ -18,7 +18,7 @@ function AccountsTableModal({ id_user, onClose }) {
         const filters = { 'id_user': id_user };
         const response = await MostrarCuentas(filters);
         
-        console.log('Respuesta del backend:', response);
+        //console.log('Respuesta del backend:', response);
         
         if (response?.success) {
           // Manejo más seguro de los datos
@@ -37,7 +37,7 @@ function AccountsTableModal({ id_user, onClose }) {
           
           // Si no hay cuentas pero la respuesta fue exitosa
           if (accountsData.length === 0) {
-            console.log('Usuario sin cuentas (respuesta exitosa)');
+            //console.log('Usuario sin cuentas (respuesta exitosa)');
           }
         } else {
           // Solo establecer error si realmente hay un problema

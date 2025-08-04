@@ -128,7 +128,7 @@ export const MostrarUsuarios = (data) => {
         }
     })
     .then(response => {
-        console.log("Respuesta completa del backend:", response);
+        //console.log("Respuesta completa del backend:", response);
         
         // Asegúrate que response.data existe
         if (!response.data) {

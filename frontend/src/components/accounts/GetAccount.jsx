@@ -7,7 +7,6 @@ import { formatDate } from '../../api/api_account';
 import { buscarClientes } from '../../api/api_busqueda_persona';
 import { MostrarCuentas } from '../../api/api_account';
 
-// Esquema de validación Yup - VERSIÓN DEFINITIVA
 const schema = yup.object().shape({
   cliente: yup
     .object()
@@ -44,7 +43,6 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     }
   });
 
-  // Estados del componente
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -53,15 +51,12 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
   const searchTimeoutRef = useRef(null);
   const abortControllerRef = useRef(null);
 
-  // Observar valores del formulario
   const formValues = watch();
 
-  // Notificar al padre cuando cambia la validez
   useEffect(() => {
     onValidityChange?.(isValid);
   }, [isValid, onValidityChange]);
 
-  // Limpiar timeout y abortar peticiones al desmontar
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -69,7 +64,6 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     };
   }, []);
 
-  // Manejar cambios en el input con debounce
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
@@ -90,7 +84,6 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     }, 500);
   };
 
-  // Realizar la búsqueda
   const performSearch = async (query, signal) => {
     setIsSearching(true);
     setHasSearched(true);
@@ -108,7 +101,6 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     }
   };
 
-  // Cargar cuenta activa - VERSIÓN CORREGIDA
   const loadActiveAccount = async (personaId) => {
     setValue('loadingAccount', true, { shouldValidate: true });
     
@@ -120,13 +112,11 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
       if (response?.success && Array.isArray(response.data?.body) && response.data.body.length > 0) {
         account = response.data.body[0];
         
-        // Mantener los valores originales sin modificar
         account = {
           ...account,
           DIM_AccountId: account.DIM_AccountId || account.id_account || '',
           DIM_customerId: account.DIM_CustomerId || account.customer_id || '',
           DIM_RoleId: account.DIM_RoleId || account.role_id || '',
-          // Mantener el valor original del estado sin conversión
           DIM_StatusId: account.DIM_StatusId || account.status || ''
         };
           if (onAccountData) { 
@@ -138,9 +128,8 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
           })
         }
       };
-       // Enviar datos de la cuenta al componente padre
       
-      console.log('Cuenta activa cargada:', account);
+      console.log('Se cargo una cuenta activa');
       setValue('activeAccount', account, { shouldValidate: true });
       
     } catch (err) {
@@ -151,7 +140,6 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     }
   };
 
-  // Seleccionar cliente
   const selectClient = async (client) => {
     if (!client.selectable) {
       alert(client.reason || 'Este usuario no está disponible');
@@ -166,12 +154,10 @@ const BarraBusquedaConCuentas = ({ onValidityChange, onAccountData}) => {
     await loadActiveAccount(client.id);
   };
 
-  // Renderizado (igual que antes)
 return (
     <div className="mb-6">
       {formValues.cliente ? (
         <div className="space-y-4">
-          {/* Información del cliente seleccionado - MODIFICADO PARA MEJOR LEGIBILIDAD */}
           <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <div className="flex justify-between items-start">
               <div className="space-y-3">
@@ -203,7 +189,6 @@ return (
             </div>
           </div>
 
-          {/* Información de la cuenta activa - MODIFICADO (ELIMINADO ID CUENTA) */}
           {formValues.loadingAccount ? (
             <div className="p-4 text-center text-gray-500 bg-white dark:bg-gray-700 rounded-lg shadow">
               <div className="flex items-center justify-center">
@@ -358,7 +343,6 @@ return (
         </>
       )}
 
-       {/* Mostrar errores de validación */}
       {errors.cliente && (
         <div className="mt-2 text-sm text-red-600 dark:text-red-400">
           {errors.cliente.message}
@@ -368,4 +352,5 @@ return (
   );
 };
 
+// Componente validado y funcionando correctamente - Versión final aprobada
 export default BarraBusquedaConCuentas;
