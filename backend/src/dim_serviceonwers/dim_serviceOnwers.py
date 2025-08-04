@@ -5,6 +5,8 @@ from src.dim_serviceonwers.models.DIM_ServiceOnwers import DIM_ServiceOnwers
 from src.dim_service.DIM_Service import DIM_Service
 
 hanlder_dim_date = DIM_DATE()
+
+# ESTA CLASE POR EL MOMENTO NO SE UTILIZARA, PUES YA QUE SERA UNA TABLA PREDEFINIDA, SE ACTUALIZARA EN OTRO MOMENTO
 class DIM_ServiceOnwersCrud:
     """Class to handle CRUD operations for service owners."""
     

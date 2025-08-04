@@ -5,34 +5,46 @@ const api = axios.create({
     baseURL: 'http://127.0.0.1:5000/api/payment/'
 });
 
-/**
- * esta funcion sera el handler de pagos de todas las comitivas, se una funcion 
- * la cual se conectara con el backend y se encargara de crear un pago
- * se le pasara un objeto con los siguientes datos:
- * {
- *   En primer lugar irian los datos de la persona que hace de administrador de la comitiva
- * ESOS DATOS AUN NO ESTAN DISPONIBLES
- * 
- * Sigen los datos del formulario sera bastanten informacion, ya 
- * que vendra tanto detalles del servicio, detalles de la comitiva,
- * detalles del pago, y detalles del cliente
- * * {
- *   comitiva_id: string, // ID de la comitiva
- *   customer_id: string, // ID del cliente
- *  service_id: string, // ID del servicio}
- * **/
 export const crearRegistroPago = async (data) => {
     try {
-
+        // Validación corregida de campos requeridos
         if (!data.DIM_AccountId || !data.DIM_CustomerId || !data.ServiceName || !data.DIM_OnwerCustomerId 
-            || !data.serviceDaetailsType || !data.amount || !data.anioPago || !data.FactAmount ) return; //modificar
-
+            || !data.serviceDetailsType || !data.amount || !data.AnioPago || !data.FactAmount ) {
+            throw new Error('Faltan campos requeridos para crear el pago');
+        }
+        
         console.log("Datos enviados para crear el pago:", data);
-
         const response = await api.post('create/', data);
-
-    // return { data: response.data }; // Asigna los datos = response.data;
+        
+        console.log("Respuesta del servidor:", response.data);
+        
+        // Devolvemos toda la respuesta, no solo los datos
+        return {
+            success: response.data.status || false,
+            message: response.data.message ,
+            data: response.data
+        };
+        
     } catch (error) {
-        console.log(error);
+        // Manejo mejorado de errores
+        let errorMessage = 'Error desconocido al crear el pago';
+        
+        if (error.response) {
+            // El servidor respondió con un status fuera del rango 2xx
+            console.error("Error de respuesta:", error.response.data);
+            errorMessage = error.response.data?.message || 
+                          error.response.data?.error || 
+                          `Error ${error.response.status}: ${error.response.statusText}`;
+        } else if (error.request) {
+            // La petición fue hecha pero no se recibió respuesta
+            console.error("No se recibió respuesta:", error.request);
+            errorMessage = 'No se recibió respuesta del servidor';
+        } else {
+            // Algo pasó en la configuración de la petición
+            console.error("Error de configuración:", error.message);
+            errorMessage = error.message || 'Error al configurar la petición';
+        }
+        
+        throw new Error(errorMessage);
     }
 };
