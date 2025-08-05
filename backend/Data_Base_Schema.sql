@@ -229,8 +229,6 @@ VALUES
 ('0901a1e6-8779-5695', '080c33d3-7f33-55d7', '1fbd9d83-7a85-50ec', 'ed37cb83-f080-5e41', '2025-01-01', '2025-12-31');
 
 
-
-
 -- Índices adicionales para mejorar el rendimiento
 -- CREATE INDEX idx_customer_date ON DIM_Customer(DIM_DateId);
 -- CREATE INDEX idx_account_customer ON DIM_Account(DIM_CustomerId);

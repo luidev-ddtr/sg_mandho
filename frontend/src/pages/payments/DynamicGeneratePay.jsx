@@ -3,19 +3,19 @@ import React, { useState, useEffect, lazy, Suspense, useCallback  } from 'react'
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import Sidebar from '../partials/SideBar';
-import Header from "../partials/Header";
-import LoadingSpinner from '../components/LoadingSpinner';
-import { crearRegistroPago } from '../api/pagos/api_crear_pago.js';
-import { useAuth } from "../utils/AuthContext";
+import Sidebar from '../../partials/SideBar.jsx';
+import Header from "../../partials/Header.jsx";
+import LoadingSpinner from '../../components/LoadingSpinner.jsx';
+import { crearRegistroPago } from '../../api/pagos/api_crear_pago.js';
+import { useAuth } from "../../utils/AuthContext.jsx";
 import { useParams, useNavigate } from 'react-router-dom';
 
 
 // Componentes dinámicos (carga diferida)
 const COMPONENT_CONFIG = {
-  obtener_cuenta: lazy(() => import('../components/accounts/GetAccount.jsx')),
-  pago_agua: lazy(() => import('../components/modules/AguaCreate.jsx')),
-  // pago_panteon: lazy(() => import('../components/modules/PanteonCreate.jsx')),
+  obtener_cuenta: lazy(() => import('../../components/accounts/GetAccount.jsx')),
+  pago_agua: lazy(() => import('../../components/modules/AguaCreate.jsx')),
+  pago_panteon: lazy(() => import('../../components/modules/PanteonCreate.jsx')),
   // pago_delegacion: lazy(() => import('../components/modules/DelegacionCreate.jsx')),
   // pago_feria: lazy(() => import('../components/modules/feriaCreate.jsx')),
 };
@@ -111,7 +111,7 @@ const DynamicGeneratePay = () => {
     const loadConfig = async () => {
       try {
         setIsLoading(true);
-        const moduleJson = await import(`../components/modules/crear/crear_${moduleName}.json`);
+        const moduleJson = await import(`../../components/modules/crear/crear_${moduleName}.json`);
         
         setModuleData({
           ...moduleJson.default,

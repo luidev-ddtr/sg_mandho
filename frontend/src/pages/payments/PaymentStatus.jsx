@@ -1,8 +1,8 @@
 // src/pages/PaymentStatusPage.jsx
 import React from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-import Header from "../partials/Header";
-import Sidebar from '../partials/SideBar';
+import Header from "../../partials/Header";
+import Sidebar from '../../partials/SideBar';
 
 const PaymentStatus = () => {
   const location = useLocation();

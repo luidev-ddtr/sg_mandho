@@ -54,7 +54,7 @@ def get_admin_account() -> list[Any] | None:
         data_format = {
             'DIM_AccountId': row[0],
             'DIM_CustomerId': row[1],
-            'UserFullName': f"{row[3]} {row[4]} {row[5]} {row[6]}",
+            'UserFullName': f"{row[4]} {row[5]} {row[6]}",
             'RoleName': row[8],
             'StatusName': row[9] if row[9] else 'No especificado'
         }

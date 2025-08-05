@@ -21,12 +21,14 @@ import UserSucces from './pages/personas/UserSucces.jsx';
 import UserRegister from './pages/personas/UseRegister.jsx';
 
 //crear pago modulo
-import DynamicGeneratePay from './pages/DynamicGeneratePay.jsx'
+import DynamicGeneratePay from './pages/payments/DynamicGeneratePay.jsx'
+import DynamicDisplayTable from './pages/payments/DynamiShowPay.jsx';
+import PaymentStatus from './pages/payments/PaymentStatus.jsx';  
 
 //Cuentas modulo
 import Cuenta from './pages/cuentas/Cuenta.jsx';
 import mosntrarCuentas from './pages/cuentas/MostrarCuentas.jsx';
-import PaymentStatus from './pages/PaymentStatus.jsx';  
+
 //import Navigation from './components/Navigation.jsx';
 
 /**
@@ -78,6 +80,7 @@ function App() {
           <Route path="/modulos/crear_pago/:moduleName" element={<DynamicGeneratePay />} />
 
           <Route path="/modulos/estado_pago" element={<PaymentStatus />} />
+          <Route path="/modulos/ver_pagos" element={<DynamicDisplayTable />} />
 
 
         </Routes>

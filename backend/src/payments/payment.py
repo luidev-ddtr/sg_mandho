@@ -55,7 +55,7 @@ class PaymentCrud:
             code, message = fact_revenue_handler.create_fact_revenue(data_json)
             
             if code != 201:
-                return code, f"Error en la tabla de facturación: {message}"
+                return code, message
 
             return 201, "Pago creado satisfactoriamente"
         
