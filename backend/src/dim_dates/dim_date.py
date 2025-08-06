@@ -1,112 +1,218 @@
-from src.utils.id_generator import create_id
+import sqlite3
+from typing import Optional, List
+from src.utils.conexion import Conexion
+from src.dim_dates.model.modelo import DIM_DATE_MODEL
+import datetime
+from zoneinfo import ZoneInfo
+import pytz  # Necesitarás instalar: pip install pytz
 
-"""
-Ejemplo de diccionario con informacion cargada
-        "dim_date": {
-            "fiscal_date": "2022-01-01",
-            "fiscal_year": "2022",
-            "fiscal_month": "01",
-            "fiscal_day": "01",
-            "week": "01",
-            "year": "2022",
-            "month": "01",
-            "day": "01"
-        }
-"""
-
-class DIM_DATE_MODEL:
-    """
-    Clase la cual mapeara la informacion de la base de datos y se cargara automaticamente 
-    para poder enviarse al frontend o usarse para hacer calculos con fechas
-    Args:
-        dateId (str): Identificador unico de la fecha
-        fiscal_date (str): Fecha Fiscal
-        year (int): Año
-        month (int): Mes
-        day (int): Dia
-        fiscal_year (int): Año Fiscal
-        fiscal_month (int): Mes Fiscal
-        fiscal_day (int): Dia Fiscal
-        week (int): Semana
-    
-    returns: Objeto con la informacion para ser introducida en la base de datos
-    """
-    def __init__(self, dateId, fiscal_date, year, month, day, fiscal_year, fiscal_month, fiscal_day, week):
-        """
-        Constructor de la clase DIM_DATE: Hace referencia a la tabla DIM DATE de la base de datos:
-        este recibira la informacion ya creada y guardada en la bd
-        """
-        self.dateId = dateId
-        self.year = year
-        self.month = month
-        self.day = day
-        self.fiscal_date = fiscal_date
-        self.fiscal_year =  fiscal_year
-        self.fiscal_month = fiscal_month
-        self.fiscal_day = fiscal_day
-        self.week = week
-    
-    def __str__(self) -> str:
-        return f"Date {self.dateId} {self.fiscal_date} {self.year} {self.month} {self.day} {self.fiscal_year} {self.fiscal_month} {self.fiscal_day} {self.week}"
-    
-    def mostrar_datos(self):
-        print(f"""Id fecha {self.dateId}
-        Fecha Fiscal {self.fiscal_date}
-        Año {self.year}
-        Mes {self.month}
-        Dia {self.day}
-        Año Fiscal {self.fiscal_year}
-        Mes Fiscal {self.fiscal_month}
-        Dia Fiscal {self.fiscal_day}
-        Semana {self.week}""")
-        
 
 class DIM_DATE:
     """
-    IMPORTANTE ESTA CLASE AUN NO ES FUNCIONAL
-    
-    Clase dim date, Se instanciara cada que una de las tablas relacionadas nesecite la informacion
-    Se creara automaticamente los atributos de.
-    Returns:
-        string: dateId,
-        string: fiscal_date,
-        string: year,
-        string: month,
-        string: day,
-        string: fiscal_year,
-        string: fiscal_month,
-        string: fiscal_day,
-        string: week
-    
-    Agregar mas metodos para que sea mas funcional 
+    Clase principal para interactuar con fechas desde otras partes del sistema.
+    Maneja la interacción con la base de datos y proporciona una interfaz limpia.
     """
     def __init__(self) -> None:
         """
-        Constructor de la clase DIM_DATE: Define en none todos los atributos
-        y los guardara en un diccionario
+        Inicializa el gestor de fechas con la ruta a la base de datos.
+        
+        Args:
+            db_path: Ruta al archivo SQLite (.db)
         """
-        self.dim_date_data = dict()
-        self.dateId = create_id([None, None, None])
-        self.fiscal_date = None
-        self.fiscal_year = None
-        self.fiscal_month = None
-        self.fiscal_day = None
-        self.year = None
-        self.month = None
-        self.day = None
-        self.week = None
+        self.dateId = self.get_id_by_object_date(*self._get_full_date())
+        self.full_date = self._get_full_date()
     
+    def _get_full_date(self) -> tuple:
+        """
+        Obtiene la fecha completa en formato Time.
+        Trackea la fecha a la hora actual del centro de mexico y con eso ahce la conversion y devuelve el ide correspondiente
+
+        Returns:
+            Fecha completa en formato AAAAMMDD
+        """
+        
+        now = datetime.datetime.now(pytz.timezone("America/Mexico_City")) 
+        
+        return [now.year, now.month, now.day]
     
-    def Create_dim_date_dic(self) -> dict[str, str | None]:
-        self.dim_date_data = {
-                "dateId": self.dateId,
-                "fiscal_date": self.fiscal_date,
-                "fiscal_year": self.fiscal_year,
-                "fiscal_month": self.fiscal_month, 
-                "fiscal_day": self.fiscal_day,
-                "year": self.year,
-                "month": self.month,
-                "week": self.week,
-                "day": self.day,
-            }
-        return self.dim_date_data
+
+    def get_by_id(self, date_id: int) -> Optional[DIM_DATE_MODEL]:
+        """
+        Obtiene una fecha por su ID completo (AAAAMMDD).
+        
+        Args:
+            date_id: Identificador completo de la fecha (ej. 20230815)
+            
+        Returns:
+            DIM_DATE_MODEL si se encuentra, None si no existe
+        """
+        try:
+            pass
+                
+        except sqlite3.Error as e:
+            print(f"Error al obtener fecha por ID: {e}")
+            return None
+    
+    def get_by_object_date(self, year: int, month: int, day: int) -> Optional[DIM_DATE_MODEL]:
+        """
+        Obtiene una fecha por sus componentes (año, mes, día).
+        
+        Args:
+            year: Año (ej. 2023)
+            month: Mes (1-12)
+            day: Día (1-31)
+            
+        Returns:
+            DIM_DATE_MODEL si se encuentra, None si no existe
+        """
+        date_id = int(f"{year}{month:02d}{day:02d}")
+        return self.get_by_id(date_id)
+    
+    def get_id_by_object_date(self, year: int, month: int, day: int) -> Optional[int]:
+        """
+        Obtiene el ID de una fecha por sus componentes (año, mes, día).
+        
+        Args:
+            year: Año (ej. 2023)
+            month: Mes (1-12)
+            day: Día (1-31)
+            
+        Returns:
+            ID de la fecha si se encuentra, None si no existe
+        """
+        date_id = int(f"{year}{month:02d}{day:02d}")
+        conecttion = Conexion()
+        try:
+            query = "SELECT DIM_DateId FROM DIM_Date WHERE DIM_DateId = ?"
+            conecttion.cursor.execute(query, (date_id,))
+            result = conecttion.cursor.fetchone()
+            
+            if result is not None:
+                return result[0]
+            else:
+                return None
+            
+        except sqlite3.Error as e:
+            print(f"Error al obtener ID de fecha: {e}")
+            return None
+        
+    
+    def _row_to_model(self, row: tuple) -> DIM_DATE_MODEL:
+        """
+        Convierte una fila de la BD a un DIM_DATE_MODEL.
+        
+        Args:
+            row: Tupla con los datos de la fila
+            
+        Returns:
+            Instancia de DIM_DATE_MODEL
+        """
+        return DIM_DATE_MODEL(
+            DIM_DateId=row[0],
+            FiscalYear=row[1],
+            FiscalMonth=row[2],
+            FiscalQuarter=row[3],
+            FiscalWeek=row[4],
+            FiscalDay=row[5],
+            Year=row[6],
+            Month=row[7],
+            Week=row[8],
+            Day=row[9]
+        )
+    
+    def _insert_year_dates(self, registers: list[tuple]) -> bool:
+        """
+        Inserta un año completo de registros usando conversión directa a tuplas.
+        
+        Args:
+            registers: Lista de objetos DIM_DATE_MODEL a insertar
+            
+        Returns:
+            bool: True si se insertaron correctamente, False si hubo error
+        """
+        if not registers:
+            raise ValueError("La lista de registros no puede estar vacía")
+        
+        handler_connection = Conexion()
+        try:
+            query = """
+            INSERT OR IGNORE INTO DIM_Date (
+                DIM_DateId, FiscalYear, FiscalMonth, FiscalQuarter,
+                FiscalWeek, FiscalDay, Year, Month, Week, Day
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+
+            handler_connection.cursor.executemany(query, registers)
+            handler_connection.save_changes()
+            return True
+            
+        except sqlite3.Error as e:
+            print(f"Error al insertar registros: {e}")
+            return False
+        finally:
+            handler_connection.close_conexion()
+        
+
+def generar_anio_real(id_anio: int) -> List[tuple]:
+    """
+    Genera registros diarios para un año completo con semanas que se reinician cada mes.
+    
+    Args:
+        id_anio (int): Año para generar (ej: 2023)
+        
+    Returns:
+        List[tuple]: Lista de tuplas listas para INSERT
+    """
+    prefijos = {
+        "trimestral": "Q", 
+        "mensual": "M",
+        "diario": "D",
+        "semanal": "W"
+    }
+    
+    registros = []
+    dias_por_mes = {
+        1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
+        7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    }
+    
+    for mes in range(1, 13):
+        trimestre = (mes - 1) // 3 + 1
+        semana_mes = 1
+        dia_semana = 0  # Contador de días en la semana actual
+        
+        for dia in range(1, dias_por_mes[mes] + 1):
+            # Incrementar semana cada 7 días
+            dia_semana += 1
+            if dia_semana > 7:
+                semana_mes += 1
+                dia_semana = 1
+            
+            date_id = int(f"{id_anio}{mes:02d}{dia:02d}")
+            
+            registro = DIM_DATE_MODEL(
+                DIM_DateId=date_id,
+                FiscalYear=f"Y{str(id_anio)[2:]}",
+                FiscalMonth=f"{prefijos['mensual']}{mes:02d}",
+                FiscalQuarter=f"{prefijos['trimestral']}{trimestre}",
+                FiscalWeek=f"{prefijos['semanal']}{semana_mes:02d}",
+                FiscalDay=f"{prefijos['diario']}{dia:02d}",
+                Year=id_anio,
+                Month=f"{mes:02d}",
+                Week=f"{semana_mes:02d}",
+                Day=f"{dia:02d}"
+            )
+            
+            registros.append(registro.to_tuple())
+    
+    print(f"Total registros generados: {len(registros)}")
+    return registros
+if __name__ == "__main__":
+    #ejecutar el script para que genere un anio completo en la tabla
+    dim_date = DIM_DATE()
+    id = 2025
+    anio2025 = generar_anio_real(id)
+
+    print(dim_date._insert_year_dates(anio2025))
+
+
