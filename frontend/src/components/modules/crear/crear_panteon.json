@@ -5,5 +5,5 @@
   "successTitle": "Pago de Panteón Registrado",
   "successMessage": "El pago del servicio de panteón ha sido registrado para",
   "componentType": "panteon",
-  "description": "Este módulo facilita el **registro de pagos** relacionados con los servicios de panteón. Ofrece un **formulario claro** para ingresar los detalles del pago, gestiona el almacenamiento de la transacción y emite un **mensaje de confirmación**. Se integra con el endpoint `/api/pagos/panteon` para la gestión de datos."
+  "menuPath": "/modulo/panteon"
 }

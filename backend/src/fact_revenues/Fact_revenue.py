@@ -34,7 +34,7 @@ class factRevenueCrud():
         dim_date_data = DIM_DATE()
         #Validar como se debe guardar el pago
         data_format = {
-            'FACT_RevenueId': create_id([statusName, data_json['DIM_AccountId'], data_json['FactAmount'], data_json['DIM_ServiceDetailsId']]),
+            'FACT_RevenueId': create_id([statusName, data_json['DIM_AccountId'], data_json['FactAmount'], dim_date_data.dateId]), #Asi se evita que el id se repita
             'DIM_DateId': dim_date_data.dateId,
             'DIM_AccountId': data_json['DIM_AccountId'],
             'DIM_ServiceDetailsId': data_json['DIM_ServiceDetailsId'],
