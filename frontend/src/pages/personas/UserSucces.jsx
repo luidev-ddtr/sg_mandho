@@ -32,7 +32,7 @@ function Onboarding04() {
                       <path className="text-green-600 dark:text-green-400" d="M37.22 26.375a1 1 0 1 1 1.56 1.25l-8 10a1 1 0 0 1-1.487.082l-4-4a1 1 0 0 1 1.414-1.414l3.21 3.21 7.302-9.128Z" />
                     </svg>
                   </div>
-
+                  
                   {/* Título */}
                   <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4 text-center">
                     Usuario insertado correctamente <span className="ml-2">🙌</span>
@@ -47,12 +47,11 @@ function Onboarding04() {
                     El usuario ha sido registrado exitosamente en el sistema.
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-
+                  <div className="flex justify-center">
                     <Link 
-                      to="/modulo/personas" 
+                      to="/cuentas/cuenta" 
                       className="
-                        flex-1 px-4 py-3 md:px-6 md:py-3
+                        px-6 py-3
                         bg-white dark:bg-gray-700
                         border border-gray-300 dark:border-gray-600
                         text-gray-800 dark:text-gray-200
@@ -66,30 +65,11 @@ function Onboarding04() {
                         relative overflow-hidden
                         group
                         text-center
+                        w-full sm:w-auto
                       "
                     >
-                    
-                    <Link 
-                      to="/personas/Cuenta" 
-                      className="
-                        flex-1 px-4 py-3 md:px-6 md:py-3
-                        bg-white dark:bg-gray-700
-                        border border-gray-300 dark:border-gray-600
-                        text-gray-800 dark:text-gray-200
-                        font-medium rounded-lg
-                        shadow-lg
-                        transition-all duration-300
-                        transform hover:scale-[1.02]
-                        hover:shadow-xl
-                        active:scale-95
-                        focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50
-                        relative overflow-hidden
-                        group
-                        text-center
-                      "
-                    ></Link>
                       <span className="relative z-10 flex items-center justify-center">
-                        Ir al menú <span className="ml-1">-&gt;</span>
+                        Crear Cuenta <span className="ml-1">→</span>
                       </span>
                     </Link>
                   </div>

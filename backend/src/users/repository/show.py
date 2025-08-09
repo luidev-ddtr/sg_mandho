@@ -34,17 +34,13 @@ def read(id_user = str(), filters = {} ) -> list:
         Caso 2: si los filtros tienen solo el campo ninguno solamente se seleccionaran todos los campos y se enviaran esos datos
         Caso 3: Solo hay filters - Aplicar filtros 
     """
-    print(f"Id user: {id_user}, Filtros: {filters}")
     object_conection = Conexion() 
     try:
+        print(f"Imprimeinto los datos recibidos {id_user} y {filters}")
         #Se instancia la clase para todas las funciones  
         if id_user and filters is None: 
-            conn ,cursor  = object_conection.conexion()
-            query = f"""SELECT * FROM DIM_Customer WHERE DIM_CustomerId  = '{str(id_user)}'"""
-            cursor.execute(query)
-            registros = cursor.fetchall()
-            return [registros]
-                
+            return get_user(id_user)
+        
 
         elif (filters == {} or filters) and id_user is None:
             if filters == {}:
@@ -72,22 +68,21 @@ def read(id_user = str(), filters = {} ) -> list:
                         "number_ext": registro[11]
                     }
                     data_format.append(persona)
-                object_conection.close_conexion()
+                print("desde show en users")
                 return data_format
             else:
                 print("No se encontraron registros con los filtros proporcionados")
-                object_conection.close_conexion()
                 pass
         else:
             print("Error inesperado")
-            object_conection.close_conexion()
             return []
     except sqlite3.Error as e:
         print(f"Error al realizar la consulta: {e}")
-        object_conection.close_conexion()
         return []
+    finally:
+        object_conection.close_conexion()
     
-def get_user(id_user = str()):# -> list:
+def get_user(id_user: str):# -> dict[str, str] | list:
     """
     Funcion para optener la informacion de un usuario en especifico
     Args:
@@ -96,7 +91,7 @@ def get_user(id_user = str()):# -> list:
         list: Con el registro encontrado o error en caso contrario
     """
 
-    print(f"Id user: {id_user}")
+    print(f"Id de usuario: {id_user}")
 
     object_conection = Conexion() 
     
@@ -106,7 +101,20 @@ def get_user(id_user = str()):# -> list:
         conn, cursor = object_conection.conexion()
 
         # Usando parámetros seguros para evitar SQL injection
-        query = "SELECT * FROM DIM_Customer WHERE DIM_CustomerId = ?"
+        query = """SELECT  
+        DIM_CustomerId,
+        DIM_DateId,
+        CustomerName,
+        CustomerMiddleName,
+        CustomerLastName,
+        CustomerSecondLastName,
+        CustomerDateBirth,
+        CustomerStartDate,
+        CustomerEndDate,
+        CustomerFraction,    
+        CustomerAddress,
+        CustomerNumberext
+        FROM DIM_Customer WHERE DIM_CustomerId = ?"""
         cursor.execute(query, (id_user,))
 
         registros = cursor.fetchall()
@@ -118,21 +126,8 @@ def get_user(id_user = str()):# -> list:
             
             # Mapeo manual de la tupla a los parámetros de User
             # IMPORTANTE: Asegúrate que el orden de las columnas coincide con tu SELECT *
-            registro = User(
-                DIM_DateId=primer_registro[0],
-                DIM_CustomerId=primer_registro[1],
-                CustomerName=primer_registro[2],
-                CustomerMiddleName=primer_registro[3],
-                CustomerLastName=primer_registro[4],
-                CustomerSecondLastName=primer_registro[5],
-                CustomerDateBirth=primer_registro[6],
-                CustomerDateStart=primer_registro[7],
-                CustomerDateEnd=primer_registro[8],
-                CustomerFraction=primer_registro[9],
-                CustomerAdress=primer_registro[10],
-                CustomerNumberext=primer_registro[11]
-            )
-            return registro  # Devuelve el objeto User directamente
+            registro = User(*primer_registro)
+            return registro.to_dict()  # Devuelve el objeto User directamente
         else:
             return []  # O puedes lanzar una excepción si lo prefieres
     

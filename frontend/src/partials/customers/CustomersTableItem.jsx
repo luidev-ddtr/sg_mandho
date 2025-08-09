@@ -1,7 +1,7 @@
 import React from 'react';
 import Image01 from '../../images/user-40-01.jpg';
 import Image02 from '../../images/user-40-02.jpg';
-import ActionMenu from '../../components/ActionMenu';
+import ActionMenu from '../../components/customers/ActionMenu';
 function CustomersTableItem(props) {
     const imageMap = {
     'Image01': Image01,
@@ -69,6 +69,7 @@ function CustomersTableItem(props) {
         {/* Menu button */}
         <ActionMenu 
           id_user={props.id}
+          onUpdate={props.onEditSuccess} // Pasamos la prop hacia abajo
         />
       </td>
     </tr>

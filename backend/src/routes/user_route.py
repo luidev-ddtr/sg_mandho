@@ -111,25 +111,43 @@ def read_information():# -> tuple[Any, Literal[400]] | tuple[Any, Literal[200]] 
             return send_error(message, state)
         
     except Exception as e:
-        print(e)
+        print(e, "error desde read users")
         return send_error(str(e), 500)
     
 
-"""
-Informacion de rpeuba para enviar al frontend
+@user_route.route("/api/user/update_user/", methods=["POST"])
+def update_info_user():
+    """Endpoint para actualizar la información de un usuario.
 
-        info_prueba = [{
-            "id": "fsdng12fcs",
-            "nombre": "John",
-            "segundo_nombre": "Doe",
-            "apellido": "Torres",
-            "segundo_apellido": "Garcia",
-            "fecha_nacimiento": "1990-01-01",
-            "fecha_inicio": "2022-01-01",
-            "fecha_fin": "2025-12-31",
-            "manzana": "A",
-            "calle": "Main Street",
-            "numero_ext": "123",
-        }]"""
-    
+    Este endpoint espera recibir datos en formato JSON a través de una solicitud POST.
+    Llama a la función `user_options.edit_user` para procesar la actualización del usuario
+    con los datos proporcionados.
+
+    - Si la solicitud JSON está vacía, devuelve un error 400.
+    - Si la actualización en `user_options.edit_user` es exitosa (códigos de estado 200-206),
+      responde con un mensaje de éxito.
+    - Si la actualización falla, devuelve un mensaje de error específico y el código de estado
+      correspondiente.
+    - Si ocurre una excepción inesperada, captura el error y devuelve una respuesta 500.
+
+    Returns:
+        tuple[Any, int]: Una tupla que contiene la respuesta (éxito o error) y el código de
+        estado HTTP.
+    """
+    try:
+        request_data = request.json
+        if not request_data:
+            return send_error("No se recibieron datos", 400)
+        
+        state, message, data = user_options.edit_user(request_data)
+
+        if 200 <= state <= 206:
+            return send_success(message, data, state)
+        else:
+            print(message)
+            return send_error(message, state)
+    except Exception as e:
+        print(e)
+        return send_error(str(e), 500)
+
 

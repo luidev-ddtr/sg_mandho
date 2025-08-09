@@ -1,9 +1,6 @@
 #Fichero el cual creara la instancia de flask # 
-from flask import Flask, jsonify
-from flask.wrappers import Response
+from flask import Flask
 from flask_cors import CORS  # Importa CORS
-
-from src.utils.conexion import Conexion
 
 #HARCODEAR LAS URL
 import os
@@ -26,14 +23,35 @@ app.register_blueprint(search_route)
 app.register_blueprint(auth_route)
 app.register_blueprint(payment_route)
 
+# Desactivar las verificaciones CORS permitiendo todas las solicitudes
+# Configuración detallada de CORS
 CORS(app, resources={
-    r"/api/*": {
-        "origins": [os.getenv('URL_FRONTEND')],
-        "methods": ["GET", "POST", "PUT", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
-        "supports_credentials": False
+    r"/*": {
+        "origins": "*",  # En desarrollo puedes usar "*", en producción restringe a tus dominios
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        "allow_headers": [
+            "Content-Type",
+            "Authorization",
+            "X-Requested-With",
+            "Accept",
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ],
+        "expose_headers": ["Content-Disposition"],
+        "supports_credentials": True,
+        "max_age": 86400
     }
 })
+#Estas validaciones se deberan revisar despues 
+# CORS(app, resources={
+#     r"/api/*": {
+#         "origins": [os.getenv('URL_FRONTEND')],
+#         "methods": ["GET", "POST", "PUT", "OPTIONS"],
+#         "allow_headers": ["Content-Type"],
+#         "supports_credentials": False
+#     }
+# })
 
 #cerrar todos los hilos 
 # cnection = Conexion()

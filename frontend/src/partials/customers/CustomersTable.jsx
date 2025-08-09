@@ -17,6 +17,12 @@ function CustomersTable({ selectedItems }) {
     }
   };
 
+  const handleUpdateCustomer = (updatedCustomer) => {
+  setList(list.map(customer => 
+    customer.id_user === updatedCustomer.id_user ? updatedCustomer : customer
+  ));
+};
+
   const handleClick = (e) => {
     const { id, checked } = e.target;
     setSelectAll(false);
@@ -46,7 +52,7 @@ function CustomersTable({ selectedItems }) {
         setIsLoading(false);
       }
     };
-    
+    console.log("Laamando desde mostrar");
     fetchCustomers();
   }, []); // Empty dependency array = solo en montaje
 
@@ -133,6 +139,7 @@ function CustomersTable({ selectedItems }) {
                   date_of_end={customer.date_user_end}
                   handleClick={handleClick}
                   isChecked={isCheck.includes(customer.id_user)}
+                  onEditSuccess={handleUpdateCustomer} // Nueva prop
                 />
               ))}
             </tbody>

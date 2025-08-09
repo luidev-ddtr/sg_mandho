@@ -1,7 +1,7 @@
 import React from 'react';
 import Image01 from '../../images/user-40-01.jpg';
 import Image02 from '../../images/user-40-02.jpg';
-import ActionMenu from '../ActionMenu';
+import ActionMenu from '../customers/ActionMenu';
 
 
 function AccountTableItem(props) {

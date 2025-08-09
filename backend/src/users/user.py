@@ -6,10 +6,12 @@ from src.dim_dates.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
 
 #validaciones del crud
-from src.users.models.user import User
+from src.users.models.user import User, to_edit
 from src.users.repository.create import Create
 from src.users.repository.show import read
 
+#importacion para editar usuario
+from src.users.repository.edit import edit_user
 #base_de_datos = BdPrueba()
 
 class UserCrud:
@@ -52,7 +54,7 @@ class UserCrud:
                 "CustomerDateEnd": user_json.get("fecha_fin") or "s/n",
                 "CustomerAdress": user_json.get("calle") or "s/n",
                 "CustomerFraction": user_json.get("manzana") or "s/n",
-                "CustomerNumberext": user_json.get("numero_ext") or "s/n"
+                "CustomerNumberExt": user_json.get("numero_ext") or "s/n"
             }
             persona = User(**user_data)
             
@@ -106,7 +108,6 @@ class UserCrud:
         tipo_campos = [str,dict]
         
         respuesta,mensaje = validate_data(data_json, campos_requeridos, tipo_campos, "user") # <--- Retorna boleano y el mensaje del error
-        
         if respuesta:
             
             if data_json["id_user"] and data_json['filters'] == {}:
@@ -139,4 +140,51 @@ class UserCrud:
             
         else:
             return 400, mensaje, []
+        
+    def edit_user(self, data_edit: dict):# -> tuple[Literal[201], Literal['El usuario se ha actualizado...:
+        """Endpoint para actualizar la información de un usuario existente.
 
+        Esta función recibe un diccionario con los datos del usuario que se desea
+        modificar. Realiza una validación de los datos para asegurarse de que
+        contienen los campos requeridos y que los tipos de datos son correctos.
+        En caso de que la validación sea exitosa, formatea los datos y llama
+        a la función `edit_user` para aplicar los cambios en la base de datos.
+        Finalmente, retorna una respuesta de éxito (código 201) o de error
+        (código 400) junto con un mensaje descriptivo.
+
+        Los campos requeridos para la actualización son:
+        - DIM_CustomerId (str): Identificador único del usuario.
+        - CustomerName (str): Nombre del usuario.
+        - CustomerMiddleName (str): Segundo nombre del usuario.
+        - CustomerLastName (str): Apellido paterno del usuario.
+        - CustomerSecondLastName (str): Apellido materno del usuario.
+        - CustomerAddress (str): Dirección del usuario.
+        - CustomerFraction (str): Fraccionamiento o colonia del usuario.
+        - CustomerNumberExt (str): Número exterior del domicilio.
+
+        Args:
+            data_edit (dict): Diccionario con los datos a editar.
+
+        Returns:
+            tuple[int, str]: Una tupla que contiene un código de estado HTTP
+                             y un mensaje de éxito o error.
+        """
+        campos_requeridos = ["DIM_CustomerId","CustomerName", "CustomerMiddleName", "CustomerLastName", "CustomerSecondLastName", "CustomerAddress", "CustomerFraction", "CustomerNumberExt"]
+        tipo_campos = [str, str, str, str, str, str, str, str]
+
+        result , message = validate_data(data_edit, campos_requeridos, tipo_campos, "user")
+        if result:
+            format_data = to_edit(data_edit)
+
+            print(format_data)
+            isvalid = edit_user(format_data)
+
+            if not isvalid:
+                return 400, "No se pudo actualizar el registro"
+            
+            #Obtener el nuevo ususario para regresarlo en la respuesta
+            new_user = read(data_edit["DIM_CustomerId"], None)
+
+            return 201, "El usuario se ha actualizado correctamente", new_user
+        else:
+            return 400, message

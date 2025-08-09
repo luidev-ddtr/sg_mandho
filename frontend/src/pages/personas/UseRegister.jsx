@@ -514,7 +514,7 @@ function UserRegister() {
                 </div>
               </div>
             </div>
-
+            
             {/* Image container */}
             <div className="hidden md:block w-1/3 relative">
               <img 

@@ -61,7 +61,7 @@ def convertir_a_formato_legible(datos_crudos: list) -> list:
         legible = {
             "DIM_AccountId": cuenta.DIM_AccountId,
             # "DIM_DateId": self._formatear_fecha(cuenta.get("date_id")), Registro interno, no se envia
-            "DIM_CustomerId": persona.CustomerName + " " + persona.CustomerMiddleName + " " + persona.CustomerLastName + " " + persona.CustomerSecondLastName,
+            "DIM_CustomerId": persona["CustomerName"] + " " + persona["CustomerMiddleName"] + " " + persona["CustomerLastName"] + " " + persona["CustomerSecondLastName"],
             "DIM_RoleId": rol.RoleName,
             "DIM_StatusId": status[1],  #para el nombre
             "startDate": cuenta.StartDate,

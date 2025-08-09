@@ -1,10 +1,10 @@
 class User:
-    def __init__(self, DIM_DateId: str, DIM_CustomerId: str, CustomerName: str, 
+    def __init__(self,  DIM_CustomerId: str, DIM_DateId: str, CustomerName: str, 
                  CustomerMiddleName: str = "s/n", CustomerLastName: str = "", 
                  CustomerSecondLastName: str = "s/n", CustomerDateBirth: str = "", 
                  CustomerDateStart: str = "", CustomerDateEnd: str = "s/n", 
                  CustomerFraction: str = "", CustomerAdress: str = "", 
-                 CustomerNumberext: str = "") -> None:
+                 CustomerNumberExt: str = "") -> None:
         """
         Modelo de usuario: representa a una persona registrada en el sistema.
 
@@ -25,8 +25,8 @@ class User:
             CustomerAdress (str): Dirección o calle del usuario.
             CustomerNumberext (str): Número exterior del domicilio del usuario.
         """
-        self.DIM_DateId = DIM_DateId
         self.DIM_CustomerId = DIM_CustomerId
+        self.DIM_DateId = DIM_DateId
         self.CustomerName = CustomerName
         self.CustomerMiddleName = CustomerMiddleName
         self.CustomerLastName = CustomerLastName
@@ -36,7 +36,7 @@ class User:
         self.CustomerEndDate = CustomerDateEnd
         self.CustomerFraction = CustomerFraction
         self.CustomerAddress = CustomerAdress
-        self.CustomerNumberext = CustomerNumberext
+        self.CustomerNumberExt = CustomerNumberExt
 
     def __str__(self) -> str:
         """
@@ -46,7 +46,7 @@ class User:
                 f"{self.CustomerLastName} {self.CustomerSecondLastName}, "
                 f"Nacido el {self.CustomerDateBirth}, "
                 f"Inicio: {self.CustomerStartDate}, Fin: {self.CustomerEndDate}, "
-                f"Dirección: {self.CustomerFraction}, {self.CustomerAddress} #{self.CustomerNumberext}")
+                f"Dirección: {self.CustomerFraction}, {self.CustomerAddress} #{self.CustomerNumberExt}")
 
     def mostrar_datos(self) -> None:
         """
@@ -65,6 +65,52 @@ class User:
         Fecha de Fin:          {self.CustomerEndDate}
         Manzana (Fracción):    {self.CustomerFraction}
         Calle:                 {self.CustomerAddress}
-        Número Exterior:       {self.CustomerNumberext}
+        Número Exterior:       {self.CustomerNumberExt}
         """)
 
+    def to_dict(self) -> dict[str, str]:
+        """Funcion la cual devuelve los datos de la tabla formateados, para poder ser enviados 
+        en formato de diccionario, esta informacion se envia al frontend"""
+        return {
+            "DIM_CustomerId": self.DIM_CustomerId,
+            "DIM_DateId": self.DIM_DateId,
+            "CustomerName": self.CustomerName,
+            "CustomerMiddleName": self.CustomerMiddleName,
+            "CustomerLastName": self.CustomerLastName,
+            "CustomerSecondLastName": self.CustomerSecondLastName,
+            "CustomerDateBirth": self.CustomerDateBirth,
+            "CustomerStartDate": self.CustomerStartDate,
+            "CustomerEndDate": self.CustomerEndDate,
+            "CustomerFraction": self.CustomerFraction,
+            "CustomerAddress": self.CustomerAddress,
+            "CustomerNumberExt": self.CustomerNumberExt
+        }
+
+def to_edit(campos_editables: dict) -> dict[str, str]:
+    """
+    Función para verificar o completar la información recibida y poner alguna por defecto
+    si es que el valor del campo es nulo o una cadena vacía.
+    """
+    # Define los campos que deben tener un valor por defecto y sus respectivos valores
+    fields_with_defaults = {
+        'CustomerName': 's/n',
+        'CustomerMiddleName': 's/n',
+        'CustomerLastName': 's/n',
+        'CustomerSecondLastName': 's/n',
+        'CustomerFraction': 's/n',
+        'CustomerAddress': 's/n',
+        'CustomerNumberExt': 's/n'
+    }
+
+    # Itera sobre los campos definidos en fields_with_defaults
+    for field_name, default_value in fields_with_defaults.items():
+        # Obtiene el valor actual del campo en campos_editables.
+        # Si el campo no existe, .get() devuelve None.
+        current_value = campos_editables.get(field_name)
+
+        # Verifica si el valor actual es None o una cadena vacía (después de quitar espacios en blanco)
+        # Esto asegura que tanto None como '' (cadena vacía) se traten como "nulos"
+        if current_value is None or (isinstance(current_value, str) and current_value.strip() == ''):
+            campos_editables[field_name] = default_value
+    
+    return campos_editables
