@@ -1,4 +1,5 @@
 import axios from "axios";
+import { id } from "date-fns/locale/id";
 
 // Instancia de Axios con la URL base configurada
 const api = axios.create({
@@ -158,5 +159,16 @@ export const MostrarCuentas = async (filters) => {
       message: err.response?.data?.message || err.message || 'Error al obtener cuentas',
       data: { body: [] }
     };
+  }
+};
+
+
+export const validate_edit_account = async (data) => {
+  try {
+    // Validación básica de los datos requeridos
+    console.log("Esta funcion no hace nada aun")
+  } catch (error) {
+    console.error("Error en validate_edit_account:", error);
+    return false;
   }
 };

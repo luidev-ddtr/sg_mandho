@@ -146,24 +146,9 @@ class AccountCrud():
         campos_requeridos = ["id_user"]
         tipo_campos = [str]
         esvalido, mensaje = validate_data(persona_id, campos_requeridos, tipo_campos, "account")
-        
+        print("Aqui estamos jaja ")
         if esvalido:
-            if persona_id is None or persona_id.get('id_user', "") == "":
-                # Caso: Mostrar todas las cuentas
-                datos = show_account(None) #Se manda como paremetro para que devuelva todas las cuentas
-                if datos:
-                    # Aquí se transformarían los IDs a información legible
-                    datos_legibles = convertir_a_formato_legible(datos)
-                    if datos_legibles:
-                        return 200, "Todas las cuentas obtenidas correctamente", datos_legibles
-                    else:
-                        mensaje = "Ocurrio un error mientras se buscaban los datos "
-                        return 400, mensaje, []
-                else:
-                    mensaje = "No se encontraron cuentas"
-                    return 404, mensaje, []
-                
-            elif persona_id['id_user']:
+            if persona_id['id_user']:
                 # Caso: Mostrar cuenta específica
                 print(persona_id['id_user'])
                 datos = show_account(persona_id['id_user'])

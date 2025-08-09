@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { validate_edit_account } from "./api_account";
+import { crearCuenta } from "./api_account";
 // Instancia de Axios con la URL base configurada
 const api = axios.create({
     baseURL: 'http://127.0.0.1:5000/api/user/'
@@ -139,6 +140,7 @@ export const MostrarUsuarios = (data) => {
         if (response.data.status === 'success') {
             return {
                 data: response.data.body,
+                success: true
                 // Agrega otros campos si son necesarios
             };
         } else {
@@ -151,27 +153,53 @@ export const MostrarUsuarios = (data) => {
     });
 };
 
+export const EditarUsuario = (data) => {
 
-export const MostrarUsuarios1 = ( ) => {
+    //Validacion para ver si crear una nueva cuenta o no modificar nada
+    const data_account = {
+    status: data.estadoPersona.toLowerCase(),  // Del campo estadoPersona del primer payload
+    customer_id: data.DIM_CustomerId,      // Del campo DIM_CustomerId del primer payload
+    start_date: data.fechaCuenta,                   // Usamos la misma fecha que en el primer payload
+    end_date: ""                               // Valor por defecto para nueva cuenta
+};
 
-    // Usa 'api.get' en lugar de 'axios.get'
-    console.log("Estoy en MostrarUsuarios1, Funcion de prueba para cargar usarios ");
-    return (
-        [
-        {
-        "id_user": "1",
-        "first_name": "Guadalupe",
-        "second_name": "Maria",
-        "last_name": "Torres",
-        "second_last_name": "Garcia",
-        "date_of_birth": "1990-01-01",
-        "date_user_start": "2022-01-01",
-        "date_user_end": "2025-12-31",
-        "user_manzana": "Tepetate",
-        "user_street": "Main Street",
-        "user_number_ext": "123",
-        "image": "Image01"
-    },
-        ]
-    )
-} 
+    if  (validate_edit_account(data_account)){
+        crearCuenta(data_account);
+    }
+    
+
+    console.log("Los datos llegaron correctamente a Api.js en EditarUsuario",data);
+    return api.post('update_user/', data, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.data.status === 'success') {
+            console.log("Respuesta Datos que llegaron del backend:", response.data.body);
+            return {
+                data: {     
+                    id_user: response.data.body.DIM_CustomerId,
+                    first_name: response.data.body.CustomerName,
+                    second_name: response.data.body.CustomerMiddleName || '',
+                    last_name: response.data.body.CustomerLastName,
+                    second_last_name: response.data.body.CustomerSecondLastName || '',
+                    date_of_birth: response.data.body.CustomerDateBirth,
+                    date_user_start: response.data.body.CustomerStartDate,
+                    date_user_end: response.data.body.CustomerEndDate,
+                    manzana: response.data.body.CustomerFraction,
+                    street: response.data.body.CustomerAddress,
+                    number_ext: response.data.body.CustomerNumberExt
+                },
+                success: true
+            };
+        } else {
+            throw new Error(response.data.message || 'Respuesta inesperada del backend');
+        }
+    })
+    .catch(error => {
+        console.error("Error en EditarUsuario:", error);
+        throw error;
+    });
+}

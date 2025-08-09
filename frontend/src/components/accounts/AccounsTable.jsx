@@ -16,6 +16,7 @@ function AccountsTableModal({ id_user, onClose }) {
         setError(null);
         
         const filters = { 'id_user': id_user };
+        console.log('Filtros:', filters, 'Persona ingresada', id_user);
         const response = await MostrarCuentas(filters);
         
         //console.log('Respuesta del backend:', response);

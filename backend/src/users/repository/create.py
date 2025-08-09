@@ -42,7 +42,7 @@ class Create():
                 CustomerEndDate, 
                 CustomerFraction, 
                 CustomerAddress, 
-                CustomerNumberext
+                CustomerNumberExt
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
 
@@ -58,7 +58,7 @@ class Create():
                 data.CustomerEndDate,
                 data.CustomerFraction,
                 data.CustomerAddress,
-                data.CustomerNumberext  # Agregado este campo que faltaba
+                data.CustomerNumberExt  # Agregado este campo que faltaba
             )
 
             object_conecction.cursor.execute(query, values)
