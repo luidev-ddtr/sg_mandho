@@ -59,14 +59,15 @@ class AccountCrud():
                 print("Termino porque no era valido al insertr el rol")
                 return 501, message
             
+            
             #Estatus sera para ver si el pago ya esta pendiente o pagado, los roles seran los que tomaran la fucniona ctual de estatus
             estado = DIM_status()
             valido = validate_account(account_json["customer_id"])
-
+            
             if estado and dim_date and valido:
                 
                 account_data = {
-                    "DIM_AccountId": create_id([account_json["start_date"], account_json["end_date"], account_json["customer_id"]]),
+                    "DIM_AccountId": create_id([dim_role_id, account_json["customer_id"], dim_date.dateId]),
                     "DIM_DateId": dim_date.dateId, 
                     "DIM_CustomerId": account_json["customer_id"],
                     "DIM_RoleId": dim_role_id,

@@ -4,9 +4,9 @@ from src.accounts.account import AccountCrud
 def test_insert_account():
     crud = AccountCrud()
     account_json = {
-        "status": "invalido",
+        "status": "ranchero",
         "customer_id": "74ca90c2-5657-5eef",
-        "start_date": "2022-01-01",
+        "start_date": "2025-01-01",
         "end_date": "s/n"
     }
     

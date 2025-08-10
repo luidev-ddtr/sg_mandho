@@ -4,7 +4,7 @@ from src.utils.conexion import Conexion
 from src.dim_dates.model.modelo import DIM_DATE_MODEL
 import datetime
 from zoneinfo import ZoneInfo
-import pytz  # Necesitarás instalar: pip install pytz
+import pytz 
 
 
 class DIM_DATE:
@@ -17,7 +17,7 @@ class DIM_DATE:
         Inicializa el gestor de fechas con la ruta a la base de datos.
         
         Args:
-            db_path: Ruta al archivo SQLite (.db)
+            none
         """
         self.dateId = self.get_id_by_object_date(*self._get_full_date())
         self.full_date = self._get_full_date()
@@ -201,6 +201,11 @@ class DIM_DATE:
         
         return fiscal_date
     
+    def get_end_date(self):
+        dia, mes, anio = self._get_full_date()
+
+        return f"{str(anio)}-{str(mes).zfill(2)}-{str(dia).zfill(2)}"
+    
 
 def generar_anio_real(id_anio: int) -> List[tuple]:
     """
@@ -253,6 +258,8 @@ def generar_anio_real(id_anio: int) -> List[tuple]:
             )
             
             registros.append(registro.to_tuple())
+
+        
     
     print(f"Total registros generados: {len(registros)}")
     return registros

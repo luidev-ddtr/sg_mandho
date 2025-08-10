@@ -9,6 +9,9 @@ from src.dim_status.status import DIM_status
 #importacion de roles
 from src.dim_roles.role import Role
 
+#Importacion de tiempo
+from src.dim_dates.dim_date import DIM_DATE
+
 #Manejadro de los roles para cuenta, ya que es a donde esta asociado
 handler_role = Role()
 
@@ -30,6 +33,8 @@ def validate_account(user_id: str) -> bool:
         
     if result is None: # No hay cuentas asociadas a este id
         return True
+    
+    desactivate_account = descativar_otra_cuenta(user_id)
     
     account_count = result[0]  # El COUNT(*) es el primer elemento de la tupla
     # Verificar el límite (menor a 10)
@@ -70,3 +75,31 @@ def convertir_a_formato_legible(datos_crudos: list) -> list:
         datos_legibles.append(legible)
     return datos_legibles
 
+
+def descativar_otra_cuenta(Customer_id):
+    """Funcion la cual hace una consulta a la base de datos para descativar una cuenta,
+    Se modifica la cuenta activa actual para agregarle un EndDate y cambiarle el status
+
+    Args:
+        Customer_id (str): El id de la persona
+    Returns:
+        None
+    """
+    handler_conn = Conexion()
+    handler_status = DIM_status()
+    dim_date = DIM_DATE()
+    
+    query = """UPDATE DIM_account
+     SET EndDate = ?,
+     DIM_StatusId = ?
+     WHERE DIM_CustomerId = ?"""
+    endate =  dim_date.get_end_date()
+
+    estado = handler_status.get_status_id("inactivo", "account")
+
+    values = (endate, estado, Customer_id)
+
+    handler_conn.cursor.execute(query, values)
+    handler_conn.save_changes()
+
+    handler_conn.close_conexion()
