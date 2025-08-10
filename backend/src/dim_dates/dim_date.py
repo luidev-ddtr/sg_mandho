@@ -151,7 +151,56 @@ class DIM_DATE:
             return False
         finally:
             handler_connection.close_conexion()
+
+    
+    def generar_fechas(self, prefijo) -> dict[str, str]:
+        """
+        Recibe un prefijo desde el frontend, Segun lo que reciba generara un registro de tiempo dinamico, donde se obtendran las fechas que coincidan con este prefijo.
+        Args:
+            prefijo (str): Prefijo para generar las fechas dinamicas.
+        Returns:
+                Retorna un diccionario con la informacion contendia en cada parametro de entrada
+        """
+        if prefijo == "FiscalDay":
+            return self.obtener_prefijos()
         
+        elif prefijo == "FiscalMonth":
+            fechas = self.obtener_prefijos()
+            
+            fecha_formateada = dict()
+            fecha_formateada["FiscalMonth"] = fechas["FiscalMonth"]
+            fecha_formateada["FiscalYear"] = fechas["FiscalYear"]
+            
+            return fecha_formateada
+        
+        elif prefijo == "FiscalYear":
+            fechas = self.obtener_prefijos()
+
+            return dict(fechas["FiscalYear"])
+
+        return 
+    def obtener_prefijos(self) -> dict[str, str]:
+        """Función donde se obtienen los prefijos de la fecha, en la que se buscará el registro
+        """
+        date = datetime.datetime.now(pytz.timezone("America/Mexico_City"))
+        prefijos = {
+            "mensual": "M",
+            "diario": "D",
+            "semanal": "W",
+            "anual": "Y" 
+        }
+
+        # Obtenemos los últimos dos dígitos del año
+        year_two_digits = str(date.year)[-2:]
+        
+        fiscal_date = {
+            "FiscalDay": f"{prefijos['diario']}{date.day:02d}",
+            "FiscalMonth": f"{prefijos['mensual']}{date.month:02d}",
+            "FiscalYear": f"{prefijos['anual']}{year_two_digits}",
+        }
+        
+        return fiscal_date
+    
 
 def generar_anio_real(id_anio: int) -> List[tuple]:
     """

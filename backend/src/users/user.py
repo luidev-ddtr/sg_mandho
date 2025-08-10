@@ -1,6 +1,7 @@
 # Este sera el archio el cual una toda la parte usuarios, 
 # estara encapsulada en esta parte, aqui se recibirar los datos de los entpoins y tambien se 
 # envirarar los datos de los entpoins y a la bd
+from typing import Any, Literal
 from src.utils.validate_data import validate_data
 from src.dim_dates.dim_date import DIM_DATE
 from src.utils.id_generator import create_id
@@ -8,7 +9,7 @@ from src.utils.id_generator import create_id
 #validaciones del crud
 from src.users.models.user import User, to_edit
 from src.users.repository.create import Create
-from src.users.repository.show import read
+from src.users.repository.show import get_users_with_filters, get_all_users, get_user
 
 #importacion para editar usuario
 from src.users.repository.edit import edit_user
@@ -113,7 +114,7 @@ class UserCrud:
             if data_json["id_user"] and data_json['filters'] == {}:
                 # Caso 1: Solo hay id_user - Buscar información específica de un usuario
                 # Solamente se pasa el valor, ya no se pasa el diccionario
-                datos = read(data_json["id_user"], None)
+                datos = get_user(data_json["id_user"])
                 
                 if datos:
                     return 200, "Se encontró a la persona correctamente", datos
@@ -122,26 +123,30 @@ class UserCrud:
                 
             elif data_json["filters"] == {} and data_json['id_user'] == '':
                 
-                datos = read(None, data_json["filters"])
+                datos = get_all_users()
+                
+                if datos:
+                    return 200, "Se encontraron resultados con estos filtros", datos
+                else:
+                    return 404, "No se encontraron resultados con estos filtros", []
+            
+            elif data_json["filters"] and data_json['id_user'] == '':
+                # Caso 2: Solo hay filters - Aplicar filtros
+                # Solamente se pasa el diccionario, ya no se pasa el valor
+                datos = get_users_with_filters(data_json["filters"])
                 
                 if datos:
                     return 200, "Se encontraron resultados con estos filtros", datos
                 else:
                     return 404, "No se encontraron resultados con estos filtros", []
                 
-                # Caso 2: Solo hay filters - Aplicar filtros
-                # Aquí llamarías a tu función que maneja los filtros
-                # resultado_filtros = aplicar_filtros(data_json["filters"])
-                
-                # if resultado_filtros:
-                #     return 200, "Filtros aplicados correctamente", resultado_filtros
-                # else:
-                #     return 404, "No se encontraron resultados con estos filtros"
+            else:
+                return 400, "El id_user y filters son mutuamente excluyentes", []
             
         else:
             return 400, mensaje, []
         
-    def edit_user(self, data_edit: dict):# -> tuple[Literal[201], Literal['El usuario se ha actualizado...:
+    def edit_user(self, data_edit: dict) -> tuple[Literal[201], Literal['El usuario se ha actualizado...']]:
         """Endpoint para actualizar la información de un usuario existente.
 
         Esta función recibe un diccionario con los datos del usuario que se desea
@@ -183,7 +188,7 @@ class UserCrud:
                 return 400, "No se pudo actualizar el registro"
             
             #Obtener el nuevo ususario para regresarlo en la respuesta
-            new_user = read(data_edit["DIM_CustomerId"], None)
+            new_user = get_user(data_edit["DIM_CustomerId"])
 
             return 201, "El usuario se ha actualizado correctamente", new_user
         else:
