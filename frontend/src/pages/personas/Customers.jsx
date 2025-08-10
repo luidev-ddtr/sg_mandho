@@ -1,82 +1,134 @@
+// Customer interfaz principal
+// Customers.jsx
 import React, { useState } from 'react';
-
 import Sidebar from '../../partials/SideBar';
 import Header from '../../partials/Header';
-import DeleteButton from '../../partials/DeleteButton'
 import DateSelect from '../../components/DateSelect';
 import FilterButton from '../../components/DropdownFilter';
 import CustomersTable from '../../partials/customers/CustomersTable';
 import PaginationClassic from '../../components/PaginationClassic';
+import { Link } from 'react-router-dom';
 
 function Customers() {
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [filters, setFilters] = useState({});
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };
 
-  return (
-    <div className="flex h-[100dvh] overflow-hidden">
+  const handleDateFilterChange = (dateValue) => {
+    setFilters(prev => {
+      const newFilters = { ...prev };
+      ['day', 'month', 'year'].forEach(key => {
+        delete newFilters[key];
+      });
+      
+      if (dateValue) {
+        newFilters[dateValue] = true;
+      }
+      return newFilters;
+    });
+  };
 
+  const handleCategoryFilterChange = (categoryFilters) => {
+    setFilters(prev => {
+      // Crear nuevo objeto de filtros
+      const newFilters = { ...prev };
+      
+      // Eliminar solo los filtros de categoría existentes
+      filterOptions.forEach(option => {
+        delete newFilters[option.value];
+      });
+      
+      // Aplicar nuevos filtros de categoría
+      Object.keys(categoryFilters).forEach(key => {
+        if (categoryFilters[key]) {
+          newFilters[key] = true;
+        }
+      });
+
+      return newFilters;
+    });
+  };
+
+  const filterOptions = [
+    { label: 'Cerritos', value: 'cerritos' },
+    { label: 'Centro', value: 'centro' },
+    { label: 'Garambullo', value: 'garambullo' },
+    { label: 'Yhonda', value: 'yhonda' },
+    { label: 'Tepetate', value: 'tepetate' },
+    { label: 'Buena vista', value: 'buenavista' },
+    { label: 'Defunciones', value: 'enddate' }
+  ];
+
+  return (
+    <div className="flex h-[100dvh] overflow-hidden bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-
-        {/*  Site header */}
+        {/* Site header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-[96rem] mx-auto">
-
             {/* Page header */}
             <div className="sm:flex sm:justify-between sm:items-center mb-8">
-
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0">
-                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">Personas</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">Personas</h1>
               </div>
 
               {/* Right: Actions */}
-              <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* Filtros container */}
+                <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                  {/* Date filter */}
+                  <div className="relative">
+                    <DateSelect onFilterChange={handleDateFilterChange} />
+                  </div>
+                  
+                  {/* Category filter */}
+                  <div className="relative">
+                    <FilterButton 
+                      align="right" 
+                      options={filterOptions} 
+                      onFilterChange={handleCategoryFilterChange} 
+                    />
+                  </div>
+                </div>
 
-                {/* Delete button */}
-                <DeleteButton selectedItems={selectedItems} />
-
-                {/* Dropdown */}
-                <DateSelect />
-                
-                {/* Filter button */}
-                <FilterButton align="right" />
-
-                {/* Add customer button */}
-                <button className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white">
-                  <svg className="fill-current shrink-0 xs:hidden" width="16" height="16" viewBox="0 0 16 16">
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="max-xs:sr-only">Todos los usuarios</span>
-                </button>
-                
+                {/* Add button */}
+                <Link
+                  to="/personas/registro"
+                  className="flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-medium rounded-lg shadow transition-all duration-200 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+                >
+                  <span className="flex items-center">
+                    <span className="mr-2 text-lg">+</span>
+                    <span className="text-sm sm:text-base">Agregar Usuario</span>
+                  </span>
+                </Link>
               </div>
-
             </div>
 
             {/* Table */}
-            <CustomersTable selectedItems={handleSelectedItems} />
-
-            {/* Pagination */}
-            <div className="mt-8">
-              <PaginationClassic />
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
+              <CustomersTable
+                selectedItems={handleSelectedItems}
+                filters={filters}
+              />
             </div>
 
+            {/* Pagination */}
+            <div className="mt-6">
+              <PaginationClassic />
+            </div>
           </div>
         </main>
-
       </div>
-
     </div>
   );
 }

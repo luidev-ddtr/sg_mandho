@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../utils/Transition';
 
-function DropdownFilter({
-  align
-}) {
-
+function DropdownFilter({ align, options, onFilterChange }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const [selectedOptions, setSelectedOptions] = useState({});
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
-  // close on click outside
+  // Cerrar al hacer clic fuera
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!dropdown.current) return;
@@ -21,7 +18,7 @@ function DropdownFilter({
     return () => document.removeEventListener('click', clickHandler);
   });
 
-  // close if the esc key is pressed
+  // Cerrar al presionar ESC
   useEffect(() => {
     const keyHandler = ({ keyCode }) => {
       if (!dropdownOpen || keyCode !== 27) return;
@@ -31,96 +28,94 @@ function DropdownFilter({
     return () => document.removeEventListener('keydown', keyHandler);
   });
 
-  return (
-    <div className="relative inline-flex">
-      <button
-        ref={trigger}
-        className="btn px-2.5 bg-white dark:bg-gray-800 border-gray-200 hover:border-gray-300 dark:border-gray-700/60 dark:hover:border-gray-600 text-gray-400 dark:text-gray-500"
-        aria-haspopup="true"
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        aria-expanded={dropdownOpen}
-      >
-        <span className="sr-only">Filter</span>
-        <wbr />
-        <svg className="fill-current" width="16" height="16" viewBox="0 0 16 16">
-          <path d="M0 3a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H1a1 1 0 0 1-1-1ZM3 8a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1ZM7 12a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H7Z" />
-        </svg>
-      </button>
-      <Transition
-        show={dropdownOpen}
-        tag="div"
-        className={`origin-top-right z-10 absolute top-full left-0 right-auto min-w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/60 pt-1.5 rounded-lg shadow-lg overflow-hidden mt-1 ${
-          align === 'right' ? 'md:left-auto md:right-0' : 'md:left-0 md:right-auto'
-        }`}
-        enter="transition ease-out duration-200 transform"
-        enterStart="opacity-0 -translate-y-2"
-        enterEnd="opacity-100 translate-y-0"
-        leave="transition ease-out duration-200"
-        leaveStart="opacity-100"
-        leaveEnd="opacity-0"
-      >
-        <div ref={dropdown}>
-          <div className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase pt-1.5 pb-2 px-3">Filters</div>
-          <ul className="mb-4">
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Direct VS Indirect</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Real Time Value</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Top Channels</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Sales VS Refunds</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Last Order</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Total Spent</span>
-              </label>
-            </li>
-          </ul>
-          <div className="py-2 px-3 border-t border-gray-200 dark:border-gray-700/60 bg-gray-50 dark:bg-gray-700/20">
-            <ul className="flex items-center justify-between">
-              <li>
-                <button className="btn-xs bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700/60 hover:border-gray-300 dark:hover:border-gray-600 text-red-500">
-                  Clear
-                </button>
-              </li>
-              <li>
-                <button
-                  className="btn-xs bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
-                  onClick={() => setDropdownOpen(false)}
-                  onBlur={() => setDropdownOpen(false)}
-                >
-                  Apply
-                </button>
-              </li>
-            </ul>
-          </div>
+  const handleOptionChange = (value) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [value]: !prev[value]
+    }));
+  };
+
+  const handleClear = () => {
+    setSelectedOptions({});
+    onFilterChange({});
+    setDropdownOpen(false);
+  };
+
+  const handleApply = () => {
+    onFilterChange(selectedOptions);
+    setDropdownOpen(false);
+  };
+
+return (
+  <div className="relative inline-flex">
+    <button
+      ref={trigger}
+      className="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-all duration-200 hover:shadow-md"
+      aria-haspopup="true"
+      onClick={() => setDropdownOpen(!dropdownOpen)}
+      aria-expanded={dropdownOpen}
+    >
+      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      </svg>
+      <span>Aplicar filtros</span>
+      <svg className={`w-4 h-4 ml-1 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+      </svg>
+    </button>
+
+    <Transition
+      show={dropdownOpen}
+      tag="div"
+      className={`origin-top-right z-20 absolute top-full left-0 right-auto min-w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl overflow-hidden mt-1 ${
+        align === 'right' ? 'md:left-auto md:right-0' : 'md:left-0 md:right-auto'
+      }`}
+      enter="transition ease-out duration-200"
+      enterStart="opacity-0 -translate-y-2"
+      enterEnd="opacity-100 translate-y-0"
+      leave="transition ease-out duration-200"
+      leaveStart="opacity-100"
+      leaveEnd="opacity-0"
+    >
+      <div ref={dropdown} className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="px-4 py-3">
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Filtrar por:</h3>
         </div>
-      </Transition>
-    </div>
-  );
+        <div className="py-2">
+          <ul className="space-y-1">
+            {options.map((option, index) => (
+              <li key={index}>
+                <label className="flex items-center px-4 py-2 space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="h-4 w-4 text-indigo-600 dark:text-indigo-500 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                    checked={!!selectedOptions[option.value]}
+                    onChange={() => handleOptionChange(option.value)}
+                  />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{option.label}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700/30 flex justify-between space-x-3">
+          <button 
+            className="px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150"
+            onClick={handleClear}
+          >
+            Limpiar
+          </button>
+          <button
+            className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 rounded-md shadow-sm transition-colors duration-150"
+            onClick={handleApply}
+          >
+            Aplicar 
+          </button>
+        </div>
+      </div>
+    </Transition>
+  </div>
+);
 }
 
 export default DropdownFilter;

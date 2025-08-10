@@ -2,11 +2,12 @@
 import React, { useState, useRef } from 'react';
 import AccountsTableModal from '../accounts/AccounsTable';
 import EditCustomerModal from './CustomerEdit';
+import DesactivateModal from './DesactivateModal';
 
-function ActionMenu({ userId, onUpdate, onDelete, id_user }) {
+function ActionMenu({  onUpdate, onDelete, id_user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [desactivateUserOpen, setDesactivateUserOpen] = useState(false);
   const [accountsModalOpen, setAccountsModalOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -51,11 +52,11 @@ function ActionMenu({ userId, onUpdate, onDelete, id_user }) {
             className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={(e) => {
               e.stopPropagation();
-              setDeleteModalOpen(true);
+              setDesactivateUserOpen(true);
               setIsOpen(false);
             }}
           >
-            Eliminar
+            Marcar como Fallecido
           </button>
           <button
             className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -77,6 +78,14 @@ function ActionMenu({ userId, onUpdate, onDelete, id_user }) {
           onClose={() => setEditModalOpen(false)}
           onUpdate={onUpdate} // Pasamos la prop al modal de edición
         />
+      )}
+
+      {desactivateUserOpen && (
+        <DesactivateModal 
+        id_user={id_user} 
+        onClose={() => setDesactivateUserOpen(false)} 
+        // onUpdate={recargarUsuarios} 
+      />
       )}
 
       {/* Modal de Ver Cuentas */}

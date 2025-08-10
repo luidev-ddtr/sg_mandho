@@ -1,86 +1,43 @@
 from src.utils.conexion import Conexion
 from src.users.models.user import User
 import sqlite3
+from src.dim_dates.dim_date import DIM_DATE
 
-def read(id_user = str(), filters = {} ) -> list:
-    """
-    Funcion la cual se encargara de ir a la base de datos y buscar los registro y aplicar filtros segun sean necesarios
+def get_all_users() -> list:
+    """Funcion la cual sirve para obtener a todos los usuarios, 
+    se usa cuando tanto los filtros como la id_user estan vacios
     Args:
-        id_user (str, optional): Id del usuario. Defaults to None.
-        filters (dict, optional): Filtros a aplicar. Defaults to None.
-    Returns: 
-        list: Registros encontrados la cual tendra la siguiente estructura:
-        [
-            {
-                "date_id": str,
-                "id_user": str,
-                "first_name": str,
-                "second_name": str,
-                "last_name": str,
-                "second_last_name": str,
-                "date_of_birth": str,
-                "date_user_start": str,
-                "date_user_end": str,
-                "user_manzana": str,
-                "user_street": str,
-                "user_number_ext": str
-            }
-        ]
-        # Esta estructura puede cambiar ya que depende que filtros se apliquen la tabla resultante podra cambiar, el objetivo
-        # es que sea dinamica. Sin embargo esa implementacion aun no se aplica 
-
-    comments:
-        Caso 1: Solo hay id_user - Buscar información específica de un usuario
-        Caso 2: si los filtros tienen solo el campo ninguno solamente se seleccionaran todos los campos y se enviaran esos datos
-        Caso 3: Solo hay filters - Aplicar filtros 
+        None
+    Returns:
+        list: Todos los registros que se encuentren en la base de datos
     """
-    object_conection = Conexion() 
-    try:
-        print(f"Imprimeinto los datos recibidos {id_user} y {filters}")
-        #Se instancia la clase para todas las funciones  
-        if id_user and filters is None: 
-            return get_user(id_user)
-        
-
-        elif (filters == {} or filters) and id_user is None:
-            if filters == {}:
-                conn ,cursor  = object_conection.conexion()
-                query = """SELECT * FROM DIM_Customer"""
-                cursor.execute(query)
-                registros = cursor.fetchall()
-                
-                data_format = []
-                #Registros mapeados a como deben de llamarse en el frontend
-                for registro in registros:
-                    #Mapeado a como se enviaran en el frontend
-                    persona = {
-                        "id_user": registro[0],
-                        "date_id": registro[1],
-                        "first_name": registro[2],
-                        "second_name": registro[3],
-                        "last_name": registro[4],
-                        "second_last_name": registro[5],
-                        "date_of_birth": registro[6],
-                        "date_user_start": registro[7],
-                        "date_user_end": registro[8],
-                        "manzana": registro[9],
-                        "street": registro[10],
-                        "number_ext": registro[11]
-                    }
-                    data_format.append(persona)
-                print("desde show en users")
-                return data_format
-            else:
-                print("No se encontraron registros con los filtros proporcionados")
-                pass
-        else:
-            print("Error inesperado")
-            return []
-    except sqlite3.Error as e:
-        print(f"Error al realizar la consulta: {e}")
-        return []
-    finally:
-        object_conection.close_conexion()
+    handlers = Conexion()
+    conn ,cursor  = handlers.conexion()
+    query = """SELECT * FROM DIM_Customer"""
+    cursor.execute(query)
+    registros = cursor.fetchall()
+    
+    data_format = []
+    #Registros mapeados a como deben de llamarse en el frontend
+    for registro in registros:
+        #Mapeado a como se enviaran en el frontend
+        persona = {
+            "id_user": registro[0],
+            "date_id": registro[1],
+            "first_name": registro[2],
+            "second_name": registro[3],
+            "last_name": registro[4],
+            "second_last_name": registro[5],
+            "date_of_birth": registro[6],
+            "date_user_start": registro[7],
+            "date_user_end": registro[8],
+            "manzana": registro[9],
+            "street": registro[10],
+            "number_ext": registro[11]
+        }
+        data_format.append(persona)
+    print("desde show en users")
+    return data_format
     
 def get_user(id_user: str):# -> dict[str, str] | list:
     """
@@ -135,3 +92,157 @@ def get_user(id_user: str):# -> dict[str, str] | list:
         print(f"Error al realizar la consulta: {e}")
         object_conection.close_conexion()
         return []
+    
+
+
+def get_users_with_filters(filters: dict[str, str]) -> list[dict[str, str]] | list:
+    """
+    Obtiene información de usuarios aplicando filtros especificados.
+    
+    Args:
+        filters (dict[str, str]): Diccionario con los filtros a aplicar.
+            - CustomerFraction: Lista de manzanas a filtrar
+            - CustomerEndDate: Fecha de fin opcional
+            - DIM_Date: Filtros de fecha fiscal
+            
+    Returns:
+        list[dict]: Lista de usuarios que coinciden con los filtros
+    """
+    print("[DEBUG] Iniciando get_users_with_filters con filtros:", filters)
+
+    conecion = Conexion()
+
+    # Query base - Asegurando que coincida el número de columnas seleccionadas con las esperadas
+    query = """SELECT       
+        p.DIM_CustomerId,
+        p.CustomerName,
+        p.CustomerMiddleName,
+        p.CustomerLastName,
+        p.CustomerSecondLastName,
+        p.CustomerDateBirth,
+        p.CustomerStartDate,
+        p.CustomerEndDate,
+        p.CustomerFraction,
+        p.CustomerAddress,
+        p.CustomerNumberExt
+     FROM DIM_Customer AS p
+     INNER JOIN DIM_Date AS d ON p.DIM_DateId = d.DIM_DateId
+     WHERE 1=1"""
+
+    valores = []
+    
+    try:
+        # Construcción de condiciones (se mantiene igual)
+        if 'CustomerFraction' in filters and filters['CustomerFraction']:
+            manzana_cond, manzana_values = build_manzana_condition(filters['CustomerFraction'])
+            query += f" AND ({manzana_cond})"
+            valores.extend(manzana_values)
+
+        if 'CustomerEndDate' in filters and filters['CustomerEndDate']:
+            query += " AND p.CustomerEndDate = ?"
+            valores.append(filters['CustomerEndDate'])
+
+        fechas_cond, fechas_values = add_date(filters.get("DIM_Date"))
+        if fechas_cond:
+            query += f" AND {fechas_cond}"
+            valores.extend(fechas_values)
+            
+        print("[DEBUG] Valores para la consulta:", valores)
+
+        conecion.cursor.execute(query, tuple(valores))
+        registros = conecion.cursor.fetchall()
+        data_format = []
+        
+        for registro in registros:
+            # Mapeo seguro basado en el número real de columnas
+            persona = {
+                "id_user": registro[0],
+                "first_name": registro[1],
+                "second_name": registro[2],
+                "last_name": registro[3],
+                "second_last_name": registro[4],
+                "date_of_birth": registro[5],
+                "date_user_start": registro[6],
+                "date_user_end": registro[7],
+                "manzana": registro[8],
+                "street": registro[9],
+                "number_ext": registro[10] if len(registro) > 10 else None
+            }
+            
+            data_format.append(persona)
+
+        print(f" Se encontraron {len(data_format)} registros")
+        return data_format
+
+    except Exception as e:
+        print(f"[ERROR] Fallo al ejecutar consulta: {str(e)}")
+        raise
+def build_manzana_condition(manzanas: list) -> tuple[str, list]:
+    """
+    Construye la condición SQL para filtrar por manzanas.
+    
+    Args:
+        manzanas (list): Lista de nombres de manzanas a filtrar
+        
+    Returns:
+        tuple: (condicion_sql, valores) donde:
+            - condicion_sql: string con la condición OR
+            - valores: lista de valores para los parámetros
+    """
+    condiciones = []
+    valores = []
+    
+    manzanas_mapping = {
+        "cerritos": "p.CustomerFraction = ?",
+        "centro": "p.CustomerFraction = ?",
+        "yhonda": "p.CustomerFraction = ?",
+        "tepetate": "p.CustomerFraction = ?",
+        "garambullo": "p.CustomerFraction = ?",
+        "buenavista": "p.CustomerFraction = ?",
+    }
+    
+    for manzana in manzanas:
+        if manzana in manzanas_mapping:
+            condiciones.append(manzanas_mapping[manzana])
+            valores.append(manzana)
+    
+    return " OR ".join(condiciones), valores
+
+def add_date(fechafiscal: str) -> tuple[str, list]:
+    """
+    Genera condiciones SQL para filtros de fecha fiscal
+    
+    Args:
+        fechafiscal (str): Tipo de fecha fiscal ('FiscalYear', 'FiscalMonth', etc.)
+        
+    Returns:
+        tuple: (condicion_sql, valores) donde:
+            - condicion_sql: string con la condición WHERE (ej: "d.FiscalYear = ?")
+            - valores: lista de valores para los parámetros
+    """
+    if not fechafiscal:
+        return "", []
+    
+    try:
+        dim_date = DIM_DATE()
+        fechas = dim_date.generar_fechas(fechafiscal)
+        
+        if not fechas:
+            return "", []
+        
+        condiciones = []
+        valores = []
+        
+        for clave, valor in fechas.items():
+            condiciones.append(f"d.{clave} = ?")
+            valores.append(valor)
+        
+        condicion_sql = " AND ".join(condiciones)
+        print(f"[DEBUG] Generadas condiciones de fecha: {condicion_sql}")
+        
+        return condicion_sql, valores
+        
+    except Exception as e:
+        print(f"[ERROR] Error al procesar fechas fiscales: {str(e)}")
+        return "", []
+

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Customer from './CustomersTableItem';
 import { MostrarUsuarios } from '../../api/api_user';
 
-function CustomersTable({ selectedItems }) {
+function CustomersTable({ selectedItems, filters }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
   const [list, setList] = useState([]);
@@ -18,10 +18,10 @@ function CustomersTable({ selectedItems }) {
   };
 
   const handleUpdateCustomer = (updatedCustomer) => {
-  setList(list.map(customer => 
-    customer.id_user === updatedCustomer.id_user ? updatedCustomer : customer
-  ));
-};
+    setList(list.map(customer => 
+      customer.id_user === updatedCustomer.id_user ? updatedCustomer : customer
+    ));
+  };
 
   const handleClick = (e) => {
     const { id, checked } = e.target;
@@ -38,34 +38,66 @@ function CustomersTable({ selectedItems }) {
       setError(null);
       
       try {
-        const filters = {
-          'id_user': "",
-          'filters': {}
-        };
+        // Preparar los filtros en formato backend
+        const backendFilters = {};
         
-        const response = await MostrarUsuarios(filters);
-        setList(response.data); // Asume que response.data es el array de clientes
+        // Mapear filtros de zona a CustomerFraction
+        const zonas = [];
+        if (filters.cerritos) zonas.push('cerritos');
+        if (filters.centro) zonas.push('centro');
+        if (filters.garambullo) zonas.push('garambullo');
+        if (filters.yhonda) zonas.push('yhonda');
+        if (filters.tepetate) zonas.push('tepetate');
+        if (filters.buena_vista) zonas.push('buenavista');
+        
+        if (zonas.length > 0) {
+          backendFilters.CustomerFraction = zonas;
+        }
+        
+        // Mapear filtros de fecha
+        if (filters.day) {
+          backendFilters.DIM_Date = 'FiscalDay';
+        } else if (filters.month) {
+          backendFilters.DIM_Date = 'FiscalMonth';
+        } else if (filters.year) {
+          backendFilters.DIM_Date = 'FiscalYear';
+        }
+
+        
+        // Mapear filtro de defunciones
+        if (filters.enddate) {
+          backendFilters.CustomerEndDate = true;
+        }
+
+        console.log('Filtros mapeados para el backend', backendFilters);
+
+        // Llamar a la API con los filtros mapeados
+        const response = await MostrarUsuarios({
+          'id_user': "",
+          'filters': backendFilters
+        });
+        
+        setList(response.data);
       } catch (err) {
-        setError(err.message);
+        setError(err.message || "Error al cargar usuarios");
         console.error("Error fetching customers:", err);
       } finally {
         setIsLoading(false);
       }
     };
-    console.log("Laamando desde mostrar");
+
     fetchCustomers();
-  }, []); // Empty dependency array = solo en montaje
+  }, [filters]);
 
   if (isLoading) return <div>Cargando usuarios...</div>;
   if (error) return <div>Error: {error}</div>;
-  
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-xs rounded-xl relative">
       <header className="px-5 py-4">
         <h2 className="font-semibold text-gray-800 dark:text-gray-100">
           Total de Usuarios <span className="text-gray-400 dark:text-gray-500 font-medium">
-            {list.length} {/* Usamos list.length en lugar de customer.length */}
+            {list.length}
           </span>
         </h2>
       </header>
@@ -139,7 +171,7 @@ function CustomersTable({ selectedItems }) {
                   date_of_end={customer.date_user_end}
                   handleClick={handleClick}
                   isChecked={isCheck.includes(customer.id_user)}
-                  onEditSuccess={handleUpdateCustomer} // Nueva prop
+                  onEditSuccess={handleUpdateCustomer}
                 />
               ))}
             </tbody>

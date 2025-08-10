@@ -203,3 +203,9 @@ export const EditarUsuario = (data) => {
         throw error;
     });
 }
+
+
+export const DesactivarUsuario = (DIM_CustomerId) => {
+    console.log("Nada de esta api esta lsito");
+    console.log("Los datos llegaron correctamente a Api.js en DesactivarUsuario",DIM_CustomerId);
+}
