@@ -1,6 +1,7 @@
 import axios from "axios";
 import { validate_edit_account } from "./api_account";
 import { crearCuenta } from "./api_account";
+import { isValid } from "date-fns/isValid";
 // Instancia de Axios con la URL base configurada
 const api = axios.create({
     baseURL: 'http://127.0.0.1:5000/api/user/'
@@ -152,23 +153,26 @@ export const MostrarUsuarios = (data) => {
         throw error; // Re-lanza el error para manejarlo en el componente
     });
 };
-
-export const EditarUsuario = (data) => {
-
+export const EditarUsuario = async (data) => { // Añadir async aquí
     //Validacion para ver si crear una nueva cuenta o no modificar nada
     const data_account = {
-    status: data.estadoPersona.toLowerCase(),  // Del campo estadoPersona del primer payload
-    customer_id: data.DIM_CustomerId,      // Del campo DIM_CustomerId del primer payload
-    start_date: data.fechaCuenta,                   // Usamos la misma fecha que en el primer payload
-    end_date: ""                               // Valor por defecto para nueva cuenta
-};
+        status: data.estadoPersona,
+        customer_id: data.DIM_CustomerId,
+        start_date: data.fechaCuenta,
+        end_date: "",
+        orginal_status: data.EstadoPersonaOriginal,
+    };
+    console.log('datos a enviar para validacion', data_account);
 
-    if  (validate_edit_account(data_account)){
+    // Usar await para obtener el valor booleano real
+    const shouldCreateAccount = await validate_edit_account(data_account);
+    if (shouldCreateAccount) {
+        console.log("hubo cuenta");
         crearCuenta(data_account);
     }
-    
-
-    console.log("Los datos llegaron correctamente a Api.js en EditarUsuario",data);
+    else {
+        console.log("no hubo cuenta");
+    }
     return api.post('update_user/', data, {
         headers: {
             'Content-Type': 'application/json',
@@ -177,7 +181,6 @@ export const EditarUsuario = (data) => {
     })
     .then(response => {
         if (response.data.status === 'success') {
-            console.log("Respuesta Datos que llegaron del backend:", response.data.body);
             return {
                 data: {     
                     id_user: response.data.body.DIM_CustomerId,
@@ -203,7 +206,6 @@ export const EditarUsuario = (data) => {
         throw error;
     });
 }
-
 
 export const DesactivarUsuario = (DIM_CustomerId) => {
     console.log("Nada de esta api esta lsito");

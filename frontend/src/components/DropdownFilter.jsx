@@ -1,6 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../utils/Transition';
 
+/**
+ * Componente DropdownFilter
+ * 
+ * - Estado:
+ *   - `dropdownOpen`: Controla si el menú desplegable de filtros está visible.
+ *   - `selectedOptions`: Objeto que almacena las opciones seleccionadas, donde
+ *      la clave es el valor (`value`) de la opción y el valor booleano indica
+ *      si está seleccionada.
+ * 
+ * useEffect (click fuera):
+ *   Se utiliza para cerrar el menú desplegable cuando el usuario hace clic fuera
+ *   del área del componente (ni en el botón trigger ni dentro del dropdown).
+ * 
+ * useEffect (ESC):
+ *   Se utiliza para cerrar el menú desplegable cuando el usuario presiona la tecla
+ *   Escape (keyCode 27).
+ * 
+ * handleOptionChange:
+ *   Función síncrona que alterna el estado de selección de una opción específica.
+ *   - Si la opción estaba seleccionada, la desmarca.
+ *   - Si no estaba seleccionada, la marca como true.
+ * 
+ * handleClear:
+ *   Limpia todas las selecciones:
+ *     - Vacía el estado `selectedOptions`.
+ *     - Llama a `onFilterChange` con un objeto vacío para notificar al padre.
+ *     - Cierra el menú desplegable.
+ * 
+ * handleApply:
+ *   Aplica los filtros seleccionados:
+ *     - Llama a `onFilterChange` pasando el estado `selectedOptions`.
+ *     - Cierra el menú desplegable.
+ * 
+ * options:
+ *   Array de objetos que definen las opciones del filtro, con:
+ *     - label: Texto que se muestra al usuario.
+ *     - value: Identificador único que se usa para el manejo interno de selección.
+ * 
+ * UI:
+ *   - Botón principal (trigger) con icono de filtro y flecha que rota según
+ *     el estado `dropdownOpen`.
+ *   - Componente `Transition` para animar la apertura/cierre del menú.
+ *   - Lista de opciones con checkboxes para seleccionar múltiples filtros.
+ *   - Botones en el pie:
+ *       - "Limpiar": elimina todas las selecciones.
+ *       - "Aplicar": confirma y envía las selecciones al callback padre.
+ */
+
 function DropdownFilter({ align, options, onFilterChange }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState({});

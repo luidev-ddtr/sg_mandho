@@ -11,7 +11,7 @@ from src.dim_status.status import DIM_status
 
 #Importaciones de mostrar o leer ceuntas
 from src.accounts.repository.show import show_account
-from src.accounts.services.validate import convertir_a_formato_legible
+from src.accounts.services.validate import convertir_a_formato_legible, validate_status
 
 #importacion de roles
 from src.dim_roles.role import Role
@@ -64,6 +64,18 @@ class AccountCrud():
             estado = DIM_status()
             valido = validate_account(account_json["customer_id"])
             
+            #Validaciones para ver si la cuenta debe ser activa u inactiva
+            status_name = estado.get_status_id("","account")
+
+            is_active, Status, EndDate = validate_status(account_json["status"])  
+
+            #En caso de no ser activas las variables se asignan como desactivadas
+            if not is_active:
+                status_id = Status
+                account_json["end_date"] = EndDate
+            else:
+
+                status_id = status_name
             if estado and dim_date and valido:
                 
                 account_data = {
@@ -71,7 +83,7 @@ class AccountCrud():
                     "DIM_DateId": dim_date.dateId, 
                     "DIM_CustomerId": account_json["customer_id"],
                     "DIM_RoleId": dim_role_id,
-                    "DIM_StatusId": estado.get_status_id("","account"),  # Asumo que 'estado' sigue el mismo patrón
+                    "DIM_StatusId":  status_id, 
                     "StartDate": account_json["start_date"],
                     "EndDate": account_json["end_date"]
                     # timestamp se omite para que se genere automáticamente
@@ -147,11 +159,11 @@ class AccountCrud():
         campos_requeridos = ["id_user"]
         tipo_campos = [str]
         esvalido, mensaje = validate_data(persona_id, campos_requeridos, tipo_campos, "account")
-        print("Aqui estamos jaja ")
+
         if esvalido:
             if persona_id['id_user']:
                 # Caso: Mostrar cuenta específica
-                print(persona_id['id_user'])
+                
                 datos = show_account(persona_id['id_user'])
                 if datos:
                     # Aquí se transformarían los IDs a información legible

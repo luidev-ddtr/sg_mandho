@@ -48,7 +48,7 @@ function CustomersTable({ selectedItems, filters }) {
         if (filters.garambullo) zonas.push('garambullo');
         if (filters.yhonda) zonas.push('yhonda');
         if (filters.tepetate) zonas.push('tepetate');
-        if (filters.buena_vista) zonas.push('buenavista');
+        if (filters.buenavista) zonas.push('buenavista');
         
         if (zonas.length > 0) {
           backendFilters.CustomerFraction = zonas;
@@ -68,9 +68,6 @@ function CustomersTable({ selectedItems, filters }) {
         if (filters.enddate) {
           backendFilters.CustomerEndDate = true;
         }
-
-        console.log('Filtros mapeados para el backend', backendFilters);
-
         // Llamar a la API con los filtros mapeados
         const response = await MostrarUsuarios({
           'id_user': "",

@@ -54,7 +54,6 @@ def read_account() -> tuple[Response, Literal[400]] | tuple[Response, int] | tup
     try:
         print("entro a cuentas")
         account_json = request.json
-        print(account_json," La informacion que llego al endpoint")
 
         if not account_json:
             return send_error("No se recibieron datos", 400)

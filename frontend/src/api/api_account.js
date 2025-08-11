@@ -163,12 +163,28 @@ export const MostrarCuentas = async (filters) => {
 };
 
 
+/**
+ * Valida si el estado de la cuenta ha cambiado comparando el estado original con el nuevo estado.
+ * @param {Object} data - Objeto que contiene los estados a comparar
+ * @param {string|Object} data.orginal_status - Estado original de la cuenta
+ * @param {string|Object} data.status - Nuevo estado de la cuenta
+ * @returns {boolean} - Retorna false si los estados son iguales o si no hay datos, true si son diferentes
+ */
 export const validate_edit_account = async (data) => {
-  try {
-    // Validación básica de los datos requeridos
-    console.log("Esta funcion no hace nada aun")
-  } catch (error) {
-    console.error("Error en validate_edit_account:", error);
+  if (!data.orginal_status || !data.status) {
+    console.log('[validate_edit_account] Sin datos proporcionados');
     return false;
   }
+
+  const estado_original = data.orginal_status;
+  const estado_persona = data.status.toLowerCase();
+  // Manejo de comparación para objetos
+  if (typeof estado_original === 'object' && typeof estado_persona === 'object') {
+    const sonIguales = JSON.stringify(estado_original) === JSON.stringify(estado_persona);
+    return !sonIguales;
+  }
+  
+  // Comparación directa para valores primitivos
+  const sonDiferentes = estado_original !== estado_persona;
+  return sonDiferentes;
 };

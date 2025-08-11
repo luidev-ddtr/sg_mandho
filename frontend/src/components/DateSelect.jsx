@@ -1,6 +1,42 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../utils/Transition';
 
+/**
+ * Componente DateSelect
+ * 
+ * - El estado `dropdownOpen` controla si el menú desplegable está visible.
+ * - El estado `selected` almacena el ID de la opción actualmente seleccionada.
+ * 
+ * useEffect (click fuera):
+ *   Se utiliza para escuchar clics en el documento y cerrar el menú desplegable
+ *   si el usuario hace clic fuera del botón o del contenedor del menú.
+ * 
+ * useEffect (ESC):
+ *   Se utiliza para cerrar el menú desplegable cuando el usuario presiona
+ *   la tecla Escape (keyCode 27).
+ * 
+ * handleSelection:
+ *   Función síncrona que:
+ *     - Busca la opción seleccionada en el array `options` usando su ID.
+ *     - Actualiza el estado `selected` con el ID de la opción elegida.
+ *     - Cierra el menú desplegable.
+ *     - Llama a la función `onFilterChange` (si fue proporcionada) pasando
+ *       el valor correspondiente a la opción seleccionada.
+ * 
+ * options:
+ *   Array de objetos con las opciones de selección de fecha, donde cada objeto
+ *   contiene:
+ *     - id: Identificador numérico único.
+ *     - period: Texto visible al usuario.
+ *     - value: Valor interno que se envía al callback `onFilterChange`.
+ * 
+ * UI:
+ *   - Botón principal con icono de calendario y texto de la opción seleccionada.
+ *   - Icono de flecha que indica desplegable.
+ *   - Menú desplegable animado (componente Transition) que lista las opciones.
+ *   - Opción seleccionada se marca visualmente con un fondo distinto y un icono de check.
+ */
+
 function DateSelect({ onFilterChange }) {
   const options = [
     { id: 0, period: 'Hoy', value: 'day' },

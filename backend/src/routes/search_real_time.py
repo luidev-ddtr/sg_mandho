@@ -3,8 +3,9 @@
 from typing import Literal
 from flask import Blueprint, Response, request, jsonify
 from src.users.user import UserCrud
+from src.dim_dates.dim_date import DIM_DATE
 
-from src.routes.handle_message import send_error, send_success
+from src.routes.handle_message import send_error
 
 personas = UserCrud()
 
@@ -92,6 +93,7 @@ def busqueda_tiempo_real() -> tuple[Response, Literal[400]] | Response | tuple[R
             'message': 'Ingrese mínimo 3 caracteres'
         }), 400  # Cambiado a 400 (Bad Request es más apropiado que 401)
 
+    handler_date = DIM_DATE()
     try:
         # 2. Obtener todos los usuarios (filtro vacío)
         data = {'id_user': '', 'filters': {}}
@@ -104,6 +106,7 @@ def busqueda_tiempo_real() -> tuple[Response, Literal[400]] | Response | tuple[R
         resultados = []
         
         for registro in todos_los_datos:
+            registro['edad'] = handler_date.get_age(registro.get('date_of_birth'))
             # Campos donde se buscará (todos convertidos a minúsculas)
             campos_relevantes = [
                 registro.get('first_name', '').lower(),

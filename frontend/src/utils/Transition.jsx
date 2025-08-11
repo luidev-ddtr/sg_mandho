@@ -1,3 +1,4 @@
+// Compoente transition
 import React, { useRef, useEffect, useContext } from 'react';
 import { CSSTransition as ReactCSSTransition } from 'react-transition-group';
 
@@ -46,6 +47,13 @@ function CSSTransition({
   const nodeRef = React.useRef(null);
   const Component = tag;
 
+  // Crear un nuevo objeto rest sin las props específicas de transición
+  const filteredRest = { ...rest };
+  delete filteredRest.enterFrom;
+  delete filteredRest.enterTo;
+  delete filteredRest.leaveFrom;
+  delete filteredRest.leaveTo;
+
   return (
     <ReactCSSTransition
       appear={appear}
@@ -78,7 +86,13 @@ function CSSTransition({
         if (!removeFromDom) nodeRef.current.style.display = 'none';
       }}
     >
-      <Component ref={nodeRef} {...rest} style={{ display: !removeFromDom ? 'none': null }}>{children}</Component>
+      <Component
+        ref={nodeRef}
+        {...filteredRest}  
+        style={{ display: !removeFromDom ? 'none' : null }}
+      >
+        {children}
+      </Component>
     </ReactCSSTransition>
   )
 }

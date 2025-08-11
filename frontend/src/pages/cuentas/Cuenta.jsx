@@ -31,10 +31,13 @@ function Cart() {
     handleSubmit, 
     setValue,
     reset,
+    watch,
     formState: { errors } 
   } = useForm({
     resolver: yupResolver(accountSchema)
   });
+
+  const estadoPersonaValue = watch('estadoPersona');
 
   const selectClient = (client) => {
     setSelectedClient(client);
@@ -54,6 +57,17 @@ function Cart() {
     if (!selectedClient) {
       setMessage({ text: 'Debe seleccionar un cliente', type: 'error' });
       return;
+    }
+
+    // Validación para menores de 15 años
+    if (selectedClient.edad < 15) {
+      if (data.estadoPersona !== "Estudiante" && data.estadoPersona !== "Invalido") {
+        setMessage({ 
+          text: 'Para personas menores de 15 años solo se permite "Estudiante" o "Invalido"', 
+          type: 'error' 
+        });
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -87,6 +101,12 @@ function Cart() {
     }
   };
 
+  // Función para formatear fechas
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
+
   return (
     <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -114,7 +134,6 @@ function Cart() {
 
               {!showSuccessOptions ? (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  {/* Resto del formulario... */}
                   <BarraBusquedaAutomatica 
                     name="clienteId"
                     register={register}
@@ -122,9 +141,7 @@ function Cart() {
                     setValue={setValue}
                     selectedClient={selectedClient}
                     setSelectedClient={setSelectedClient}
-                  /> 
-                 {/* Otros formas campos del formulario Deberan ser importados en componentes dinamicos */}
-
+                  />
                   <div className="mb-6">
                     <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                       Estado de la persona <span className="text-red-500">*</span>
@@ -133,6 +150,11 @@ function Cart() {
                       {...register('estadoPersona')}
                       className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 ${
                         errors.estadoPersona ? 'border-red-500' : 'border-gray-300'
+                      } ${
+                        selectedClient?.edad < 15 && estadoPersonaValue && 
+                        estadoPersonaValue !== "Estudiante" && estadoPersonaValue !== "Invalido" 
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                          : ''
                       }`}
                       disabled={isSubmitting}
                     >
@@ -144,6 +166,15 @@ function Cart() {
                       <option value="Ranchero">Ranchero</option>
                       <option value="Invalido">Invalido</option>
                     </select>
+                    
+                    {/* Mensaje de validación para menores */}
+                    {selectedClient?.edad < 15 && estadoPersonaValue && 
+                     estadoPersonaValue !== "Estudiante" && estadoPersonaValue !== "Invalido" && (
+                      <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
+                        Para menores de 15 años solo se permite "Estudiante" o "Invalido"
+                      </p>
+                    )}
+                    
                     {errors.estadoPersona && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-500">
                         {errors.estadoPersona.message}
@@ -193,7 +224,10 @@ function Cart() {
 
                     <button 
                       type="submit" 
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || (selectedClient?.edad < 15 && 
+                         estadoPersonaValue && 
+                         estadoPersonaValue !== "Estudiante" && 
+                         estadoPersonaValue !== "Invalido")}
                       className="flex-1 px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-100 dark:to-gray-200 text-white dark:text-gray-900 font-medium rounded-lg shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-95 relative overflow-hidden group"
                     >
                       {isSubmitting ? (

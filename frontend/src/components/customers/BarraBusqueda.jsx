@@ -78,6 +78,7 @@ const BarraBusquedaAutomatica = ({
                 <p>Dirección: {selectedClient.direccion}</p>
                 <p>Manzana: {selectedClient.manzana}</p>
                 <p>Fecha de registro: {formatDate(selectedClient.fecha_creacion)}</p>
+                <p>Edad: {selectedClient.edad}</p>
               </div>
             </div>
             <button
@@ -150,6 +151,7 @@ const BarraBusquedaAutomatica = ({
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Dirección</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Manzana</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha Registro</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Edad Actual</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
@@ -176,6 +178,9 @@ const BarraBusquedaAutomatica = ({
                         </td>
                         <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
                           {formatDate(persona.fecha_creacion)}
+                        </td>
+                        <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
+                          {persona.edad}
                         </td>
                       </tr>
                     ))}
