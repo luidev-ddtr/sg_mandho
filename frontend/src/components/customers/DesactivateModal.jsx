@@ -1,24 +1,27 @@
+// Desactivate usuario.jsx
 import { useState } from "react";
 import { DesactivarUsuario } from "../../api/api_user";
 
-function DesactivarUsuarioModal({ id_user, onClose, onSuccess }) {
+// Desactivate usuario.jsx
+function DesactivarUsuarioModal({ id_user, onClose, onUpdate }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   
+
   const handleDesactivar = async () => {
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       if (!id_user) {
-        throw new Error('ID de usuario no proporcionado');
+        throw new Error("ID de usuario no proporcionado al modal");
       }
-      
+
       const response = await DesactivarUsuario(id_user);
-      
       if (response?.success) {
-        if (onSuccess) {
-          onSuccess();
+       
+        if (onUpdate) {
+          onUpdate(response.data); // Pasamos los datos normalizados
         }
         onClose();
       } else {
@@ -30,6 +33,7 @@ function DesactivarUsuarioModal({ id_user, onClose, onSuccess }) {
       setIsSubmitting(false);
     }
   };
+
 
   return (    
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">

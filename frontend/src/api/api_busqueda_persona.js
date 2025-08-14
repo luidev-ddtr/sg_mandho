@@ -76,7 +76,8 @@ export const buscarClientes = async (query, signal = null) => {
       fecha_creacion: cliente.data?.date_user_start || '',
       manzana: cliente.data?.manzana || '',
       selectable: cliente.data?.selectable ?? true, // Usamos operador nullish coalescing
-      reason: cliente.data?.reason || ''
+      reason: cliente.data?.reason || '',
+      edad: cliente.data?.edad || ''
     }));
     
   } catch (err) {

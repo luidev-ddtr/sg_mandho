@@ -1,6 +1,7 @@
 import axios from "axios";
 import { validate_edit_account } from "./api_account";
 import { crearCuenta } from "./api_account";
+import { isValid } from "date-fns/isValid";
 // Instancia de Axios con la URL base configurada
 const api = axios.create({
     baseURL: 'http://127.0.0.1:5000/api/user/'
@@ -153,22 +154,27 @@ export const MostrarUsuarios = (data) => {
     });
 };
 
-export const EditarUsuario = (data) => {
 
+export const EditarUsuario = async (data) => {
     //Validacion para ver si crear una nueva cuenta o no modificar nada
     const data_account = {
-    status: data.estadoPersona.toLowerCase(),  // Del campo estadoPersona del primer payload
-    customer_id: data.DIM_CustomerId,      // Del campo DIM_CustomerId del primer payload
-    start_date: data.fechaCuenta,                   // Usamos la misma fecha que en el primer payload
-    end_date: ""                               // Valor por defecto para nueva cuenta
-};
+        status: data.estadoPersona,
+        customer_id: data.DIM_CustomerId,
+        start_date: data.fechaCuenta,
+        end_date: "",
+        orginal_status: data.EstadoPersonaOriginal,
+    };
+    console.log('datos a enviar para validacion', data_account);
 
-    if  (validate_edit_account(data_account)){
+    const shouldCreateAccount = await validate_edit_account(data_account);
+    if (shouldCreateAccount) {
+        console.log("hubo cuenta");
         crearCuenta(data_account);
     }
+    else {
+        console.log("no hubo cuenta");
+    }
     
-
-    console.log("Los datos llegaron correctamente a Api.js en EditarUsuario",data);
     return api.post('update_user/', data, {
         headers: {
             'Content-Type': 'application/json',
@@ -177,21 +183,8 @@ export const EditarUsuario = (data) => {
     })
     .then(response => {
         if (response.data.status === 'success') {
-            console.log("Respuesta Datos que llegaron del backend:", response.data.body);
             return {
-                data: {     
-                    id_user: response.data.body.DIM_CustomerId,
-                    first_name: response.data.body.CustomerName,
-                    second_name: response.data.body.CustomerMiddleName || '',
-                    last_name: response.data.body.CustomerLastName,
-                    second_last_name: response.data.body.CustomerSecondLastName || '',
-                    date_of_birth: response.data.body.CustomerDateBirth,
-                    date_user_start: response.data.body.CustomerStartDate,
-                    date_user_end: response.data.body.CustomerEndDate,
-                    manzana: response.data.body.CustomerFraction,
-                    street: response.data.body.CustomerAddress,
-                    number_ext: response.data.body.CustomerNumberExt
-                },
+                data: normalizeUserData(response.data.body),
                 success: true
             };
         } else {
@@ -203,9 +196,53 @@ export const EditarUsuario = (data) => {
         throw error;
     });
 }
-
-
+// API.js
 export const DesactivarUsuario = (DIM_CustomerId) => {
-    console.log("Nada de esta api esta lsito");
-    console.log("Los datos llegaron correctamente a Api.js en DesactivarUsuario",DIM_CustomerId);
-}
+    if (!DIM_CustomerId) {
+        
+        return Promise.reject(new Error("ID de usuario no proporcionado"));
+    }
+
+    return api.patch('delete_user/', {
+        DIM_CustomerId: DIM_CustomerId
+    }).then(response => {
+        
+        if (response.data.status === 'success') {
+            
+            const normalizedData = normalizeUserData(response.data.body);
+            
+            return {
+                success: response.data.status,
+                data: normalizedData
+            };
+        } else {
+            throw new Error(response.data.message || 'Respuesta inesperada del backend');
+        }
+    }).catch(error => {
+        console.error("[API] 5. Error en DesactivarUsuario:", {
+            error: error,
+            responseData: error.response?.data,
+            status: error.response?.status
+        });
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message
+        };
+    });
+};
+
+const normalizeUserData = (userData) => {
+    return {
+        id_user: userData.DIM_CustomerId,
+        first_name: userData.CustomerName,
+        second_name: userData.CustomerMiddleName || '',
+        last_name: userData.CustomerLastName,
+        second_last_name: userData.CustomerSecondLastName || '',
+        date_of_birth: userData.CustomerDateBirth,
+        date_user_start: userData.CustomerStartDate,
+        date_user_end: userData.CustomerEndDate,
+        manzana: userData.CustomerFraction,
+        street: userData.CustomerAddress,
+        number_ext: userData.CustomerNumberExt
+    };
+};

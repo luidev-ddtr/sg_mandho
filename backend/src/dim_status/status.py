@@ -11,7 +11,7 @@ class DIM_status:
         self.StatusId = None
         self.conexion = None
 
-    def get_status_id(self, StatusName: str, from_message: str) -> int:
+    def get_status_id(self, StatusName: str, from_message: str) -> str:
         """
         Se hara una peticion a la base de datos, donde si no se agrega un nombre de estado, y viene desde account, se generara
         como una cuenta nueva. EStatus activo, por el contrariro si se quiere camvbiar aqui tambien de deberia obtener el estatus
@@ -33,14 +33,15 @@ class DIM_status:
             self.conexion.close_conexion()
             return StatusId[0]
         else:
-            #Esta funcion aun no esta probada
-            query = f"SELECT DIM_StatusId FROM DIM_status WHERE StatusName = '{StatusName}'"
+            query = "SELECT DIM_StatusId FROM DIM_status WHERE StatusName = ?"
             
-            self.conexion.cursor.execute(query)
+            self.conexion.cursor.execute(query, (StatusName,))
 
             StatusId = self.conexion.cursor.fetchone()
 
             self.conexion.close_conexion()
+            if StatusId is None:
+                return ""   
             return StatusId[0]
         
     def get_status(self, id) -> tuple[tuple[Any], Any] | tuple[()]:

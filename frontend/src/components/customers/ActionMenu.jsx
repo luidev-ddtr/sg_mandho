@@ -1,10 +1,10 @@
-//codigo del action menu
+// ActionMenu.jsx
 import React, { useState, useRef } from 'react';
 import AccountsTableModal from '../accounts/AccounsTable';
 import EditCustomerModal from './CustomerEdit';
 import DesactivateModal from './DesactivateModal';
 
-function ActionMenu({  onUpdate, onDelete, id_user }) {
+function ActionMenu({ onUpdate, id_user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [desactivateUserOpen, setDesactivateUserOpen] = useState(false);
@@ -19,7 +19,7 @@ function ActionMenu({  onUpdate, onDelete, id_user }) {
 
   return (
     <div className="relative" ref={menuRef}>
-      {/* Botón del menú */}
+      {/* Botón del menú (sin cambios) */}
       <button
         className="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 rounded-full"
         onClick={(e) => {
@@ -35,15 +35,15 @@ function ActionMenu({  onUpdate, onDelete, id_user }) {
         </svg>
       </button>
 
-      {/* Menú desplegable */}
+      {/* Menú desplegable (sin cambios) */}
       {isOpen && (
         <div className="absolute right-0 z-10 mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
           <button
             className="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={(e) => {
-             e.stopPropagation();
-            setEditModalOpen(true);
-            setIsOpen(false);
+              e.stopPropagation();
+              setEditModalOpen(true);
+              setIsOpen(false);
             }}
           >
             Editar
@@ -71,24 +71,24 @@ function ActionMenu({  onUpdate, onDelete, id_user }) {
         </div>
       )}
 
-      {/* Modal de Edición */}
+      {/* Modal de Edición (sin cambios) */}
       {editModalOpen && (
         <EditCustomerModal
           id_user={id_user}
           onClose={() => setEditModalOpen(false)}
-          onUpdate={onUpdate} // Pasamos la prop al modal de edición
+          onUpdate={onUpdate}
         />
       )}
 
       {desactivateUserOpen && (
         <DesactivateModal 
-        id_user={id_user} 
-        onClose={() => setDesactivateUserOpen(false)} 
-        // onUpdate={recargarUsuarios} 
-      />
+          id_user={id_user} 
+          onClose={() => setDesactivateUserOpen(false)}
+          onUpdate={onUpdate} // Pasamos la prop onSuccess al modal
+        />
       )}
 
-      {/* Modal de Ver Cuentas */}
+      {/* Modal de Ver Cuentas (sin cambios) */}
       {accountsModalOpen && (
         <AccountsTableModal
           id_user={id_user}

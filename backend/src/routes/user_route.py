@@ -1,5 +1,5 @@
 # Blueprint del usuario, se hace para separar el codigo y dejar app.py limpio
-
+from typing import Literal, Any
 from flask import Blueprint, request
 
 from src.users.user import UserCrud
@@ -26,7 +26,7 @@ def create_user():# -> tuple[Any, Literal[400]] | tuple | tuple[Any, Literal[500
     Returns:
         llama a la funcion send_error o send_success las cuales no son mas que un acortador de codigo
         pero en si esas funciones se encargan de enviar el mensaje en formato json
-        
+    
         Se debe cambiar esta parte ya que la api ahira reuqiere obligatoriamente estos campos
         USUARIO VALIDO 
         {
@@ -142,6 +142,30 @@ def update_info_user():
         state, message, data = user_options.edit_user(request_data)
 
         if 200 <= state <= 206:
+            return send_success(message, data, state)
+        else:
+            print(message)
+            return send_error(message, state)
+    except Exception as e:
+        print(e)
+        return send_error(str(e), 500)
+    
+
+@user_route.route("/api/user/delete_user/", methods=["PATCH"])
+def userDefuncion() -> tuple[Any, Literal[400]] | tuple | tuple[Any, Literal[500]]:
+    """
+    Funcion para manejar la defuncion de un usuario, Se recibira un ID con esta informacion se haran los cambios en las tablas y se
+    devolvera el mismo registro con la informacion cambiada en fecha de defuncion
+    """
+    try:
+        defuncion_data = request.json
+        if not defuncion_data:
+            return send_error("No se recibieron datos", 400)
+        
+        state, message, data = user_options.defuncion_user(defuncion_data)
+
+        if 201 == state :
+            print(f"El estado {state}  Mensaje: {message}, la informacion {data}")
             return send_success(message, data, state)
         else:
             print(message)

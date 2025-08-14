@@ -1,4 +1,6 @@
 #from src.account.models.DIM_account import DIM_account
+import sqlite3
+from typing import Literal
 from src.utils.conexion import Conexion
 
 #Importaciones de mostrar o leer ceuntas
@@ -88,18 +90,61 @@ def descativar_otra_cuenta(Customer_id):
     handler_conn = Conexion()
     handler_status = DIM_status()
     dim_date = DIM_DATE()
+    try:
+        query = """UPDATE DIM_account
+        SET EndDate = ?,
+        DIM_StatusId = ?
+        WHERE DIM_CustomerId = ? AND (EndDate IS NULL OR EndDate = '');"""
+        endate =  dim_date.get_end_date()
+
+        estado = handler_status.get_status_id("inactivo", "account")
+
+        values = (endate, estado, Customer_id)
+
+        handler_conn.cursor.execute(query, values)
+        handler_conn.save_changes()
+
+    except sqlite3.Error as e:
+        print(f"Error al descativar la cuenta: {e}")
+    finally:
+        handler_conn.close_conexion()
+
+
+def validate_status(type_status) -> tuple[Literal[False], int, str] | tuple[Literal[True], Literal[''], Literal['']]:
+    """
+    Valida el estado de un tipo de usuario y determina si es inactivo.
     
-    query = """UPDATE DIM_account
-     SET EndDate = ?,
-     DIM_StatusId = ?
-     WHERE DIM_CustomerId = ?"""
-    endate =  dim_date.get_end_date()
+    Args:
+        type_status (str): Tipo de estado a validar (por ejemplo, "estudiante", "invalido").
+        
+    Returns:
+        tuple:
+            - Si el estado es inactivo:
+                (False, status_id (int), endDate (str))
+              donde:
+                * status_id: ID correspondiente al estado inactivo obtenido del handler DIM_status.
+                * endDate: fecha de fin obtenida desde DIM_DATE.
+            - Si el estado no es inactivo:
+                (True, "", "")
+              indicando que el estado está activo o no requiere actualización.
+    
+    Nota:
+        - Los tipos de estado considerados inactivos están definidos en el diccionario `estatus_inactivos`.
+        - Se debe ampliar este diccionario si existen más tipos de usuarios inactivos.
+    """
+    handler_status = DIM_status()
 
-    estado = handler_status.get_status_id("inactivo", "account")
+    inactivo = "inactivo"
+    #Aqui se deberan agregar mas si es que hay mas tipos de usuarios inactivos
+    estatus_inactivos = {
+        "estudiante": inactivo,
+        "invalido": inactivo,
+    }
 
-    values = (endate, estado, Customer_id)
-
-    handler_conn.cursor.execute(query, values)
-    handler_conn.save_changes()
-
-    handler_conn.close_conexion()
+    if type_status in estatus_inactivos:
+        new_status = estatus_inactivos[type_status]
+        estaus_id = handler_status.get_status_id(new_status, 'account')
+        endDate = DIM_DATE().get_end_date()
+        return False, estaus_id, endDate
+    else:
+        return True, "", ""

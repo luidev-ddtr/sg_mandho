@@ -18,6 +18,59 @@ function Customers() {
     setSelectedItems([...selectedItems]);
   };
 
+  /**
+ * Componente principal para la gestión de personas (Clientes/Usuarios).
+ * 
+ * - Maneja la apertura/cierre de la barra lateral con `sidebarOpen`.
+ * - Controla los ítems seleccionados en la tabla mediante `selectedItems`.
+ * - Mantiene un objeto `filters` que contiene filtros activos combinados
+ *   de fecha y categorías para filtrar los datos mostrados.
+ * 
+ * Funciones:
+ * 
+ * - handleSelectedItems(selectedItems):
+ *     Actualiza el estado con la lista de elementos seleccionados en la tabla.
+ * 
+ * - handleDateFilterChange(dateValue):
+ *     Actualiza los filtros de fecha:
+ *       - Elimina filtros anteriores de tipo fecha ('day', 'month', 'year').
+ *       - Agrega el nuevo filtro de fecha seleccionado.
+ * 
+ * - handleCategoryFilterChange(categoryFilters):
+ *     Actualiza los filtros de categoría:
+ *       - Elimina filtros anteriores correspondientes a las opciones de categoría.
+ *       - Aplica los filtros seleccionados que están activos (true).
+ * 
+ * Props y componentes usados:
+ * 
+ * - Sidebar:
+ *     Barra lateral con menú de navegación, recibe estados para abrir/cerrar.
+ * 
+ * - Header:
+ *     Cabecera fija, también controla estado de sidebar.
+ * 
+ * - DateSelect:
+ *     Componente selector de fechas que notifica el filtro seleccionado
+ *     mediante `handleDateFilterChange`.
+ * 
+ * - FilterButton (DropdownFilter):
+ *     Selector de múltiples filtros por categoría, notifica cambios con
+ *     `handleCategoryFilterChange`.
+ * 
+ * - CustomersTable:
+ *     Tabla que recibe los filtros activos y la función para manejar
+ *     elementos seleccionados.
+ * 
+ * - PaginationClassic:
+ *     Componente de paginación para navegar entre páginas de datos.
+ * 
+ * Estructura:
+ * 
+ * - Sidebar y Header fijos.
+ * - Área principal con título, filtros y botón para agregar usuario.
+ * - Tabla con los datos filtrados y paginación.
+ */
+
   const handleDateFilterChange = (dateValue) => {
     setFilters(prev => {
       const newFilters = { ...prev };

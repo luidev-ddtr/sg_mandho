@@ -39,7 +39,7 @@ def get_all_users() -> list:
     print("desde show en users")
     return data_format
     
-def get_user(id_user: str):# -> dict[str, str] | list:
+def get_user(id_user: str)-> dict[str, str] | dict:
     """
     Funcion para optener la informacion de un usuario en especifico
     Args:
@@ -86,12 +86,12 @@ def get_user(id_user: str):# -> dict[str, str] | list:
             registro = User(*primer_registro)
             return registro.to_dict()  # Devuelve el objeto User directamente
         else:
-            return []  # O puedes lanzar una excepción si lo prefieres
+            return {}  # O puedes lanzar una excepción si lo prefieres
     
     except sqlite3.Error as e:
         print(f"Error al realizar la consulta: {e}")
         object_conection.close_conexion()
-        return []
+        return {}
     
 
 
@@ -127,7 +127,7 @@ def get_users_with_filters(filters: dict[str, str]) -> list[dict[str, str]] | li
         p.CustomerNumberExt
      FROM DIM_Customer AS p
      INNER JOIN DIM_Date AS d ON p.DIM_DateId = d.DIM_DateId
-     WHERE 1=1"""
+     WHERE 1 = 1 """
 
     valores = []
     
@@ -139,16 +139,14 @@ def get_users_with_filters(filters: dict[str, str]) -> list[dict[str, str]] | li
             valores.extend(manzana_values)
 
         if 'CustomerEndDate' in filters and filters['CustomerEndDate']:
-            query += " AND p.CustomerEndDate = ?"
-            valores.append(filters['CustomerEndDate'])
+            query += " AND  p.CustomerEndDate is not 's/n'"
 
         fechas_cond, fechas_values = add_date(filters.get("DIM_Date"))
         if fechas_cond:
             query += f" AND {fechas_cond}"
             valores.extend(fechas_values)
-            
-        print("[DEBUG] Valores para la consulta:", valores)
-
+        print("[DEBUG] Query generado:", query)
+        print("[DEBUG] Valores:", valores)
         conecion.cursor.execute(query, tuple(valores))
         registros = conecion.cursor.fetchall()
         data_format = []
