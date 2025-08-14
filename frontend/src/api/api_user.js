@@ -153,7 +153,9 @@ export const MostrarUsuarios = (data) => {
         throw error; // Re-lanza el error para manejarlo en el componente
     });
 };
-export const EditarUsuario = async (data) => { // Añadir async aquí
+
+
+export const EditarUsuario = async (data) => {
     //Validacion para ver si crear una nueva cuenta o no modificar nada
     const data_account = {
         status: data.estadoPersona,
@@ -164,7 +166,6 @@ export const EditarUsuario = async (data) => { // Añadir async aquí
     };
     console.log('datos a enviar para validacion', data_account);
 
-    // Usar await para obtener el valor booleano real
     const shouldCreateAccount = await validate_edit_account(data_account);
     if (shouldCreateAccount) {
         console.log("hubo cuenta");
@@ -173,6 +174,7 @@ export const EditarUsuario = async (data) => { // Añadir async aquí
     else {
         console.log("no hubo cuenta");
     }
+    
     return api.post('update_user/', data, {
         headers: {
             'Content-Type': 'application/json',
@@ -182,19 +184,7 @@ export const EditarUsuario = async (data) => { // Añadir async aquí
     .then(response => {
         if (response.data.status === 'success') {
             return {
-                data: {     
-                    id_user: response.data.body.DIM_CustomerId,
-                    first_name: response.data.body.CustomerName,
-                    second_name: response.data.body.CustomerMiddleName || '',
-                    last_name: response.data.body.CustomerLastName,
-                    second_last_name: response.data.body.CustomerSecondLastName || '',
-                    date_of_birth: response.data.body.CustomerDateBirth,
-                    date_user_start: response.data.body.CustomerStartDate,
-                    date_user_end: response.data.body.CustomerEndDate,
-                    manzana: response.data.body.CustomerFraction,
-                    street: response.data.body.CustomerAddress,
-                    number_ext: response.data.body.CustomerNumberExt
-                },
+                data: normalizeUserData(response.data.body),
                 success: true
             };
         } else {
@@ -206,8 +196,53 @@ export const EditarUsuario = async (data) => { // Añadir async aquí
         throw error;
     });
 }
-
+// API.js
 export const DesactivarUsuario = (DIM_CustomerId) => {
-    console.log("Nada de esta api esta lsito");
-    console.log("Los datos llegaron correctamente a Api.js en DesactivarUsuario",DIM_CustomerId);
-}
+    if (!DIM_CustomerId) {
+        
+        return Promise.reject(new Error("ID de usuario no proporcionado"));
+    }
+
+    return api.patch('delete_user/', {
+        DIM_CustomerId: DIM_CustomerId
+    }).then(response => {
+        
+        if (response.data.status === 'success') {
+            
+            const normalizedData = normalizeUserData(response.data.body);
+            
+            return {
+                success: response.data.status,
+                data: normalizedData
+            };
+        } else {
+            throw new Error(response.data.message || 'Respuesta inesperada del backend');
+        }
+    }).catch(error => {
+        console.error("[API] 5. Error en DesactivarUsuario:", {
+            error: error,
+            responseData: error.response?.data,
+            status: error.response?.status
+        });
+        return {
+            success: false,
+            message: error.response?.data?.message || error.message
+        };
+    });
+};
+
+const normalizeUserData = (userData) => {
+    return {
+        id_user: userData.DIM_CustomerId,
+        first_name: userData.CustomerName,
+        second_name: userData.CustomerMiddleName || '',
+        last_name: userData.CustomerLastName,
+        second_last_name: userData.CustomerSecondLastName || '',
+        date_of_birth: userData.CustomerDateBirth,
+        date_user_start: userData.CustomerStartDate,
+        date_user_end: userData.CustomerEndDate,
+        manzana: userData.CustomerFraction,
+        street: userData.CustomerAddress,
+        number_ext: userData.CustomerNumberExt
+    };
+};

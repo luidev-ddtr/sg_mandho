@@ -20,8 +20,8 @@ def test_read_user2() -> None:
 def test_read_user3() -> None:
     user_options = UserCrud()
     data_filters = {
-        'CustomerEndDate': False,
-        'CustomerFraction': ['centro', 'garambullo'],
+        'CustomerEndDate': True,
+        'CustomerFraction': [],
         'DIM_Date': 'FiscalMonth'
     }
     data = { "id_user": "", "filters": data_filters}
@@ -30,3 +30,4 @@ def test_read_user3() -> None:
     assert estado == 200
     assert mensaje == 'Se encontraron resultados con estos filtros'
     assert len(informacion) >= 1
+

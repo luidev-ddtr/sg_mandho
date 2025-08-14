@@ -11,7 +11,7 @@ from src.dim_status.status import DIM_status
 
 #Importaciones de mostrar o leer ceuntas
 from src.accounts.repository.show import show_account
-from src.accounts.services.validate import convertir_a_formato_legible, validate_status
+from src.accounts.services.validate import convertir_a_formato_legible, validate_status, descativar_otra_cuenta
 
 #importacion de roles
 from src.dim_roles.role import Role
@@ -174,3 +174,18 @@ class AccountCrud():
                     return 404, mensaje, []
         else:
             return 400, mensaje, []
+        
+    
+    def desactivate_account(self, persona_id: str ) -> None :
+        """
+        Esta función desactiva una cuenta en la base de datos.
+
+        Args:
+            persona_id (str): El id de la cuenta que se desea desactivar.
+
+        Returns:
+            None (NoneType): No responde nada solo hace una accion
+
+        """
+        descativar_otra_cuenta(persona_id)
+    

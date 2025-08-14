@@ -90,6 +90,21 @@ def to_edit(campos_editables: dict) -> dict[str, str]:
     """
     Función para verificar o completar la información recibida y poner alguna por defecto
     si es que el valor del campo es nulo o una cadena vacía.
+
+    Args:
+        campos_editables (dict): Un diccionario que contiene los campos a verificar.
+                                 Las claves son los nombres de los campos y los valores
+                                 son los datos a procesar.
+
+    Returns:
+        dict[str, str]: El mismo diccionario 'campos_editables' pero con los valores
+                        nulos o vacíos reemplazados por un valor por defecto ('s/n').
+                        Se devuelve un diccionario con claves de tipo string y valores de tipo string.
+
+    Ejemplo:
+        >>> datos = {'CustomerName': 'Juan', 'CustomerMiddleName': '', 'CustomerLastName': None, 'CustomerFraction': '2'}
+        >>> to_edit(datos)
+        {'CustomerName': 'Juan', 'CustomerMiddleName': 's/n', 'CustomerLastName': 's/n', 'CustomerFraction': '2'}
     """
     # Define los campos que deben tener un valor por defecto y sus respectivos valores
     fields_with_defaults = {
@@ -102,14 +117,15 @@ def to_edit(campos_editables: dict) -> dict[str, str]:
         'CustomerNumberExt': 's/n'
     }
 
-    # Itera sobre los campos definidos en fields_with_defaults
+    # Itera sobre los campos definidos en fields_with_defaults para verificar y asignar
     for field_name, default_value in fields_with_defaults.items():
         # Obtiene el valor actual del campo en campos_editables.
-        # Si el campo no existe, .get() devuelve None.
+        # .get() devuelve None si la clave no existe en el diccionario.
         current_value = campos_editables.get(field_name)
 
-        # Verifica si el valor actual es None o una cadena vacía (después de quitar espacios en blanco)
-        # Esto asegura que tanto None como '' (cadena vacía) se traten como "nulos"
+        # Verifica si el valor actual es None o una cadena vacía.
+        # .strip() elimina los espacios en blanco iniciales y finales, asegurando
+        # que cadenas como ' ' o '\t' también se consideren vacías.
         if current_value is None or (isinstance(current_value, str) and current_value.strip() == ''):
             campos_editables[field_name] = default_value
     

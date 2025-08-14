@@ -1,4 +1,5 @@
 #from src.account.models.DIM_account import DIM_account
+import sqlite3
 from typing import Literal
 from src.utils.conexion import Conexion
 
@@ -89,21 +90,24 @@ def descativar_otra_cuenta(Customer_id):
     handler_conn = Conexion()
     handler_status = DIM_status()
     dim_date = DIM_DATE()
-    
-    query = """UPDATE DIM_account
-     SET EndDate = ?,
-     DIM_StatusId = ?
-     WHERE DIM_CustomerId = ? AND (EndDate IS NULL OR EndDate = '');"""
-    endate =  dim_date.get_end_date()
+    try:
+        query = """UPDATE DIM_account
+        SET EndDate = ?,
+        DIM_StatusId = ?
+        WHERE DIM_CustomerId = ? AND (EndDate IS NULL OR EndDate = '');"""
+        endate =  dim_date.get_end_date()
 
-    estado = handler_status.get_status_id("inactivo", "account")
+        estado = handler_status.get_status_id("inactivo", "account")
 
-    values = (endate, estado, Customer_id)
+        values = (endate, estado, Customer_id)
 
-    handler_conn.cursor.execute(query, values)
-    handler_conn.save_changes()
+        handler_conn.cursor.execute(query, values)
+        handler_conn.save_changes()
 
-    handler_conn.close_conexion()
+    except sqlite3.Error as e:
+        print(f"Error al descativar la cuenta: {e}")
+    finally:
+        handler_conn.close_conexion()
 
 
 def validate_status(type_status) -> tuple[Literal[False], int, str] | tuple[Literal[True], Literal[''], Literal['']]:

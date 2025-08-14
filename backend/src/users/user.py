@@ -15,6 +15,9 @@ from src.users.repository.show import get_users_with_filters, get_all_users, get
 from src.users.repository.edit import edit_user
 #base_de_datos = BdPrueba()
 
+#importaciones de eliminar 
+from src.users.repository.delete import set_defuncion, defuncion_validation
+from src.accounts.account import AccountCrud
 class UserCrud:
     """ 
     Clase la cual hara la mayoria del curd, aun no hara la parte de mostrar ya que esta se esta legando la bd
@@ -193,3 +196,38 @@ class UserCrud:
             return 201, "El usuario se ha actualizado correctamente", new_user
         else:
             return 400, message
+        
+
+    def defuncion_user(self, defuncion_data) -> tuple[Literal[400], Literal['No se pudo actualizar el reg...']]:
+        """
+        Esta funcion sera la encargada de manejar todo lo relacionado con la defuncion de un usuario, Su funcion sera dejar al usuario
+        compleamtente desactivado en la tabla DIM_Customers, y todas las tablas relacionadas con su cuenta
+
+        Args:
+            defuncion_data (dict): Un diccionario que contiene la informacion del usuario.
+
+        Returns:
+            tuple[Any, Literal[400]] | tuple | tuple[Any, Literal[201]]: Una tupla que contiene un codigo de estado HTTP y un mensaje de error
+        """
+        handrer_account = AccountCrud()
+        campos_requeridos = ["DIM_CustomerId"]
+        tipo_campos = [str]
+
+        result , message = validate_data(defuncion_data, campos_requeridos, tipo_campos, "user")
+
+        if not result:
+            return 400, message, {}
+        
+        
+        if not defuncion_validation(defuncion_data["DIM_CustomerId"]): #Para verificar si el usuario ya esta marcado como defuncion
+            return 400, "El usuario ya se encuentra como defuncion", {}
+        
+        set_defuncion(defuncion_data["DIM_CustomerId"])
+        
+        #Modificar la cuenta del usuario, para desactivarlo
+        handrer_account.desactivate_account(defuncion_data["DIM_CustomerId"])
+        
+        #Obtener el nuevo ususario para regresarlo en la respuesta
+        new_user = get_user(defuncion_data["DIM_CustomerId"])
+
+        return 201, "El usuario se ha actualizado correctamente", new_user
