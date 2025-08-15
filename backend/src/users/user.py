@@ -50,7 +50,7 @@ class UserCrud:
                 "DIM_CustomerId": create_id([user_json["nombre"], user_json["apellido"], user_json["fecha_inicio"]]),
                 "DIM_DateId": dim_date_data.dateId,
                 "CustomerName": user_json["nombre"],
-                "CustomerMiddleName": user_json.get("segundo_nombre") or "s/n",
+                "CustomerMiddleName": user_json.get("segundo_nombre") or "n/a",
                 "CustomerLastName": user_json["apellido"],
                 "CustomerSecondLastName": user_json.get("segundo_apellido") or "s/n",
                 "CustomerDateBirth": user_json["fecha_nacimiento"],
@@ -162,40 +162,35 @@ class UserCrud:
 
         Los campos requeridos para la actualización son:
         - DIM_CustomerId (str): Identificador único del usuario.
-        - CustomerName (str): Nombre del usuario.
-        - CustomerMiddleName (str): Segundo nombre del usuario.
-        - CustomerLastName (str): Apellido paterno del usuario.
-        - CustomerSecondLastName (str): Apellido materno del usuario.
         - CustomerAddress (str): Dirección del usuario.
         - CustomerFraction (str): Fraccionamiento o colonia del usuario.
         - CustomerNumberExt (str): Número exterior del domicilio.
 
         Args:
-            data_edit (dict): Diccionario con los datos a editar.
+            data_edit (dict): Diccionario con los datos a editar.=
 
         Returns:
-            tuple[int, str]: Una tupla que contiene un código de estado HTTP
-                             y un mensaje de éxito o error.
+            tuple[int, str, dict]: Una tupla que contiene un código de estado HTTP
+            (código 201 o 400), un mensaje de éxito o error y la información del usuario se ha actualizado.
         """
-        campos_requeridos = ["DIM_CustomerId","CustomerName", "CustomerMiddleName", "CustomerLastName", "CustomerSecondLastName", "CustomerAddress", "CustomerFraction", "CustomerNumberExt"]
-        tipo_campos = [str, str, str, str, str, str, str, str]
+        campos_requeridos = ["DIM_CustomerId", "CustomerAddress", "CustomerFraction", "CustomerNumberExt"]
+        tipo_campos = [str, str, str, str]
 
         result , message = validate_data(data_edit, campos_requeridos, tipo_campos, "user")
-        if result:
-            format_data = to_edit(data_edit)
+        if not result:
+            return 400, message, {}
+        
+        format_data = to_edit(data_edit)
+        
+        isvalid = edit_user(format_data)
 
-            print(format_data)
-            isvalid = edit_user(format_data)
+        if not isvalid:
+            return 400, "No se pudo actualizar el registro", {}
+        
+        #Obtener el nuevo ususario para regresarlo en la respuesta
+        new_user = get_user(data_edit["DIM_CustomerId"])
 
-            if not isvalid:
-                return 400, "No se pudo actualizar el registro"
-            
-            #Obtener el nuevo ususario para regresarlo en la respuesta
-            new_user = get_user(data_edit["DIM_CustomerId"])
-
-            return 201, "El usuario se ha actualizado correctamente", new_user
-        else:
-            return 400, message
+        return 201, "El usuario se ha actualizado correctamente", new_user
         
 
     def defuncion_user(self, defuncion_data) -> tuple[Literal[400], Literal['No se pudo actualizar el reg...']]:

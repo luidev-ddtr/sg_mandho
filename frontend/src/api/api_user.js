@@ -49,31 +49,46 @@ const api = axios.create({
  */
 export const AgregarUsuario = async (data) => { 
     try {
-        const response = await api.post('create_user/', data, {
+        // 1. Crear el usuario primero
+        const userResponse = await api.post('create_user/', data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             }
         });
 
-        console.log("Respuesta completa del backend:", response); // Verifica toda la respuesta
-        
-        // Asegúrate de que response.data existe
-        if (!response.data) {
-            throw new Error('No se recibieron datos del backend');
+        if (!userResponse.data || userResponse.data.status !== 'success') {
+            throw new Error(userResponse.data?.message || 'Error al crear el usuario');
+        }
+        // Obtener ID del usuario creado
+        const userId = userResponse.data.body.id;
+        if (!userId) {
+            throw new Error('No se recibió ID de usuario del backend');
         }
 
-        // Verifica la estructura esperada
-        if (response.data.status === 'success') {
-            return {
-                id: response.data.body.id,
-            };
+        // 2. Preparar y crear la cuenta asociada
+        const accountPayload = {
+            customer_id: userId,
+            start_date: data.data.fecha_inicio, // Acceder a data.data ya que el payload está anidado
+            end_date: data.data.fecha_fin,
+            status: data.data.estadoPersona.toLowerCase(),
+        };
+
+        console.log('Información para crear la cuenta:', accountPayload);
+        
+        // Crear la cuenta asociada
+        const accountResponse = await crearCuenta(accountPayload);
+        console.log("Respuesta de creación de cuenta:", accountResponse);
+
+        // 3. Verificar que ambas operaciones fueron exitosas (ajustado a estructura real)
+        if (userResponse.data.status === 'success' && (accountResponse.success || accountResponse.data?.status === 'success')) {
+            return { id: userId };
         } else {
-            throw new Error(response.data.message || 'Respuesta inesperada del backend');
+            throw new Error(accountResponse.message || 'Error en la creación de la cuenta asociada');
         }
     } catch (error) {
         console.error("Error en AgregarUsuario:", error);
-        throw error; // Re-lanza el error para manejarlo en el componente
+        throw error;
     }
 }
 
@@ -130,29 +145,31 @@ export const MostrarUsuarios = (data) => {
         }
     })
     .then(response => {
-        //console.log("Respuesta completa del backend:", response);
-        
-        // Asegúrate que response.data existe
         if (!response.data) {
             throw new Error('No se recibieron datos del backend');
         }
 
-        // Verifica la estructura esperada
         if (response.data.status === 'success') {
             return {
                 data: response.data.body,
                 success: true
-                // Agrega otros campos si son necesarios
             };
         } else {
+            // Usamos el mensaje del backend si existe
             throw new Error(response.data.message || 'Respuesta inesperada del backend');
         }
     })
     .catch(error => {
         console.error("Error en MostrarUsuarios:", error);
-        throw error; // Re-lanza el error para manejarlo en el componente
+        
+        // Priorizamos el mensaje del backend si está disponible
+        const errorMessage = error.response?.data?.message 
+            || error.message 
+            || 'Error al cargar los usuarios';
+        
+        throw new Error(errorMessage);
     });
-};
+}
 
 
 export const EditarUsuario = async (data) => {
@@ -164,7 +181,6 @@ export const EditarUsuario = async (data) => {
         end_date: "",
         orginal_status: data.EstadoPersonaOriginal,
     };
-    console.log('datos a enviar para validacion', data_account);
 
     const shouldCreateAccount = await validate_edit_account(data_account);
     if (shouldCreateAccount) {

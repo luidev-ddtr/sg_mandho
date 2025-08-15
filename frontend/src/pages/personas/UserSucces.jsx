@@ -49,7 +49,7 @@ function Onboarding04() {
 
                   <div className="flex justify-center">
                     <Link 
-                      to="/cuentas/cuenta" 
+                      to="/personas/usuarios" 
                       className="
                         px-6 py-3
                         bg-white dark:bg-gray-700
@@ -69,7 +69,7 @@ function Onboarding04() {
                       "
                     >
                       <span className="relative z-10 flex items-center justify-center">
-                        Crear Cuenta <span className="ml-1">→</span>
+                        Volver al Menu <span className="ml-1">→</span>
                       </span>
                     </Link>
                   </div>

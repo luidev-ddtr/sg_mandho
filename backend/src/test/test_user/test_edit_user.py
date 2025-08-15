@@ -6,10 +6,6 @@ def test_edit_user() -> None:
     handler = UserCrud()
     user_json = {
         "DIM_CustomerId": "74ca90c2-5657-5eef",
-        "CustomerName": "Andres",
-        "CustomerMiddleName": '',
-        "CustomerLastName": 'Martinez',
-        "CustomerSecondLastName": 'Torres',
         "CustomerAddress": "",
         "CustomerFraction": "garambullo",
         "CustomerNumberExt": '08'

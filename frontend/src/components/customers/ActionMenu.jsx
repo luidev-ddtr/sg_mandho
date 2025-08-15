@@ -27,7 +27,7 @@ function ActionMenu({ onUpdate, id_user }) {
           setIsOpen(!isOpen);
         }}
       >
-        <span className="sr-only">Menu</span>
+        <span className="sr-only">Mas opciones</span>
         <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
           <circle cx="16" cy="16" r="2" />
           <circle cx="10" cy="16" r="2" />

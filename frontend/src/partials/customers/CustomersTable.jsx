@@ -1,8 +1,9 @@
+// Codigo donde estan los nombres
 import React, { useState, useEffect } from 'react';
 import Customer from './CustomersTableItem';
 import { MostrarUsuarios } from '../../api/api_user';
 
-function CustomersTable({ selectedItems, filters }) {
+function CustomersTable({ filters }) {
   const [selectAll, setSelectAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
   const [list, setList] = useState([]);
@@ -107,23 +108,10 @@ function CustomersTable({ selectedItems, filters }) {
                 {/* Columna Checkbox */}
                 <th className="px-3 py-3 whitespace-nowrap w-10">
                   <div className="flex items-center justify-center">
-                    <label className="inline-flex">
-                      <span className="sr-only">Select all</span>
-                      <input className="form-checkbox" type="checkbox" checked={selectAll} onChange={handleSelectAll} />
-                    </label>
+                    <p>Imgen</p>
                   </div>
                 </th>
-                
-                {/* Columna Imagen */}
-                <th className="px-1 py-3 whitespace-nowrap w-12">
-                  <span className="sr-only">Imagen</span>
-                </th>
-                
-                {/* Columna Nombre */}
-                <th className="px-4 py-3 whitespace-nowrap text-left min-w-[50px]">
-                  <div className="font-semibold"></div>
-                </th>
-                
+
                 {/* Resto de columnas */}
                 <th className="px-4 py-3 whitespace-nowrap text-left min-w-[110px]">
                   <div className="font-semibold">Nombre</div>
@@ -137,7 +125,7 @@ function CustomersTable({ selectedItems, filters }) {
                 <th className="px-4 py-3 whitespace-nowrap text-center min-w-[70px]">
                   <div className="font-semibold">Manzana</div>
                 </th>
-                <th className="px-4 py-3 whitespace-nowrap text-left min-w-[90px]">
+                <th className="px-4 py-3 whitespace-nowrap text-center min-w-[90px]">
                   <div className="font-semibold">Dirección</div>
                 </th>
                 <th className="px-4 py-3 whitespace-nowrap text-left min-w-[90px]">
@@ -147,7 +135,7 @@ function CustomersTable({ selectedItems, filters }) {
                   <div className="font-semibold">Fecha Defunción</div>
                 </th>
                 <th className="px-2 py-3 whitespace-nowrap w-20 text-center">
-                  <span className="sr-only">Acciones</span>
+                  <span className="font-semibold">Acciones</span>
                 </th>
               </tr>
             </thead>

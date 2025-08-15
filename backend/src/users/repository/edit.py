@@ -14,10 +14,6 @@ def edit_user(data_edit: dict) -> bool:
         que se desean actualizar. Los campos posibles son:
         
         - "DIM_CustomerId": str, ID unico del cliente.
-        - "CustomerName": str, Nombre del cliente.
-        - "CustomerMiddleName": str, Segundo nombre del cliente.
-        - "CustomerLastName": str, Apellido paterno del cliente.
-        - "CustomerSecondLastName": str, Apellido materno del cliente.
         - "CustomerFraction": str, Fraccionamiento o colonia del cliente.
         - "CustomerAddress": str, Direccion completa del cliente.
         - "CustomerNumberExt": str, Numero exterior de la direccion.
@@ -33,19 +29,11 @@ def edit_user(data_edit: dict) -> bool:
         query = """
         UPDATE DIM_Customer
                    SET
-                   CustomerName = ?,
-                   CustomerMiddleName = ?,
-                   CustomerLastName = ?,
-                   CustomerSecondLastName = ?,
                    CustomerFraction = ?,
                    CustomerAddress = ?,
                    CustomerNumberExt = ?
                    WHERE DIM_CustomerId = ?"""
         values = (
-            data_edit['CustomerName'],
-            data_edit['CustomerMiddleName'],
-            data_edit['CustomerLastName'],
-            data_edit['CustomerSecondLastName'],
             data_edit['CustomerFraction'],
             data_edit['CustomerAddress'],
             data_edit['CustomerNumberExt'],
