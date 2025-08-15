@@ -108,8 +108,6 @@ def get_users_with_filters(filters: dict[str, str]) -> list[dict[str, str]] | li
     Returns:
         list[dict]: Lista de usuarios que coinciden con los filtros
     """
-    print("[DEBUG] Iniciando get_users_with_filters con filtros:", filters)
-
     conecion = Conexion()
 
     # Query base - Asegurando que coincida el número de columnas seleccionadas con las esperadas
@@ -145,8 +143,8 @@ def get_users_with_filters(filters: dict[str, str]) -> list[dict[str, str]] | li
         if fechas_cond:
             query += f" AND {fechas_cond}"
             valores.extend(fechas_values)
-        print("[DEBUG] Query generado:", query)
-        print("[DEBUG] Valores:", valores)
+        # print("[DEBUG] Query generado:", query)
+        # print("[DEBUG] Valores:", valores)
         conecion.cursor.execute(query, tuple(valores))
         registros = conecion.cursor.fetchall()
         data_format = []

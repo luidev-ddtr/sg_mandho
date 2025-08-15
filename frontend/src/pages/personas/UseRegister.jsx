@@ -27,33 +27,44 @@ const capitalizeFirstLetter = (value) => {
 const schema = yup.object().shape({
   nombre: yup.string()
     .required('El nombre es requerido')
+    .transform(value => value ? value.trim() : value) // Eliminar espacios al inicio/final
     .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/, 'Solo se permiten letras')
     .transform(value => capitalizeFirstLetter(value))
     .test('single-word', 'Solo se permite una palabra', value => {
-      return value && value.split(' ').length === 1;
+      return value && value.trim().split(/\s+/).length === 1;
     }),
   
   segundo_nombre: yup.string()
-    .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]*$/, 'Solo se permiten letras')
-    .transform(value => value ? capitalizeFirstLetter(value) : value)
+    .transform(value => {
+      // Convertir a "n/a" si está vacío después de limpiar
+      if (!value || value.trim() === '') return 'n/a';
+      return value.trim(); // Limpiar espacios
+    })
+    .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$|^n\/a$/i, 'Solo se permiten letras o "n/a"')
+    .transform(value => {
+      if (value.toLowerCase() === 'n/a') return 'n/a';
+      return capitalizeFirstLetter(value);
+    })
     .test('single-word', 'Solo se permite una palabra', value => {
-      return !value || value.split(' ').length === 1;
+      return !value || value.trim().split(/\s+/).length === 1;
     }),
   
   apellido: yup.string()
     .required('El apellido paterno es requerido')
+    .transform(value => value ? value.trim() : value) // Eliminar espacios al inicio/final
     .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/, 'Solo se permiten letras')
     .transform(value => capitalizeFirstLetter(value))
     .test('single-word', 'Solo se permite una palabra', value => {
-      return value && value.split(' ').length === 1;
+      return value && value.trim().split(/\s+/).length === 1;
     }),
   
   segundo_apellido: yup.string()
     .required('El apellido materno es requerido')
+    .transform(value => value ? value.trim() : value) // Eliminar espacios al inicio/final
     .matches(/^[A-Za-zÁÉÍÓÚáéíóúñÑ]+$/, 'Solo se permiten letras')
     .transform(value => capitalizeFirstLetter(value))
     .test('single-word', 'Solo se permite una palabra', value => {
-      return value && value.split(' ').length === 1;
+      return value && value.trim().split(/\s+/).length === 1;
     }),
   
   manzana: yup.string()
@@ -67,57 +78,73 @@ const schema = yup.object().shape({
       'buenavista'
     ], 'Seleccione una manzana válida'),
   
-  calle: yup.string()
-    .required('La calle es requerida'),
-  
-  n_exterior: yup.string()
-    .required('El número exterior es requerido')
-    .test(
-      'valid-format',
-      'Debe ser solo números o "s/n"',
-      (value) => /^[0-9]+$/.test(value) || value?.toLowerCase() === 's/n'
-    ),
-
-fecha_nacimiento: yup
-  .mixed() // Cambiamos de date() a mixed() para mayor flexibilidad
-  .required('La fecha de nacimiento es requerida')
-  .test('is-valid-date', 'La fecha de nacimiento no es válida', (value) => {
-    // Si es un objeto Date, es válido
-    if (value instanceof Date) return !isNaN(value.getTime());
-    // Si es una string (del input type="date"), verificamos el formato
-    if (typeof value === 'string') {
-      return /^\d{4}-\d{2}-\d{2}$/.test(value) && !isNaN(new Date(value).getTime());
-    }
-    return false;
-  })
-  .transform(function (value, originalValue) {
-    // Si el valor original es una string vacía, devolvemos null
-    if (originalValue === '') return null;
-    
-    // Si es una string del input type="date" (formato YYYY-MM-DD)
-    if (typeof originalValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(originalValue)) {
-      return originalValue; // Mantenemos el formato ISO
-    }
-    
-    // Si es un objeto Date, lo convertimos a string ISO
-    if (value instanceof Date) {
-      return value.toISOString().split('T')[0];
-    }
-    
-    return value;
-  })
-  .test('min-date', 'La fecha de nacimiento no puede ser anterior a 1940', (value) => {
-    if (!value) return true;
-    const date = new Date(value);
-    const minDate = new Date(1940, 0, 1);
-    return date >= minDate;
-  })
-  .test('max-date', 'La fecha de nacimiento no puede ser posterior a la fecha actual', (value) => {
-    if (!value) return true;
-    const date = new Date(value);
-    const today = new Date();
-    return date <= today;
+calle: yup.string()
+  .required('La calle es requerida')
+  .transform(value => value ? value.trim() : value) // Eliminar espacios al inicio/final
+  .test('no-cero', 'El valor "0" no es permitido', value => value !== '0')
+  .test('no-negative', 'No se permiten números negativos', value => {
+    // Verificar que no sea un número negativo
+    return !/^-?\d+$/.test(value);
   }),
+
+n_exterior: yup.string()
+  .transform(value => {
+    // Convertir vacío a "s/n"
+    if (!value || value.trim() === '') return 's/n';
+    return value.trim();
+  })
+  .test(
+    'valid-format',
+    'Debe ser solo números positivos o "s/n"',
+    (value) => {
+      // Permitir números positivos o "s/n"
+      return /^\d+$/.test(value) || value.toLowerCase() === 's/n';
+    }
+  )
+  .test('no-negative', 'No se permiten números negativos', (value) => {
+    // Validar explícitamente que no sea negativo
+    return !/^-\d+$/.test(value);
+  }),
+
+  estadoPersona: yup.string()
+    .required('Debe seleccionar un estado para la persona')
+    .oneOf([
+      'Estudiante', 'Inmigrante', 'Pequeño propietario', 
+      'Vecino', 'Ranchero', 'Invalido'
+    ], 'Estado no válido'),
+
+  fecha_nacimiento: yup
+    .mixed()
+    .required('La fecha de nacimiento es requerida')
+    .test('is-valid-date', 'La fecha de nacimiento no es válida', (value) => {
+      if (value instanceof Date) return !isNaN(value.getTime());
+      if (typeof value === 'string') {
+        return /^\d{4}-\d{2}-\d{2}$/.test(value) && !isNaN(new Date(value).getTime());
+      }
+      return false;
+    })
+    .transform(function (value, originalValue) {
+      if (originalValue === '') return null;
+      if (typeof originalValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(originalValue)) {
+        return originalValue;
+      }
+      if (value instanceof Date) {
+        return value.toISOString().split('T')[0];
+      }
+      return value;
+    })
+    .test('min-date', 'La fecha de nacimiento no puede ser anterior a 1940', (value) => {
+      if (!value) return true;
+      const date = new Date(value);
+      const minDate = new Date(1940, 0, 1);
+      return date >= minDate;
+    })
+    .test('max-date', 'La fecha de nacimiento no puede ser posterior a la fecha actual', (value) => {
+      if (!value) return true;
+      const date = new Date(value);
+      const today = new Date();
+      return date <= today;
+    }),
 });
 
 /**
@@ -150,38 +177,38 @@ function UserRegister() {
     setSubmitError(null);
     setSubmitSuccess(false);
     
-    try {
-      const fechaData = AgregarFechaActual();
-      const fechaFin = AgregarFechaFinVacio();
-      
-      const dataConFecha = {
-        ...formData,
-        ...fechaData,
-        ...fechaFin
-      };
+      try {
+        const fechaData = AgregarFechaActual();
+        const fechaFin = AgregarFechaFinVacio();
+        
+        const dataConFecha = {
+          ...formData,
+          ...fechaData,
+          ...fechaFin
+        };
 
-      const requestData = {
-        data: dataConFecha
-      };
+        const requestData = {
+          data: dataConFecha
+        };
 
-      const response = await AgregarUsuario(requestData);
+        const response = await AgregarUsuario(requestData);
 
-      console.log("Respuesta del endpoint front:", response.id);
-      
-      if (response.id) {
-        setSubmitSuccess(true);
-        // Pequeño delay para que el usuario vea el mensaje de éxito
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        navigate(`/personas/registro_exito/${response.id}`);
-      } else {
-        throw new Error('El backend no devolvió un ID de usuario');
+        console.log("Respuesta del endpoint front:", response.id);
+        
+        if (response.id) {
+          setSubmitSuccess(true);
+          // Pequeño delay para que el usuario vea el mensaje de éxito
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          navigate(`/personas/registro_exito/${response.id}`);
+        } else {
+          throw new Error('El backend no devolvió un ID de usuario');
+        }
+      } catch (error) {
+        console.error("Error en el registro:", error);
+        setSubmitError(error.response?.data?.message || error.message || "Error en el registro");
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      console.error("Error en el registro:", error);
-      setSubmitError(error.response?.data?.message || error.message || "Error en el registro");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
     return (
@@ -395,53 +422,82 @@ function UserRegister() {
                       </div>
                       
                       {/* Fecha de nacimiento */}
-                      <div className="flex space-x-4">
-                        <div className="flex-1 relative">
-                          <label className="block text-sm font-medium mb-1" htmlFor="fecha_nacimiento">
-                            Fecha de Nacimiento <span className="text-red-500">*</span>
-                          </label>
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium mb-1" htmlFor="fecha_nacimiento">
+                          Fecha de Nacimiento <span className="text-red-500">*</span>
+                        </label>
+                        
+                        {/* Contenedor relativo para posicionar el icono */}
+                        <div className="relative max-w-xs">
+                          <input 
+                            id="fecha_nacimiento" 
+                            className={`dark:text-gray-900 dark:bg-gray-100 form-input w-full rounded-lg pl-10 pr-3 py-2 ${
+                              errors.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
+                            } ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
+                            type="date"
+                            {...register("fecha_nacimiento")}
+                            max={new Date().toISOString().split('T')[0]}
+                            disabled={isSubmitting}
+                          />
                           
-                          {/* Contenedor relativo para posicionar el icono */}
-                          <div className="relative">
-                            <input 
-                              id="fecha_nacimiento" 
-                              className={`dark:text-gray-900 dark:bg-gray-100 form-input w-full rounded-lg pl-10 pr-3 py-2 ${
-                                errors.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
-                              } ${isSubmitting ? 'bg-gray-100 cursor-not-allowed' : ''}`} 
-                              type="date"
-                              {...register("fecha_nacimiento")}
-                              max={new Date().toISOString().split('T')[0]}
-                              disabled={isSubmitting}
-                            />
-                            
-                            {/* Icono de calendario */}
-                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                              <svg 
-                                className="w-5 h-5 text-gray-400 dark:text-gray-500" 
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                              >
-                                <path 
-                                  strokeLinecap="round" 
-                                  strokeLinejoin="round" 
-                                  strokeWidth={2} 
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
-                                />
-                              </svg>
-                            </div>
+                          {/* Icono de calendario */}
+                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <svg 
+                              className="w-5 h-5 text-gray-400 dark:text-gray-500" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                                strokeWidth={2} 
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                              />
+                            </svg>
                           </div>
-                          
-                          {errors.fecha_nacimiento && (
-                            <span className="text-red-500 text-sm mt-1 block animate-fade-in">
-                              {errors.fecha_nacimiento.message}
-                            </span>
-                          )} 
                         </div>
                         
-                        <div className="flex-1">
-                          {/* Espacio para otro campo si es necesario */}
+                        {errors.fecha_nacimiento && (
+                          <span className="text-red-500 text-sm mt-1 block animate-fade-in">
+                            {errors.fecha_nacimiento.message}
+                          </span>
+                        )} 
+                      </div>
+
+                      {/* Información de la cuenta - Ahora debajo de la fecha con separación */}
+                      <div className="mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Información de la cuenta</h2>
+                        
+                        <div className="mb-6">
+                          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Estado de la persona <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            {...register('estadoPersona')}
+                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 ${
+                              errors.estadoPersona ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                          >
+                            <option value="">Seleccione una opción</option>
+                            <option value="Estudiante">Estudiante</option>
+                            <option value="Inmigrante">Inmigrante</option>
+                            <option value="Pequeño propietario">Pequeño propietario</option>
+                            <option value="Vecino">Vecino</option>
+                            <option value="Ranchero">Ranchero</option>
+                            <option value="Invalido">Invalido</option>
+                          </select>
+                          
+                          {errors.estadoPersona && (
+                            <p className="mt-1 text-sm text-red-600 dark:text-red-500">
+                              {errors.estadoPersona.message}
+                            </p>
+                          )}
                         </div>
+                      </div>
+
+                      <div className="flex-1">
+                        {/* Espacio para otro campo si es necesario */}
                       </div>
                     </div>
                       

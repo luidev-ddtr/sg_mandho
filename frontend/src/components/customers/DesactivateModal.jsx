@@ -68,7 +68,7 @@ function DesactivarUsuarioModal({ id_user, onClose, onUpdate }) {
               </h3>
               <div className="text-gray-600 dark:text-gray-400">
                 <p>Esta acción deshabilitará el acceso del usuario al sistema.</p>
-                  <p> Podrás reactivarlo más tarde si es necesario.</p>
+                  <p>Este usuario se marcara como fallecido</p>
               </div>
             </div>
           </div>
